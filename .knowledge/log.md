@@ -2,6 +2,21 @@
 
 > 本文件只追加，不修改历史记录。
 
+## [2026-07-21] update | [GL-006 NASA POWER 参数完整清单] | 通过官方 API 端点查询全部 1660 个参数，补充到 GL-006 | #a7c3e9f1
+
+- 发现 POWER 官方参数查询端点：`/api/system/manager/parameters?community=RE&temporal=HOURLY&metadata=true`
+- 端点来源：nasapower R 包源码（`query_parameters` 函数）
+- 参数总数：HOURLY 105、DAILY 152、MONTHLY 1388、CLIMATOLOGY 1634，不重复 1660 个
+- 三社区 AG/RE/SB 参数数完全一致
+- HOURLY 105 个核心参数按 14 个类别归类（温度 6、湿度 5、气压 3、风 13、降水蒸发 9、全天空辐射 13、晴空辐射 10、其他辐射 12、云 5、气溶胶 3、太阳几何 1、冰雪 2、土壤水文 14、对流层边界层 4）
+- DAILY 额外 48 个参数含 max/min/range 统计、度日（HDD/CDD）、生长度日（GDD）、IMERG 降水
+- MONTHLY/CLIMATOLOGY 参数爆炸原因：SI_TILTED/SI_TRACKER 倾斜面×追踪器组合、SG_SZA/SAA 逐小时、连续无太阳天数
+- 纠正之前"猜测参数名批量测试"的错误方法（只找到 18 个，大量 422 错误）
+- GL-006 新增第 8 节"参数完整清单"，原 8-10 节顺延为 9-11 节
+- 来源更新：增加参数查询端点、nasapower R 包链接、查询脚本路径
+- 新增脚本：scripts/data_download/list_power_params.py
+- 完整参数清单归档：.knowledge/tech/nasa_power_params.md
+
 ## [2026-07-20] cleanup | [清理 draft 条目] | 删除全部 13 个 draft 条目，仅保留 5 个 verified 条目；清理所有残留引用 | #d1e7f3a5
 
 - 用户决定：draft 状态条目（框架占位、未实测验证）不发布到 GitHub，全部删除
