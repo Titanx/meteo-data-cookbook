@@ -79,17 +79,35 @@ meteo-data-cookbook/
 
 ## 使用方法
 
-### 方式一：阅读知识库（无需运行代码）
+### 方式一：用 Coding Agent 阅读整个项目（推荐）
 
-直接在 GitHub 上浏览 `.knowledge/tech/` 目录下的 Markdown 文件。推荐阅读顺序：
+**推荐用 TRAE、Cursor、Claude Code 等 coding agent 直接打开本项目仓库**，让 AI 帮你按需检索和理解知识库。原因见下方[设计理念：为什么不是 Skill](#设计理念为什么不是-skill)。
 
-1. 先看 [.knowledge/tech/catalog.md](.knowledge/tech/catalog.md) 了解全貌
-2. 按需阅读具体条目：
-   - **想下载葵花卫星数据** → [PS-003](.knowledge/tech/processes/PS-003.md)
-   - **想下载 GOES 卫星数据** → [PS-004](.knowledge/tech/processes/PS-004.md)
-   - **想用 Meteostat 下载地面观测** → [GL-005](.knowledge/tech/guidelines/GL-005.md)
-   - **下载遇到问题先看这里** → [PF-004](.knowledge/tech/pitfalls/PF-004.md)
-   - **想用 Open-Meteo 获取 ERA5 再分析** → [GL-004](.knowledge/tech/guidelines/GL-004.md)
+**给 coding agent 的提示词示例**：
+
+```
+我要下载葵花9卫星的华东区域数据，请阅读 .knowledge/tech/processes/PS-003.md 
+和 .knowledge/tech/pitfalls/PF-004.md，给我一个完整的下载方案，包括：
+1. 需要下载哪些分段
+2. 选什么时次
+3. 怎么用 satpy 处理
+4. 有什么坑要避开
+```
+
+```
+我要下载中国50个主要机场的2025年全年气象数据，请阅读 
+.knowledge/tech/guidelines/GL-005.md 和 .knowledge/tech/pitfalls/PF-004.md，
+告诉我用哪个脚本、怎么运行、预期数据量、哪些机场可能有问题。
+```
+
+agent 会自动按需读取相关条目，你不需要手动翻文档。
+
+**纯人工阅读**也可：先看 [.knowledge/tech/catalog.md](.knowledge/tech/catalog.md) 了解全貌，再按需点进具体条目：
+- 想下载葵花卫星数据 → [PS-003](.knowledge/tech/processes/PS-003.md)
+- 想下载 GOES 卫星数据 → [PS-004](.knowledge/tech/processes/PS-004.md)
+- 想用 Meteostat 下载地面观测 → [GL-005](.knowledge/tech/guidelines/GL-005.md)
+- 下载遇到问题先看这里 → [PF-004](.knowledge/tech/pitfalls/PF-004.md)
+- 想用 Open-Meteo 获取 ERA5 再分析 → [GL-004](.knowledge/tech/guidelines/GL-004.md)
 
 每篇文档自成体系，包含背景、接口说明、Python 代码示例、实测结果、适用/不适用场景。
 
@@ -195,6 +213,54 @@ from meteostat import Daily, Hourly
 from datetime import datetime
 df = Daily("54511", datetime(2026, 1, 1), datetime(2026, 7, 19)).fetch()
 ```
+
+## 设计理念：为什么不是 Skill
+
+有人会问：为什么不把这些知识做成一个 coding agent 的 Skill（一次性加载所有上下文），而要维护一个分文件的 Markdown 知识库？
+
+**答案是：气象数据知识太庞杂，必须用渐进式披露（progressive disclosure）结构。**
+
+### Skill 的问题
+
+一个 Skill 的 prompt 在每次对话时都会完整加载到上下文窗口。如果要把目前 5 条 verified 知识（约 1500 行 Markdown）塞进一个 Skill：
+
+| 问题 | 说明 |
+|------|------|
+| **上下文爆炸** | 5 条已 1500 行，未来扩到 30+ 条会过万行，挤占对话的有效上下文 |
+| **信噪比下降** | 用户问"葵花怎么下"时，GOES/Meteostat/Open-Meteo 的内容全是噪声 |
+| **维护困难** | 单文件改一处要重新审阅全文，知识库分文件可独立迭代 |
+| **验证成本高** | Skill 无法区分 verified 和 draft，知识库可通过成熟度标记分级 |
+
+### 渐进式披露的结构
+
+本知识库采用三层渐进式披露：
+
+```
+第 1 层：catalog.md（索引）
+  ↓ 用户/agent 按需选择
+第 2 层：具体条目（GL-005.md / PS-003.md / ...）
+  ↓ 条目内部再分层
+第 3 层：背景 → 接口 → 代码示例 → 实测结果 → 陷阱 → 适用场景
+```
+
+**coding agent 天然适配这个结构**：
+1. agent 先读 `catalog.md`（几十行，低成本）
+2. 根据用户问题，只读取相关的 1-2 个条目（几百行，按需）
+3. 条目内部的分层结构让 agent 能快速定位到"代码示例"或"陷阱"段落
+
+这样，无论知识库增长到多少条，单次对话的上下文消耗始终可控。这也是为什么**推荐用 coding agent 打开本项目**而不是做成 Skill——agent 的文件检索能力就是天然的渐进式加载机制。
+
+### 知识库 vs Skill 的选择标准
+
+| 场景 | 适合 Skill | 适合知识库 |
+|------|-----------|-----------|
+| 知识总量 < 200 行，规则性强 | ✅ | ❌ 过度设计 |
+| 知识总量 > 500 行，领域庞杂 | ❌ 上下文爆炸 | ✅ |
+| 需要区分成熟度（draft/verified） | ❌ | ✅ |
+| 需要独立迭代各条目 | ❌ | ✅ |
+| 需要 agent 按需检索 | ❌ | ✅ |
+
+气象数据领域属于右列：卫星（葵花/GOES/风云）、地面观测（Meteostat/ISD）、再分析（ERA5）、数值模式（WRF/GFS），每个子领域都有独立的下载流程、陷阱、最佳实践，总量会持续增长到数千行。知识库 + coding agent 是唯一可行的结构。
 
 ## 相关项目
 
