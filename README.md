@@ -15,29 +15,28 @@
 ## 知识库结构
 
 ```
-.knowledge/
-├── README.md               # 本文件
-├── tech/
-│   ├── catalog.md          # 条目索引
-│   ├── guidelines/         # 最佳实践
-│   │   ├── GL-004.md       # Open-Meteo API 使用指南
-│   │   └── GL-005.md       # Meteostat 地面观测数据使用指南
-│   ├── pitfalls/           # 已知陷阱
-│   │   └── PF-004.md       # Meteostat 区域数据下载陷阱
-│   └── processes/          # 技术流程
-│       ├── PS-003.md       # 葵花 8/9 卫星数据下载流程
-│       └── PS-004.md       # GOES-16/18/19 卫星数据下载流程
-└── log.md                  # 变更日志
-
-scripts/
-└── data_download/          # 实测验证脚本
-
-data/                       # 下载数据（不纳入 git，可重新生成）
-├── himawari/               # 葵花 8/9 卫星数据
-├── himawari9/              # 葵花 9 实时分段数据
-├── goes19/                 # GOES-19 卫星数据
-└── meteostat/              # 地面观测数据（246 机场 847 CSV）
+meteo-data-cookbook/
+├── README.md                   # 本文件
+├── LICENSE                     # MIT
+├── .gitignore
+├── .knowledge/                 # 知识库主体
+│   ├── catalog.md              # 全景目录
+│   ├── log.md                  # 变更日志
+│   └── tech/
+│       ├── catalog.md          # 技术条目索引
+│       ├── guidelines/         # 最佳实践
+│       │   ├── GL-004.md       # Open-Meteo API 使用指南
+│       │   └── GL-005.md       # Meteostat 地面观测数据使用指南
+│       ├── pitfalls/           # 已知陷阱
+│       │   └── PF-004.md       # Meteostat 区域数据下载陷阱
+│       └── processes/          # 技术流程
+│           ├── PS-003.md       # 葵花 8/9 卫星数据下载流程
+│           └── PS-004.md       # GOES-16/18/19 卫星数据下载流程
+└── scripts/
+    └── data_download/          # 19 个实测验证脚本
 ```
+
+> `data/` 目录不纳入 git（可通过脚本重新下载），运行脚本后会自动创建。
 
 ## 条目清单（全部 verified）
 
@@ -78,14 +77,124 @@ data/                       # 下载数据（不纳入 git，可重新生成）
 5. **GOES 真彩色合成手动方案**——不依赖 pyspectral，手动 RGB + gamma 2.2 + 降采样，避免内存溢出
 6. **区域下载陷阱清单**——缅甸日数据缺失、越南 3 机场无数据、巴西 SBGR 日数据延迟 7 天
 
-## 使用方式
+## 使用方法
 
-每篇文档自成体系，可独立阅读。推荐阅读顺序：
+### 方式一：阅读知识库（无需运行代码）
 
-1. 先看 `.knowledge/tech/catalog.md` 了解全貌
-2. 按需阅读具体条目（卫星数据看 PS-003/PS-004，地面观测看 GL-005 + PF-004）
-3. 脚本位于 `scripts/data_download/`，数据路径以 `data/` 开头（相对路径，按需调整）
-4. `data/` 目录不纳入 git，运行脚本可重新生成
+直接在 GitHub 上浏览 `.knowledge/tech/` 目录下的 Markdown 文件。推荐阅读顺序：
+
+1. 先看 [.knowledge/tech/catalog.md](.knowledge/tech/catalog.md) 了解全貌
+2. 按需阅读具体条目：
+   - **想下载葵花卫星数据** → [PS-003](.knowledge/tech/processes/PS-003.md)
+   - **想下载 GOES 卫星数据** → [PS-004](.knowledge/tech/processes/PS-004.md)
+   - **想用 Meteostat 下载地面观测** → [GL-005](.knowledge/tech/guidelines/GL-005.md)
+   - **下载遇到问题先看这里** → [PF-004](.knowledge/tech/pitfalls/PF-004.md)
+   - **想用 Open-Meteo 获取 ERA5 再分析** → [GL-004](.knowledge/tech/guidelines/GL-004.md)
+
+每篇文档自成体系，包含背景、接口说明、Python 代码示例、实测结果、适用/不适用场景。
+
+### 方式二：运行脚本下载数据
+
+#### 环境准备
+
+```bash
+# 克隆仓库
+git clone https://github.com/Titanx/meteo-data-cookbook.git
+cd meteo-data-cookbook
+
+# 安装 Python 依赖（Python 3.9+）
+pip install meteostat boto3 satpy pyresample pyproj numpy pandas matplotlib pillow
+```
+
+#### 下载地面观测数据（Meteostat）
+
+```bash
+# 进入脚本目录
+cd scripts/data_download/
+
+# 测试单站（北京）
+python test_meteostat.py
+
+# 下载中国 46 个主要机场 2026 年数据
+python download_china_airports_2026.py
+
+# 下载中国 46 个机场 2025 年全年数据
+python download_china_airports_2025.py
+
+# 下载东亚东南亚 115 个机场
+python download_east_southeast_asia_2025_2026.py
+
+# 下载南北美洲 85 个机场
+python download_americas_airports_2025_2026.py
+```
+
+数据将保存到 `data/meteostat/` 目录，按年份和区域分子目录：
+```
+data/meteostat/
+├── china_2025/          # daily_ZBAA.csv, hourly_ZBAA.csv, ...
+├── china_2026/
+├── east_southeast_asia/
+│   ├── 2025/
+│   └── 2026/
+└── americas/
+    ├── 2025/
+    └── 2026/
+```
+
+#### 下载卫星数据（葵花 / GOES）
+
+```bash
+# 测试 AWS S3 匿名访问（葵花 8）
+python test_himawari_s3.py
+
+# 下载葵花 9 华东区域分段数据 + 生成真彩色图
+python himawari9_segment_pipeline.py
+
+# 下载 GOES-19 全圆盘 + 生成真彩色图
+python goes19_pipeline.py
+```
+
+卫星数据将保存到 `data/himawari9/` 或 `data/goes19/` 目录。
+
+#### 数据质量检验
+
+```bash
+# 检验中国机场数据完整性
+python check_data_integrity.py
+
+# 检验东亚东南亚数据
+python check_asia_integrity.py
+
+# 测试 Meteostat 实时性（延迟多久）
+python check_meteostat_realtime.py
+python check_meteostat_realtime_americas.py
+```
+
+### 方式三：复用代码到自己的项目
+
+知识库中的代码示例可直接复制到你的项目。关键依赖：
+
+| 用途 | 依赖库 | 安装 |
+|------|--------|------|
+| 地面观测下载 | `meteostat` | `pip install meteostat` |
+| AWS S3 匿名访问 | `boto3` | `pip install boto3` |
+| 卫星数据处理 | `satpy`, `pyresample` | `pip install satpy` |
+| 再分析数据 | `requests` 或 `openmeteo-requests` | `pip install openmeteo-requests` |
+
+**核心代码片段**（详见各条目文档）：
+
+```python
+# AWS S3 匿名访问（葵花/GOES 通用）
+import boto3
+from botocore import UNSIGNED
+from botocore.config import Config
+s3 = boto3.client('s3', config=Config(signature_version=UNSIGNED))
+
+# Meteostat 批量下载（站点 ID 复用优化）
+from meteostat import Daily, Hourly
+from datetime import datetime
+df = Daily("54511", datetime(2026, 1, 1), datetime(2026, 7, 19)).fetch()
+```
 
 ## 相关项目
 
