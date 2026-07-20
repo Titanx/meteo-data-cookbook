@@ -26,7 +26,8 @@ meteo-data-cookbook/
 │       ├── catalog.md          # 技术条目索引
 │       ├── guidelines/         # 最佳实践
 │       │   ├── GL-004.md       # Open-Meteo API 使用指南
-│       │   └── GL-005.md       # Meteostat 地面观测数据使用指南
+│       │   ├── GL-005.md       # Meteostat 地面观测数据使用指南
+│       │   └── GL-006.md       # NASA POWER 卫星同化数据使用指南
 │       ├── pitfalls/           # 已知陷阱
 │       │   └── PF-004.md       # Meteostat 区域数据下载陷阱
 │       └── processes/          # 技术流程
@@ -45,6 +46,7 @@ meteo-data-cookbook/
 |----|------|---------|
 | GL-004 | Open-Meteo API 使用指南 | 免 API key、ERA5 历史 17 天、预报 168h、批量请求 |
 | GL-005 | Meteostat 地面观测数据使用指南 | 246 机场 847 CSV 180.4MB、站点 ID 复用 3-5x 提速、**小时数据延迟仅 12 分钟** |
+| GL-006 | NASA POWER 卫星同化数据使用指南 | CERES+MERRA-2 多源、免 key、辐射延迟 3-4 月、气象延迟 2 天、**GHI MAE 38.6 W/m²（vs SURFRAD 实测）** |
 | PF-004 | Meteostat 区域数据下载陷阱 | 中国站点稀疏需 200km 半径、缅甸日数据缺失、越南 3 机场无数据 |
 | PS-003 | 葵花 8/9 卫星数据下载流程 | AWS S3 匿名访问、FLDK 分段下载省 80%、白天时次选择、HSD→AHI-L1b-FLDK 目录迁移 |
 | PS-004 | GOES-16/18/19 卫星数据下载流程 | AWS S3 匿名访问、ABI L1b RadF、真彩色合成（手动 RGB + gamma）、与 Himawari 对比 |

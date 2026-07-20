@@ -25,6 +25,21 @@
 - 复制脚本到 scripts/data_download/（surfrad_pipeline.py, surfrad_assessment.py）
 - 知识库条目数：5 → 6（全部 verified）
 
+## [2026-07-20] add | [GL-006 NASA POWER 卫星同化数据] | 新增 NASA POWER 使用指南，与 SURFRAD 实测对比验证 | #f3a5c9d2
+
+- 新增 GL-006：NASA POWER 卫星同化数据使用指南（verified）
+- 数据源：CERES 卫星反演（辐射）+ MERRA-2 再分析（气象）+ GPM IMERG（降水）
+- API 实测：免 key 免注册，hourly 240 条 + daily 10 条，HTTP 200
+- 关键发现：辐射延迟 3-4 个月（2026-07 数据缺失），气象延迟约 2 天
+- 单位陷阱：hourly GHI 是 Wh/m²（= W/m²），daily 是 kW·h/m²/day
+- 与 SURFRAD 实测对比（Bondville 2025-07-01~10，240 小时）：
+  - GHI: MAE=38.6 W/m², RMSE=68.0 W/m², BIAS=-23.3 W/m²（轻度低估）
+  - 温度: MAE=1.4°C（精度优秀）
+- 与 Open-Meteo（ERA5）对比：POWER 空间分辨率粗（0.5°-1° vs 0.25°），但辐射来自卫星观测可交叉验证
+- 更新 catalog.md、README.md（条目清单 7 条、知识库结构图）
+- 新增脚本：test_nasa_power.py（含 SURFRAD 对比）
+- 知识库条目数：6 → 7（全部 verified）
+
 ## [2026-07-18] update | [葵花数据下载方式修正] | 修正 PS-003，发现 AWS S3 匿名访问方式，无需注册 | #c4f9b3e8
 
 - 用户反馈：葵花数据可直接通过 AWS S3 下载，无需注册

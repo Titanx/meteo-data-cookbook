@@ -6,6 +6,7 @@
 |----|------|--------|------|----------|----------|
 | GL-004 | Open-Meteo API 使用指南 | verified | openmeteo, api, era5, forecast, free | implement, verify | 2026-07-18 |
 | GL-005 | Meteostat 地面观测数据使用指南 | verified | meteostat, observation, surface, station, china, batch-download, asia, americas, real-time | implement, verify | 2026-07-20 |
+| GL-006 | NASA POWER 卫星同化数据使用指南 | verified | nasa-power, ceres, merra-2, satellite, reanalysis, radiation, ghi, dni, dhi, no-api-key | implement, verify | 2026-07-20 |
 
 ## 已知陷阱 (pitfalls/)
 
