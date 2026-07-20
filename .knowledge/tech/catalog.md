@@ -19,3 +19,4 @@
 |----|------|--------|------|----------|----------|
 | PS-003 | 葵花8/9 卫星数据下载流程 | verified | himawari, satellite, aws-s3, anonymous, noaa, hsd, 葵花, real-time | architect, implement | 2026-07-20 |
 | PS-004 | GOES-16/18/19 卫星数据下载流程 | verified | goes, satellite, aws-s3, anonymous, noaa, abi, netcdf, 美洲 | architect, implement | 2026-07-20 |
+| PS-005 | SURFRAD 地表辐射实测数据下载流程 | verified | surfrad, noaa, radiation, ghi, dni, dhi, realtime, 实测, 辐照, 匿名访问 | architect, implement | 2026-07-20 |

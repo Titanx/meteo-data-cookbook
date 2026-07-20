@@ -12,6 +12,19 @@
 - 更新 GL-005：新增第 13 节"数据实时性实测"，修正"1-7天延迟"为"小时数据延迟约12分钟"
 - 知识库条目数：18 → 5（全部 verified）
 
+## [2026-07-20] add | [PS-005 SURFRAD 地表辐射实测] | 新增 SURFRAD 下载流程条目，7 站点实测验证 | #e2f4a8b1
+
+- 新增 PS-005：SURFRAD 地表辐射实测数据下载流程（verified）
+- 2026-07-20 实测：7 站点 × 7 天 = 63 文件，63,715 条 1 分钟记录
+- 数据量评估：2025-2026 全部 7 站 = 3562 文件，1.14 GB
+- 实时性：realtime 目录当天实时追加，历史目录延迟 4 天
+- 历史起始：最早 1995 年（bon/fpk/gwn），全历史约 15-20 GB
+- 数据格式：48 列文本，含 GHI/DNI/DHI/长波/UV-B/PAR/气象，缺失值 -9999.9
+- 关键发现：列顺序是 year jday month day（jday 在第 2 列），不是 year month day jday
+- 更新 catalog.md、README.md（条目清单、数据源覆盖、特色内容、知识库结构）
+- 复制脚本到 scripts/data_download/（surfrad_pipeline.py, surfrad_assessment.py）
+- 知识库条目数：5 → 6（全部 verified）
+
 ## [2026-07-18] update | [葵花数据下载方式修正] | 修正 PS-003，发现 AWS S3 匿名访问方式，无需注册 | #c4f9b3e8
 
 - 用户反馈：葵花数据可直接通过 AWS S3 下载，无需注册

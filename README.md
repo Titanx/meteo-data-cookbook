@@ -31,7 +31,8 @@ meteo-data-cookbook/
 │       │   └── PF-004.md       # Meteostat 区域数据下载陷阱
 │       └── processes/          # 技术流程
 │           ├── PS-003.md       # 葵花 8/9 卫星数据下载流程
-│           └── PS-004.md       # GOES-16/18/19 卫星数据下载流程
+│           ├── PS-004.md       # GOES-16/18/19 卫星数据下载流程
+│           └── PS-005.md       # SURFRAD 地表辐射实测数据下载流程
 └── scripts/
     └── data_download/          # 19 个实测验证脚本
 ```
@@ -47,6 +48,7 @@ meteo-data-cookbook/
 | PF-004 | Meteostat 区域数据下载陷阱 | 中国站点稀疏需 200km 半径、缅甸日数据缺失、越南 3 机场无数据 |
 | PS-003 | 葵花 8/9 卫星数据下载流程 | AWS S3 匿名访问、FLDK 分段下载省 80%、白天时次选择、HSD→AHI-L1b-FLDK 目录迁移 |
 | PS-004 | GOES-16/18/19 卫星数据下载流程 | AWS S3 匿名访问、ABI L1b RadF、真彩色合成（手动 RGB + gamma）、与 Himawari 对比 |
+| PS-005 | SURFRAD 地表辐射实测数据下载流程 | 匿名 HTTPS、7 站美国辐射网、1 分钟 GHI/DNI/DHI、当天实时追加、1.14GB 覆盖 2025-2026 |
 
 ## 数据源覆盖
 
@@ -56,6 +58,12 @@ meteo-data-cookbook/
 |------|--------|---------|--------|---------|
 | 葵花 9（Himawari-9） | AWS S3 `noaa-himawari9` | 匿名 UNSIGNED | 实时（10 分钟间隔） | 2026-07-20 02:02 UTC 最新 |
 | GOES-19 | AWS S3 `noaa-goes19` | 匿名 UNSIGNED | 实时 | 2026-07-20 01:30 UTC 全圆盘 + 真彩色图 |
+
+### 地表辐射实测
+
+| 数据源 | 分辨率 | 覆盖 | 访问方式 | 实测验证 |
+|--------|--------|------|---------|---------|
+| SURFRAD | 1 分钟 | 美国 7 站 | 匿名 HTTPS | 2026-07-20 7 站×7 天，GHI 峰值 1058-1382 W/m² |
 
 ### 地面观测
 
@@ -76,6 +84,7 @@ meteo-data-cookbook/
 4. **Meteostat 实时性实测**——纠正"1-7 天延迟"的旧认知，小时数据实际延迟仅 12 分钟
 5. **GOES 真彩色合成手动方案**——不依赖 pyspectral，手动 RGB + gamma 2.2 + 降采样，避免内存溢出
 6. **区域下载陷阱清单**——缅甸日数据缺失、越南 3 机场无数据、巴西 SBGR 日数据延迟 7 天
+7. **SURFRAD 地表实测辐照**——1 分钟 GHI/DNI/DHI，匿名 HTTPS，当天实时追加，区别于卫星衍生产品（NSRDB/PVGIS）
 
 ## 使用方法
 
