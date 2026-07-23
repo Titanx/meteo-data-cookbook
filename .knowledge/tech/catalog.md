@@ -13,6 +13,7 @@
 | ID | 标题 | 成熟度 | 标签 | 适用阶段 | 最后引用 |
 |----|------|--------|------|----------|----------|
 | PF-004 | Meteostat 区域数据下载陷阱（中国/亚洲/美洲） | verified | meteostat, china, asia, americas, station-density, data-gap, myanmar, vietnam | implement, verify | 2026-07-20 |
+| PF-005 | ERCOT 官网反爬虫屏蔽与中国 IP 不可访问陷阱 | verified | ercot, texas, electricity, price, imperva, incapsula, anti-scraping, china-ip-block, eia-api, gridstatus | architect, implement | 2026-07-23 |
 
 ## 技术流程 (processes/)
 
@@ -21,3 +22,4 @@
 | PS-003 | 葵花8/9 卫星数据下载流程 | verified | himawari, satellite, aws-s3, anonymous, noaa, hsd, 葵花, real-time | architect, implement | 2026-07-20 |
 | PS-004 | GOES-16/18/19 卫星数据下载流程 | verified | goes, satellite, aws-s3, anonymous, noaa, abi, netcdf, 美洲 | architect, implement | 2026-07-20 |
 | PS-005 | SURFRAD 地表辐射实测数据下载流程 | verified | surfrad, noaa, radiation, ghi, dni, dhi, realtime, 实测, 辐照, 匿名访问 | architect, implement | 2026-07-20 |
+| PS-006 | ERCOT 电力市场数据下载流程 | verified | ercot, texas, electricity, price, spp, dam, rtm, eia-api, gridstatus, lmp, fuel-mix, load | architect, implement | 2026-07-23 |

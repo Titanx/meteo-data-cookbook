@@ -2,6 +2,21 @@
 
 > 本文件只追加，不修改历史记录。
 
+## [2026-07-23] add | [PF-005 + PS-006 ERCOT 电力市场数据下载] | 新增 ERCOT 电价数据下载陷阱和流程，双源互补验证 | #e5f1a8b3
+
+- 新增 PF-005：ERCOT 官网反爬虫屏蔽与中国 IP 不可访问陷阱（verified）
+  - 4 个陷阱：ERCOT 官网 IP 级屏蔽、gridstatus 库 Python 版本不兼容、EIA API 无电价、HB_PANHANDLE 无数据
+  - 验证方式：requests/cloudscraper/浏览器自动化/用户手动访问全部 403 或超时
+- 新增 PS-006：ERCOT 电力市场数据下载流程（verified）
+  - 双源方案：EIA API v2（负荷/发电/燃料类型）+ GridStatus.io API（DAM/RTM 电价）
+  - EIA API 下载：19 月 × 2 路由 = 38 文件，171,231 行（region_data + fuel_type_data）
+  - GridStatus.io 下载：4 枢纽 × 2 市场 = 8 文件，272,628 行（DAM + RTM SPP）
+  - 总计：46 文件，443,859 行，覆盖 2025-01-01 ~ 2026-07-22
+  - 极端事件：RTM 最高 $3,777/MWh（2025-04-07），HB_WEST 914 次负电价
+- 新增脚本：download_ercot_prices.py（EIA API）、download_ercot_spp.py（GridStatus.io API）
+- API key 安全：key 通过环境变量传入，不硬编码，不记录在知识库文档中
+- 知识库条目数：7 → 9（全部 verified）
+
 ## [2026-07-21] update | [GL-006 NASA POWER 参数完整清单] | 通过官方 API 端点查询全部 1660 个参数，补充到 GL-006 | #a7c3e9f1
 
 - 发现 POWER 官方参数查询端点：`/api/system/manager/parameters?community=RE&temporal=HOURLY&metadata=true`
