@@ -23,6 +23,12 @@ ERCOT 交易枢纽 (Trading Hubs):
   - HB_PANHANDLE   锅柄枢纽（已弃用，返回空数据）
   - HB_WEST       西部枢纽
 
+ERCOT 负荷区 (Load Zones):
+  - LZ_WEST       西部负荷区 (风电密集区)
+  - LZ_NORTH      北部负荷区 (含 Panhandle 风电带)
+  - LZ_SOUTH      南部负荷区
+  - LZ_HOUSTON    休斯顿负荷区
+
 == 使用方法 ==
   1. 免费注册 GridStatus.io 账号 (1 分钟):
      https://www.gridstatus.io/sign-up
@@ -75,6 +81,9 @@ DATASETS = {
 # HB_PANHANDLE 已弃用，下载时返回空数据，保留在列表中以便跳过时记录
 ALL_HUBS = ["HB_NORTH", "HB_SOUTH", "HB_HOUSTON", "HB_PANHANDLE", "HB_WEST"]
 
+# ERCOT 负荷区 (Load Zones) - 比 Hub 更贴近终端用户区域电价
+ALL_LOAD_ZONES = ["LZ_WEST", "LZ_NORTH", "LZ_SOUTH", "LZ_HOUSTON"]
+
 
 def log(msg):
     print(f"[{datetime.now():%H:%M:%S}] {msg}", flush=True)
@@ -102,7 +111,10 @@ def main():
     parser.add_argument("--start", default="2025-01-01", help="起始日期 (默认 2025-01-01)")
     parser.add_argument("--end", default=None, help="截止日期 (默认今天)")
     parser.add_argument("--markets", nargs="+", default=None, help="市场类型 (默认 DAM+RTM)")
-    parser.add_argument("--hubs", nargs="+", default=None, help="交易枢纽 (默认全部)")
+    parser.add_argument("--hubs", nargs="+", default=None, help="交易枢纽 (默认全部, --location-type=hubs 时生效)")
+    parser.add_argument("--location-type", default="all",
+                        choices=["hubs", "loadzones", "all"],
+                        help="结算点类型: hubs(枢纽), loadzones(负荷区), all(全部, 默认)")
     parser.add_argument("--dry-run", action="store_true", help="只列出可用数据集, 不下载")
     args = parser.parse_args()
 
@@ -116,13 +128,23 @@ def main():
 
     # 确定要下载的市场
     markets = args.markets if args.markets else ["DAM", "RTM"]
-    hubs = args.hubs if args.hubs else ALL_HUBS
+
+    # 确定要下载的结算点
+    if args.hubs:
+        locations = args.hubs
+    elif args.location_type == "hubs":
+        locations = ALL_HUBS
+    elif args.location_type == "loadzones":
+        locations = ALL_LOAD_ZONES
+    else:  # all
+        locations = ALL_HUBS + ALL_LOAD_ZONES
 
     log("ERCOT 结算点电价下载")
     log(f"  数据源: GridStatus.io 托管 API (免费方案)")
     log(f"  时间范围: {start_date} ~ {end_date}")
     log(f"  市场: {markets}")
-    log(f"  枢纽: {hubs}")
+    log(f"  结算点类型: {args.location_type}")
+    log(f"  结算点: {locations}")
     log(f"  输出目录: {OUTPUT_DIR}")
 
     # 检查 API 使用量
@@ -168,7 +190,7 @@ def main():
         except Exception as e:
             log(f"  元数据查询失败: {e}")
 
-        for hub in hubs:
+        for hub in locations:
             fname = f"ercot_{market_key.lower()}_{hub}_{start_date}_{end_date}.csv"
             fpath = OUTPUT_DIR / fname
 
@@ -237,7 +259,8 @@ def main():
         "source": "GridStatus.io API (免费方案)",
         "date_range": f"{start_date} ~ {end_date}",
         "markets": markets,
-        "hubs": hubs,
+        "location_type": args.location_type,
+        "locations": locations,
         "downloaded": total_downloaded,
         "skipped": total_skipped,
         "failed": total_failed,

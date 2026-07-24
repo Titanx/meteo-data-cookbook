@@ -14,6 +14,8 @@
 |----|------|--------|------|----------|----------|
 | PF-004 | Meteostat 区域数据下载陷阱（中国/亚洲/美洲） | verified | meteostat, china, asia, americas, station-density, data-gap, myanmar, vietnam | implement, verify | 2026-07-20 |
 | PF-005 | ERCOT 官网反爬虫屏蔽与中国 IP 不可访问陷阱 | verified | ercot, texas, electricity, price, imperva, incapsula, anti-scraping, china-ip-block, eia-api, gridstatus | architect, implement | 2026-07-23 |
+| PF-006 | Pandas 时区 tz-naive 与 tz-aware 比较错误 | verified | python, pandas, timezone, tz-naive, tz-aware, datetime, multi-source, ercot, meteostat | implement, debug | 2026-07-24 |
+| PF-007 | 雷暴检测在高风区绝对阈值失效 | verified | thunderstorm, wind-detection, texas, ercot, meteostat, threshold, spike, high-wind-region | architect, implement | 2026-07-24 |
 
 ## 技术流程 (processes/)
 
@@ -23,3 +25,4 @@
 | PS-004 | GOES-16/18/19 卫星数据下载流程 | verified | goes, satellite, aws-s3, anonymous, noaa, abi, netcdf, 美洲 | architect, implement | 2026-07-20 |
 | PS-005 | SURFRAD 地表辐射实测数据下载流程 | verified | surfrad, noaa, radiation, ghi, dni, dhi, realtime, 实测, 辐照, 匿名访问 | architect, implement | 2026-07-20 |
 | PS-006 | ERCOT 电力市场数据下载流程 | verified | ercot, texas, electricity, price, spp, dam, rtm, eia-api, gridstatus, lmp, fuel-mix, load | architect, implement | 2026-07-23 |
+| PS-007 | 雷暴事件 × 电力市场联动分析流程 | verified | thunderstorm, ercot, electricity-price, linkage-analysis, meteostat, load-zone, hub, wind-power, solar, statistical-test | architect, implement, verify | 2026-07-24 |
