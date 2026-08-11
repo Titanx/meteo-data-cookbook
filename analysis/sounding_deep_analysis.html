@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>探空数据深度分析 - DCAPE & 对流参数</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Segoe UI', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+    background: #0f1419;
+    color: #e0e0e0;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+h1 { text-align: center; color: #00d4ff; margin: 20px 0; font-size: 28px; }
+h2 { color: #00d4ff; margin: 30px 0 15px; font-size: 22px; border-bottom: 1px solid #333; padding-bottom: 8px; }
+h3 { color: #00d4ff; margin: 20px 0 10px; font-size: 16px; }
+.subtitle { text-align: center; color: #888; margin-bottom: 30px; font-size: 14px; }
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin: 20px 0; }
+.stat-card { background: #1a1f2e; border: 1px solid #333; border-radius: 8px; padding: 15px; text-align: center; }
+.stat-card .value { font-size: 28px; font-weight: bold; }
+.stat-card .label { color: #888; font-size: 13px; margin-top: 5px; }
+.texas-border { border-left: 3px solid #ff6b6b; }
+.asia-border { border-left: 3px solid #4ecdc4; }
+.texas-val { color: #ff6b6b; font-weight: bold; }
+.asia-val { color: #4ecdc4; font-weight: bold; }
+.gold { color: #ffc107; }
+table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 13px; }
+th { background: #1a1f2e; color: #00d4ff; padding: 10px 8px; text-align: left; border-bottom: 2px solid #00d4ff; }
+td { padding: 8px; border-bottom: 1px solid #2a2f3e; }
+tr:hover { background: #1a1f2e; }
+.note { background: #1a2332; border-left: 3px solid #ffc107; padding: 10px 15px; margin: 15px 0; font-size: 13px; color: #ccc; line-height: 1.8; }
+.footer { text-align: center; color: #555; margin-top: 40px; font-size: 12px; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+.badge-texas { background: rgba(255,107,107,0.13); color: #ff6b6b; }
+.badge-asia { background: rgba(78,205,196,0.13); color: #4ecdc4; }
+.badge-gold { background: rgba(255,193,7,0.13); color: #ffc107; }
+.chart-container { background: #1a1f2e; border-radius: 8px; padding: 20px; margin: 15px 0; }
+.highlight { background: #1a2332; border-left: 3px solid #00d4ff; padding: 15px; margin: 15px 0; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<h1>探空数据深度分析</h1>
+<p class="subtitle">
+    DCAPE & 对流参数综合诊断 |
+    <span class="badge badge-texas">德州 143 次探空</span>
+    <span class="badge badge-asia">东亚 413 次探空</span> |
+    数据周期: 2026-07-13 ~ 2026-08-11 | 分析生成: 2026-08-11 13:44
+</p>
+
+<div class="summary-grid">
+    <div class="stat-card texas-border">
+        <div class="value" style="color:#ff6b6b">1209.8</div>
+        <div class="label">德州 DCAPE 均值 (J/kg)</div>
+    </div>
+    <div class="stat-card asia-border">
+        <div class="value" style="color:#4ecdc4">1016.0</div>
+        <div class="label">东亚 DCAPE 均值 (J/kg)</div>
+    </div>
+    <div class="stat-card">
+        <div class="value" style="color:#ffc107">193.8</div>
+        <div class="label">DCAPE 差异 (J/kg)</div>
+    </div>
+    <div class="stat-card">
+        <div class="value" style="color:#ffc107">0.525</div>
+        <div class="label">Cohen's d 效应量</div>
+    </div>
+</div>
+
+<h2>1. DCAPE 区域差异统计检验</h2>
+<div class="highlight">
+    <b>核心结论:</b> 德州 DCAPE 均值 (1209.8 J/kg) 显著高于东亚 (1016.0 J/kg), 
+    p = 6.51e-09 &lt; 0.001, Cohen's d = 0.525。
+    Cohen's d > 0.5 表示中等效应量，说明该差异不仅统计显著，且具有实际意义。
+    德州夏季更强的下沉气流潜势与其更干热的地表条件、更高的 LCL 和对流边界层深度有关。
+</div>
+<table>
+    <thead><tr><th>指标</th><th>值</th></tr></thead>
+    <tbody>
+        <tr><td>德州均值</td><td class="texas-val">1209.8 J/kg</td></tr>
+        <tr><td>德州标准差</td><td>313.1 J/kg</td></tr>
+        <tr><td>东亚均值</td><td class="asia-val">1016.0 J/kg</td></tr>
+        <tr><td>东亚标准差</td><td>385.9 J/kg</td></tr>
+        <tr><td>差异 (德州-东亚)</td><td><b>193.8 J/kg</b></td></tr>
+        <tr><td>t 统计量</td><td>5.9744</td></tr>
+        <tr><td>p 值</td><td>6.51e-09</td></tr>
+        <tr><td>Cohen's d (效应量)</td><td><b>0.525</b></td></tr>
+        <tr><td>统计显著?</td><td><b>✅ 是</b></td></tr>
+</tbody>
+</table>
+
+<h2>2. DCAPE 日变化分析 (00Z vs 12Z)</h2>
+<div class="note">
+    00Z ~ 当地时间 18-19h (德州 CDT) / 08h (中国 CST) — 傍晚/早晨<br>
+    12Z ~ 当地时间 06-07h (德州 CDT) / 20h (中国 CST) — 早晨/傍晚<br>
+    德州 00Z 对应当地傍晚，是日间加热积累后的对流活跃期；12Z 对应当地凌晨，对流最弱。
+</div>
+<table>
+    <thead><tr>
+        <th>区域</th><th>00Z DCAPE (J/kg)</th><th>00Z 样本数</th>
+        <th>12Z DCAPE (J/kg)</th><th>12Z 样本数</th><th>00Z vs 12Z 差异</th>
+    </tr></thead>
+    <tbody>
+        <tr>
+            <td>德州/ERCOT</td>
+            <td class="texas-val">1265.6 ± 288.3</td>
+            <td>85</td>
+            <td>1127.9 ± 334.7</td>
+            <td>58</td>
+            <td>显著</td>
+        </tr>
+        <tr>
+            <td>东亚</td>
+            <td class="asia-val">974.5 ± 385.2</td>
+            <td>210</td>
+            <td>1058.9 ± 383.8</td>
+            <td>203</td>
+            <td>显著</td>
+        </tr></tbody>
+</table>
+
+<h2>3. 热力指数相关性矩阵</h2>
+<div class="note">
+    <b>解读:</b> 红色 (|r|≥0.7)=强相关, 黄色 (|r|≥0.5)=中等, 青色 (|r|≥0.3)=弱相关。<br>
+    DCAPE 与 TOTL 的正相关反映: 较大的总指数(强不稳定性)伴随更强的下沉气流潜势。
+    SHOW 与 DCAPE 负相关: Showalter 指数越小(越不稳定), DCAPE 越大。
+</div>
+<table>
+    <thead><tr><th></th><th>DCAPE</th><th>SHOW</th><th>TOTL</th><th>CTOT</th><th>VTOT</th><th>CCLP</th></tr></thead>
+    <tbody><tr><td><b>DCAPE</b></td><td style='color:#ff6b6b;font-weight:bold'>1.0</td><td>-0.201</td><td>0.258</td><td>0.067</td><td style='color:#4ecdc4'>0.472</td><td>-0.236</td></tr>
+<tr><td><b>SHOW</b></td><td>-0.201</td><td style='color:#ff6b6b;font-weight:bold'>1.0</td><td style='color:#ff6b6b;font-weight:bold'>-0.943</td><td style='color:#ff6b6b;font-weight:bold'>-0.942</td><td style='color:#4ecdc4'>-0.415</td><td>-0.134</td></tr>
+<tr><td><b>TOTL</b></td><td>0.258</td><td style='color:#ff6b6b;font-weight:bold'>-0.943</td><td style='color:#ff6b6b;font-weight:bold'>1.0</td><td style='color:#ff6b6b;font-weight:bold'>0.907</td><td style='color:#ffc107'>0.614</td><td>0.07</td></tr>
+<tr><td><b>CTOT</b></td><td>0.067</td><td style='color:#ff6b6b;font-weight:bold'>-0.942</td><td style='color:#ff6b6b;font-weight:bold'>0.907</td><td style='color:#ff6b6b;font-weight:bold'>1.0</td><td>0.226</td><td>0.177</td></tr>
+<tr><td><b>VTOT</b></td><td style='color:#4ecdc4'>0.472</td><td style='color:#4ecdc4'>-0.415</td><td style='color:#ffc107'>0.614</td><td>0.226</td><td style='color:#ff6b6b;font-weight:bold'>1.0</td><td>-0.169</td></tr>
+<tr><td><b>CCLP</b></td><td>-0.236</td><td>-0.134</td><td>0.07</td><td>0.177</td><td>-0.169</td><td style='color:#ff6b6b;font-weight:bold'>1.0</td></tr>
+</tbody>
+</table>
+
+<h2>4. DCAPE 30天趋势分析</h2>
+<div class="chart-container">
+    <canvas id="dcapeTrendChart" style="height:350px;"></canvas>
+</div>
+<table>
+    <thead><tr><th>区域</th><th>趋势斜率</th><th>R²</th><th>p 值</th><th>统计显著?</th></tr></thead>
+    <tbody>
+        <tr>
+            <td class="texas-val">德州/ERCOT</td>
+            <td>11.0 J/kg/天</td>
+            <td>0.213</td>
+            <td>1.03e-02</td>
+            <td>有</td>
+        </tr>
+        <tr>
+            <td class="asia-val">东亚</td>
+            <td>-3.74 J/kg/天</td>
+            <td>0.03</td>
+            <td>3.62e-01</td>
+            <td>无</td>
+        </tr></tbody>
+</table>
+
+<h2>5. DCAPE 强度分类统计</h2>
+<table>
+    <thead><tr><th>区域</th><th>DCAPE 类别</th><th>次数</th><th>占比</th></tr></thead>
+    <tbody>
+        <tr>
+            <td class="texas-val">德州/ERCOT</td>
+            <td>中等 (500-1000)</td>
+            <td>25</td>
+            <td>17.5%</td>
+        </tr>
+        <tr>
+            <td class="texas-val">德州/ERCOT</td>
+            <td>弱 (<500)</td>
+            <td>6</td>
+            <td>4.2%</td>
+        </tr>
+        <tr>
+            <td class="texas-val">德州/ERCOT</td>
+            <td>强 (1000-1500)</td>
+            <td>91</td>
+            <td>63.6%</td>
+        </tr>
+        <tr>
+            <td class="texas-val">德州/ERCOT</td>
+            <td>极强 (>=1500)</td>
+            <td>21</td>
+            <td>14.7%</td>
+        </tr>
+        <tr>
+            <td class="asia-val">东亚</td>
+            <td>中等 (500-1000)</td>
+            <td>141</td>
+            <td>34.1%</td>
+        </tr>
+        <tr>
+            <td class="asia-val">东亚</td>
+            <td>弱 (<500)</td>
+            <td>44</td>
+            <td>10.7%</td>
+        </tr>
+        <tr>
+            <td class="asia-val">东亚</td>
+            <td>强 (1000-1500)</td>
+            <td>191</td>
+            <td>46.2%</td>
+        </tr>
+        <tr>
+            <td class="asia-val">东亚</td>
+            <td>极强 (>=1500)</td>
+            <td>37</td>
+            <td>9.0%</td>
+        </tr></tbody>
+</table>
+
+<h2>6. 各站 DCAPE 分布</h2>
+<table>
+    <thead><tr>
+        <th>站号</th><th>站名</th><th>区域</th>
+        <th>均值</th><th>标准差</th><th>最小值</th>
+        <th>Q25</th><th>Q75</th><th>最大值</th><th>样本数</th>
+    </tr></thead>
+    <tbody>
+        <tr class="asia">
+            <td>47401</td>
+            <td>Japan-47401</td>
+            <td class="asia-val">asia</td>
+            <td>715.0</td>
+            <td>238.8</td>
+            <td>198.0</td>
+            <td>559.3</td>
+            <td>897.9</td>
+            <td>1217.0</td>
+            <td>59</td>
+        </tr>
+        <tr class="asia">
+            <td>47678</td>
+            <td>Japan-47678</td>
+            <td class="asia-val">asia</td>
+            <td>1043.5</td>
+            <td>242.8</td>
+            <td>517.0</td>
+            <td>873.4</td>
+            <td>1224.4</td>
+            <td>1531.3</td>
+            <td>59</td>
+        </tr>
+        <tr class="asia">
+            <td>54857</td>
+            <td>Qingdao</td>
+            <td class="asia-val">asia</td>
+            <td>1135.8</td>
+            <td>375.9</td>
+            <td>48.9</td>
+            <td>1029.9</td>
+            <td>1382.2</td>
+            <td>1822.4</td>
+            <td>59</td>
+        </tr>
+        <tr class="asia">
+            <td>57083</td>
+            <td>Zhengzhou</td>
+            <td class="asia-val">asia</td>
+            <td>986.2</td>
+            <td>380.9</td>
+            <td>130.2</td>
+            <td>749.0</td>
+            <td>1253.2</td>
+            <td>1672.1</td>
+            <td>59</td>
+        </tr>
+        <tr class="asia">
+            <td>57494</td>
+            <td>Wuhan</td>
+            <td class="asia-val">asia</td>
+            <td>1069.7</td>
+            <td>417.6</td>
+            <td>156.5</td>
+            <td>759.1</td>
+            <td>1403.6</td>
+            <td>1697.7</td>
+            <td>59</td>
+        </tr>
+        <tr class="asia">
+            <td>58238</td>
+            <td>Nanjing</td>
+            <td class="asia-val">asia</td>
+            <td>1009.2</td>
+            <td>442.8</td>
+            <td>205.6</td>
+            <td>703.8</td>
+            <td>1335.4</td>
+            <td>1747.4</td>
+            <td>59</td>
+        </tr>
+        <tr class="asia">
+            <td>58362</td>
+            <td>Shanghai</td>
+            <td class="asia-val">asia</td>
+            <td>1152.5</td>
+            <td>396.4</td>
+            <td>252.9</td>
+            <td>815.4</td>
+            <td>1438.4</td>
+            <td>1797.9</td>
+            <td>59</td>
+        </tr>
+        <tr class="texas">
+            <td>72249</td>
+            <td>Fort Worth</td>
+            <td class="texas-val">texas</td>
+            <td>1277.8</td>
+            <td>325.5</td>
+            <td>355.3</td>
+            <td>1066.3</td>
+            <td>1495.0</td>
+            <td>1763.3</td>
+            <td>58</td>
+        </tr>
+        <tr class="texas">
+            <td>72251</td>
+            <td>Dallas-FW</td>
+            <td class="texas-val">texas</td>
+            <td>1231.2</td>
+            <td>247.3</td>
+            <td>411.6</td>
+            <td>1124.0</td>
+            <td>1381.0</td>
+            <td>1565.2</td>
+            <td>32</td>
+        </tr>
+        <tr class="texas">
+            <td>72340</td>
+            <td>Shreveport</td>
+            <td class="texas-val">texas</td>
+            <td>1122.4</td>
+            <td>322.1</td>
+            <td>356.2</td>
+            <td>927.0</td>
+            <td>1373.7</td>
+            <td>1681.9</td>
+            <td>53</td>
+        </tr></tbody>
+</table>
+
+<h2>7. 综合强对流潜势 (DCAPE+TOTL+SHOW)</h2>
+<div class="note">
+    综合评分: DCAPE > 1000 J/kg (1分) + TOTL > 44 (1分) + SHOW < 0°C (1分)<br>
+    高潜势 = 2-3分, 中潜势 = 1分, 低潜势 = 0分
+</div>
+<table>
+    <thead><tr><th>区域</th><th>对流潜势</th><th>次数</th><th>占比</th></tr></thead>
+    <tbody>
+        <tr>
+            <td class="texas-val">德州/ERCOT</td>
+            <td>高潜势</td>
+            <td>79</td>
+            <td>55.2%</td>
+        </tr>
+        <tr>
+            <td class="texas-val">德州/ERCOT</td>
+            <td>中潜势</td>
+            <td>54</td>
+            <td>37.8%</td>
+        </tr>
+        <tr>
+            <td class="texas-val">德州/ERCOT</td>
+            <td>低潜势</td>
+            <td>10</td>
+            <td>7.0%</td>
+        </tr>
+        <tr>
+            <td class="asia-val">东亚</td>
+            <td>高潜势</td>
+            <td>174</td>
+            <td>42.1%</td>
+        </tr>
+        <tr>
+            <td class="asia-val">东亚</td>
+            <td>中潜势</td>
+            <td>134</td>
+            <td>32.4%</td>
+        </tr>
+        <tr>
+            <td class="asia-val">东亚</td>
+            <td>低潜势</td>
+            <td>105</td>
+            <td>25.4%</td>
+        </tr></tbody>
+</table>
+
+<h2>8. 区域汇总对比</h2>
+<table>
+    <thead><tr><th>区域</th><th>探空次数</th><th>DCAPE (J/kg)</th><th>TOTL</th></tr></thead>
+    <tbody>
+        <tr>
+            <td class="texas-val">德州/ERCOT</td>
+            <td>143.0</td>
+            <td>1209.8 ± 314.2</td>
+            <td>44.0</td>
+        </tr>
+        <tr>
+            <td class="asia-val">东亚</td>
+            <td>413.0</td>
+            <td>1016.0 ± 386.4</td>
+            <td>41.9</td>
+        </tr></tbody>
+</table>
+
+<div class="footer">
+    数据源: 怀俄明大学 WSGI 接口 (weather.uwyo.edu) |
+    分析脚本: deep_analysis.py |
+    生成时间: 2026-08-11 13:44
+</div>
+
+<script>
+// DCAPE 时间序列 + 趋势
+const dailyData = [{"date": "2026-07-13", "region": "asia", "DCAPE_daily_mean": 720.1642857142857, "DCAPE_daily_std": 399.40261277051263, "n": 14, "date_str": "2026-07-13"}, {"date": "2026-07-13", "region": "texas", "DCAPE_daily_mean": 1239.575, "DCAPE_daily_std": 293.51607991158966, "n": 4, "date_str": "2026-07-13"}, {"date": "2026-07-14", "region": "asia", "DCAPE_daily_mean": 1038.0571428571427, "DCAPE_daily_std": 387.27009798228517, "n": 14, "date_str": "2026-07-14"}, {"date": "2026-07-14", "region": "texas", "DCAPE_daily_mean": 950.3399999999999, "DCAPE_daily_std": 190.7460169964238, "n": 5, "date_str": "2026-07-14"}, {"date": "2026-07-15", "region": "asia", "DCAPE_daily_mean": 1116.9214285714286, "DCAPE_daily_std": 400.92905219017223, "n": 14, "date_str": "2026-07-15"}, {"date": "2026-07-15", "region": "texas", "DCAPE_daily_mean": 768.56, "DCAPE_daily_std": 320.63429791586555, "n": 5, "date_str": "2026-07-15"}, {"date": "2026-07-16", "region": "asia", "DCAPE_daily_mean": 1213.8214285714287, "DCAPE_daily_std": 291.43018474828165, "n": 14, "date_str": "2026-07-16"}, {"date": "2026-07-16", "region": "texas", "DCAPE_daily_mean": 594.3, "DCAPE_daily_std": 424.3316568440304, "n": 5, "date_str": "2026-07-16"}, {"date": "2026-07-17", "region": "asia", "DCAPE_daily_mean": 1135.4714285714285, "DCAPE_daily_std": 544.2610819034604, "n": 14, "date_str": "2026-07-17"}, {"date": "2026-07-17", "region": "texas", "DCAPE_daily_mean": 915.68, "DCAPE_daily_std": 365.7847618477292, "n": 5, "date_str": "2026-07-17"}, {"date": "2026-07-18", "region": "asia", "DCAPE_daily_mean": 1002.5785714285714, "DCAPE_daily_std": 329.79758868963023, "n": 14, "date_str": "2026-07-18"}, {"date": "2026-07-18", "region": "texas", "DCAPE_daily_mean": 1121.8600000000001, "DCAPE_daily_std": 181.9070999164134, "n": 5, "date_str": "2026-07-18"}, {"date": "2026-07-19", "region": "asia", "DCAPE_daily_mean": 772.4214285714286, "DCAPE_daily_std": 355.55694378640004, "n": 14, "date_str": "2026-07-19"}, {"date": "2026-07-19", "region": "texas", "DCAPE_daily_mean": 1174.6200000000001, "DCAPE_daily_std": 119.4639569075124, "n": 5, "date_str": "2026-07-19"}, {"date": "2026-07-20", "region": "asia", "DCAPE_daily_mean": 875.6142857142858, "DCAPE_daily_std": 410.06695486533357, "n": 14, "date_str": "2026-07-20"}, {"date": "2026-07-20", "region": "texas", "DCAPE_daily_mean": 1190.5166666666667, "DCAPE_daily_std": 176.64533298863762, "n": 6, "date_str": "2026-07-20"}, {"date": "2026-07-21", "region": "asia", "DCAPE_daily_mean": 1040.1285714285714, "DCAPE_daily_std": 348.9213035112016, "n": 14, "date_str": "2026-07-21"}, {"date": "2026-07-21", "region": "texas", "DCAPE_daily_mean": 1197.1333333333332, "DCAPE_daily_std": 138.76548081805748, "n": 6, "date_str": "2026-07-21"}, {"date": "2026-07-22", "region": "asia", "DCAPE_daily_mean": 904.5142857142857, "DCAPE_daily_std": 385.94445167694766, "n": 14, "date_str": "2026-07-22"}, {"date": "2026-07-22", "region": "texas", "DCAPE_daily_mean": 1507.6000000000001, "DCAPE_daily_std": 203.448922336787, "n": 6, "date_str": "2026-07-22"}, {"date": "2026-07-23", "region": "asia", "DCAPE_daily_mean": 1098.3, "DCAPE_daily_std": 317.673608501653, "n": 14, "date_str": "2026-07-23"}, {"date": "2026-07-23", "region": "texas", "DCAPE_daily_mean": 1436.4, "DCAPE_daily_std": 256.451272174657, "n": 5, "date_str": "2026-07-23"}, {"date": "2026-07-24", "region": "asia", "DCAPE_daily_mean": 1086.7285714285715, "DCAPE_daily_std": 326.60673229806144, "n": 14, "date_str": "2026-07-24"}, {"date": "2026-07-24", "region": "texas", "DCAPE_daily_mean": 1082.02, "DCAPE_daily_std": 400.89332995199607, "n": 5, "date_str": "2026-07-24"}, {"date": "2026-07-25", "region": "asia", "DCAPE_daily_mean": 1204.9214285714286, "DCAPE_daily_std": 395.66748700736747, "n": 14, "date_str": "2026-07-25"}, {"date": "2026-07-25", "region": "texas", "DCAPE_daily_mean": 1150.3600000000001, "DCAPE_daily_std": 321.0759536309127, "n": 5, "date_str": "2026-07-25"}, {"date": "2026-07-26", "region": "asia", "DCAPE_daily_mean": 1276.6571428571428, "DCAPE_daily_std": 362.4701849049863, "n": 14, "date_str": "2026-07-26"}, {"date": "2026-07-26", "region": "texas", "DCAPE_daily_mean": 1387.6799999999998, "DCAPE_daily_std": 175.68971796892382, "n": 5, "date_str": "2026-07-26"}, {"date": "2026-07-27", "region": "asia", "DCAPE_daily_mean": 986.1214285714286, "DCAPE_daily_std": 397.8525068386553, "n": 14, "date_str": "2026-07-27"}, {"date": "2026-07-27", "region": "texas", "DCAPE_daily_mean": 1501.34, "DCAPE_daily_std": 180.58785396587442, "n": 5, "date_str": "2026-07-27"}, {"date": "2026-07-28", "region": "asia", "DCAPE_daily_mean": 882.3642857142858, "DCAPE_daily_std": 427.19343052990894, "n": 14, "date_str": "2026-07-28"}, {"date": "2026-07-28", "region": "texas", "DCAPE_daily_mean": 1420.6799999999998, "DCAPE_daily_std": 114.55294409136759, "n": 5, "date_str": "2026-07-28"}, {"date": "2026-07-29", "region": "asia", "DCAPE_daily_mean": 900.8142857142857, "DCAPE_daily_std": 453.51185355917806, "n": 14, "date_str": "2026-07-29"}, {"date": "2026-07-29", "region": "texas", "DCAPE_daily_mean": 1409.48, "DCAPE_daily_std": 151.48621059357183, "n": 5, "date_str": "2026-07-29"}, {"date": "2026-07-30", "region": "asia", "DCAPE_daily_mean": 951.1928571428572, "DCAPE_daily_std": 418.61880119541416, "n": 14, "date_str": "2026-07-30"}, {"date": "2026-07-30", "region": "texas", "DCAPE_daily_mean": 1232.56, "DCAPE_daily_std": 272.24021194525983, "n": 5, "date_str": "2026-07-30"}, {"date": "2026-07-31", "region": "asia", "DCAPE_daily_mean": 1083.5357142857142, "DCAPE_daily_std": 352.5457932222158, "n": 14, "date_str": "2026-07-31"}, {"date": "2026-07-31", "region": "texas", "DCAPE_daily_mean": 1122.98, "DCAPE_daily_std": 377.7238501868793, "n": 5, "date_str": "2026-07-31"}, {"date": "2026-08-01", "region": "asia", "DCAPE_daily_mean": 1172.857142857143, "DCAPE_daily_std": 286.1088892074423, "n": 14, "date_str": "2026-08-01"}, {"date": "2026-08-01", "region": "texas", "DCAPE_daily_mean": 1393.72, "DCAPE_daily_std": 205.08167153600053, "n": 5, "date_str": "2026-08-01"}, {"date": "2026-08-02", "region": "asia", "DCAPE_daily_mean": 1207.0357142857142, "DCAPE_daily_std": 321.61746653473244, "n": 14, "date_str": "2026-08-02"}, {"date": "2026-08-02", "region": "texas", "DCAPE_daily_mean": 1095.74, "DCAPE_daily_std": 195.7286591176673, "n": 5, "date_str": "2026-08-02"}, {"date": "2026-08-03", "region": "asia", "DCAPE_daily_mean": 1128.9642857142858, "DCAPE_daily_std": 221.54770143467755, "n": 14, "date_str": "2026-08-03"}, {"date": "2026-08-03", "region": "texas", "DCAPE_daily_mean": 1225.24, "DCAPE_daily_std": 224.26736944994929, "n": 5, "date_str": "2026-08-03"}, {"date": "2026-08-04", "region": "asia", "DCAPE_daily_mean": 1103.4, "DCAPE_daily_std": 289.09529969837337, "n": 14, "date_str": "2026-08-04"}, {"date": "2026-08-04", "region": "texas", "DCAPE_daily_mean": 1213.3, "DCAPE_daily_std": 212.93033289474437, "n": 4, "date_str": "2026-08-04"}, {"date": "2026-08-05", "region": "asia", "DCAPE_daily_mean": 1158.0785714285714, "DCAPE_daily_std": 266.17736186053276, "n": 14, "date_str": "2026-08-05"}, {"date": "2026-08-05", "region": "texas", "DCAPE_daily_mean": 1381.0666666666666, "DCAPE_daily_std": 173.55420863042576, "n": 3, "date_str": "2026-08-05"}, {"date": "2026-08-06", "region": "asia", "DCAPE_daily_mean": 1147.6214285714286, "DCAPE_daily_std": 273.78653722751415, "n": 14, "date_str": "2026-08-06"}, {"date": "2026-08-06", "region": "texas", "DCAPE_daily_mean": 1427.3333333333333, "DCAPE_daily_std": 131.73785839056794, "n": 3, "date_str": "2026-08-06"}, {"date": "2026-08-07", "region": "asia", "DCAPE_daily_mean": 1093.1857142857143, "DCAPE_daily_std": 295.64338928238135, "n": 14, "date_str": "2026-08-07"}, {"date": "2026-08-07", "region": "texas", "DCAPE_daily_mean": 1364.75, "DCAPE_daily_std": 235.21610630793685, "n": 4, "date_str": "2026-08-07"}, {"date": "2026-08-08", "region": "asia", "DCAPE_daily_mean": 1002.9357142857143, "DCAPE_daily_std": 248.8494775411985, "n": 14, "date_str": "2026-08-08"}, {"date": "2026-08-08", "region": "texas", "DCAPE_daily_mean": 1146.6, "DCAPE_daily_std": 461.57113572377267, "n": 4, "date_str": "2026-08-08"}, {"date": "2026-08-09", "region": "asia", "DCAPE_daily_mean": 870.7785714285714, "DCAPE_daily_std": 382.60214760459513, "n": 14, "date_str": "2026-08-09"}, {"date": "2026-08-09", "region": "texas", "DCAPE_daily_mean": 1337.34, "DCAPE_daily_std": 254.0562398367733, "n": 5, "date_str": "2026-08-09"}, {"date": "2026-08-10", "region": "asia", "DCAPE_daily_mean": 566.7285714285714, "DCAPE_daily_std": 298.32581163907, "n": 14, "date_str": "2026-08-10"}, {"date": "2026-08-10", "region": "texas", "DCAPE_daily_mean": 1183.78, "DCAPE_daily_std": 168.40711683298895, "n": 5, "date_str": "2026-08-10"}, {"date": "2026-08-11", "region": "asia", "DCAPE_daily_mean": 460.38571428571424, "DCAPE_daily_std": 307.79582750351153, "n": 7, "date_str": "2026-08-11"}, {"date": "2026-08-11", "region": "texas", "DCAPE_daily_mean": 1273.5, "DCAPE_daily_std": 495.3996063785275, "n": 3, "date_str": "2026-08-11"}];
+const txDaily = dailyData.filter(d => d.region === 'texas').sort((a,b) => a.date_str > b.date_str ? 1 : -1);
+const asDaily = dailyData.filter(d => d.region === 'asia').sort((a,b) => a.date_str > b.date_str ? 1 : -1);
+const txDates = txDaily.map(d => d.date_str);
+const txMeans = txDaily.map(d => d.DCAPE_daily_mean);
+const asDates = asDaily.map(d => d.date_str);
+const asMeans = asDaily.map(d => d.DCAPE_daily_mean);
+
+new Chart(document.getElementById('dcapeTrendChart'), {
+    type: 'line',
+    data: {
+        labels: txDates,
+        datasets: [
+            {
+                label: '德州 DCAPE 日均值',
+                data: txMeans,
+                borderColor: '#ff6b6b',
+                backgroundColor: 'rgba(255,107,107,0.1)',
+                borderWidth: 2,
+                pointRadius: 4,
+                pointBackgroundColor: '#ff6b6b',
+                tension: 0.3,
+            },
+            {
+                label: '东亚 DCAPE 日均值',
+                data: asMeans,
+                borderColor: '#4ecdc4',
+                backgroundColor: 'rgba(78,205,196,0.1)',
+                borderWidth: 2,
+                pointRadius: 4,
+                pointBackgroundColor: '#4ecdc4',
+                tension: 0.3,
+            },
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            title: { display: true, text: 'DCAPE 日均值时间序列 (30天)', color: '#00d4ff', font: { size: 16 } },
+            legend: { labels: { color: '#e0e0e0' } }
+        },
+        scales: {
+            x: { ticks: { color: '#888', maxRotation: 45, autoSkip: true, maxTicksLimit: 15 }, grid: { color: '#2a2f3e' } },
+            y: { ticks: { color: '#888' }, grid: { color: '#2a2f3e' }, title: { display: true, text: 'DCAPE (J/kg)', color: '#888' } }
+        }
+    }
+});
+</script>
+
+</body>
+</html>
