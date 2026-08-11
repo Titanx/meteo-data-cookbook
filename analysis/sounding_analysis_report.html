@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>探空廓线数据对照分析 - ERCOT/德州 vs 东亚</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Microsoft YaHei', 'Noto Sans CJK SC', sans-serif;
+            background: #0f1419;
+            color: #e0e0e0;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 { text-align: center; color: #00d4ff; margin: 20px 0; font-size: 28px; }
+        h2 { color: #00d4ff; margin: 30px 0 15px; font-size: 22px; border-bottom: 1px solid #333; padding-bottom: 8px; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 30px; font-size: 14px; }
+        .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat-card { background: #1a1f2e; border: 1px solid #333; border-radius: 8px; padding: 15px; text-align: center; }
+        .stat-card .value { font-size: 28px; font-weight: bold; color: #00d4ff; }
+        .stat-card .label { color: #888; font-size: 13px; margin-top: 5px; }
+        .texas { border-left: 3px solid #ff6b6b; }
+        .asia { border-left: 3px solid #4ecdc4; }
+        .texas-val { color: #ff6b6b; font-weight: bold; }
+        .asia-val { color: #4ecdc4; font-weight: bold; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 13px; }
+        th { background: #1a1f2e; color: #00d4ff; padding: 10px 8px; text-align: left; border-bottom: 2px solid #00d4ff; }
+        td { padding: 8px; border-bottom: 1px solid #2a2f3e; }
+        tr:hover { background: #1a1f2e; }
+        td.level { font-weight: bold; color: #00d4ff; }
+        .chart-container { background: #1a1f2e; border-radius: 8px; padding: 20px; margin: 15px 0; }
+        .note { background: #1a2332; border-left: 3px solid #ffc107; padding: 10px 15px; margin: 15px 0; font-size: 13px; color: #ccc; line-height: 1.8; }
+        .footer { text-align: center; color: #555; margin-top: 40px; font-size: 12px; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .badge-texas { background: rgba(255,107,107,0.13); color: #ff6b6b; }
+        .badge-asia { background: rgba(78,205,196,0.13); color: #4ecdc4; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <h1>探空廓线数据对照分析</h1>
+    <p class="subtitle">
+        ERCOT/德州区域 <span class="badge badge-texas">3站</span>
+        vs 东亚区域 <span class="badge badge-asia">7站</span> |
+        数据周期: 2026-07-13 ~ 2026-08-11 (30天) |
+        分析生成: 2026-08-11 11:37
+    </p>
+
+    <div class="summary-grid">
+        <div class="stat-card texas">
+            <div class="value">3</div>
+            <div class="label">德州站点数</div>
+        </div>
+        <div class="stat-card asia">
+            <div class="value">7</div>
+            <div class="label">东亚站点数</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">556</div>
+            <div class="label">探空记录总数</div>
+        </div>
+        <div class="stat-card">
+            <div class="value">842,249</div>
+            <div class="label">数据总行数</div>
+        </div>
+    </div>
+
+    <h2>1. 站点数据概览</h2>
+    <table>
+        <thead><tr>
+            <th>站号</th><th>站名</th><th>区域</th><th>探空次数</th>
+            <th>平均行数/次</th><th>气压范围 (hPa)</th><th>温度范围 (°C)</th>
+            <th>DCAPE均值</th><th>SHOW均值</th><th>TOTL均值</th>
+        </tr></thead>
+        <tbody>
+        <tr class="texas">
+            <td>72249</td>
+            <td>Fort Worth</td>
+            <td>texas</td>
+            <td>58</td>
+            <td>4216</td>
+            <td>5.1-995.8</td>
+            <td>-77.3 ~ 40.0</td>
+            <td>1276.6</td>
+            <td>0.2</td>
+            <td>44.5</td>
+        </tr>
+        <tr class="texas">
+            <td>72251</td>
+            <td>Dallas-FW</td>
+            <td>texas</td>
+            <td>32</td>
+            <td>6330</td>
+            <td>5.8-1015.9</td>
+            <td>-79.4 ~ 36.1</td>
+            <td>1224.2</td>
+            <td>2.2</td>
+            <td>42.0</td>
+        </tr>
+        <tr class="texas">
+            <td>72340</td>
+            <td>Shreveport</td>
+            <td>texas</td>
+            <td>53</td>
+            <td>6585</td>
+            <td>5.3-1000.0</td>
+            <td>-76.6 ~ 37.3</td>
+            <td>1115.0</td>
+            <td>-0.4</td>
+            <td>44.8</td>
+        </tr>
+        <tr class="asia">
+            <td>57494</td>
+            <td>Wuhan</td>
+            <td>asia</td>
+            <td>59</td>
+            <td>155</td>
+            <td>99.1-1005.6</td>
+            <td>-77.5 ~ 35.8</td>
+            <td>1092.0</td>
+            <td>-0.6</td>
+            <td>43.4</td>
+        </tr>
+        <tr class="asia">
+            <td>58362</td>
+            <td>Shanghai</td>
+            <td>asia</td>
+            <td>59</td>
+            <td>140</td>
+            <td>99.8-1013.0</td>
+            <td>-78.4 ~ 36.1</td>
+            <td>1154.4</td>
+            <td>-0.8</td>
+            <td>44.3</td>
+        </tr>
+        <tr class="asia">
+            <td>54857</td>
+            <td>Qingdao</td>
+            <td>asia</td>
+            <td>59</td>
+            <td>144</td>
+            <td>99.2-1003.9</td>
+            <td>-73.3 ~ 31.8</td>
+            <td>1153.7</td>
+            <td>2.1</td>
+            <td>40.5</td>
+        </tr>
+        <tr class="asia">
+            <td>57083</td>
+            <td>Zhengzhou</td>
+            <td>asia</td>
+            <td>59</td>
+            <td>139</td>
+            <td>99.2-997.1</td>
+            <td>-75.3 ~ 34.5</td>
+            <td>1001.0</td>
+            <td>-1.1</td>
+            <td>44.5</td>
+        </tr>
+        <tr class="asia">
+            <td>58238</td>
+            <td>Nanjing</td>
+            <td>asia</td>
+            <td>59</td>
+            <td>116</td>
+            <td>99.3-1006.9</td>
+            <td>-75.6 ~ 34.4</td>
+            <td>1039.1</td>
+            <td>-0.8</td>
+            <td>44.1</td>
+        </tr>
+        <tr class="asia">
+            <td>47401</td>
+            <td>Japan-47401</td>
+            <td>asia</td>
+            <td>59</td>
+            <td>41</td>
+            <td>212.0-1016.0</td>
+            <td>-40.1 ~ 26.2</td>
+            <td>720.0</td>
+            <td>6.1</td>
+            <td>35.9</td>
+        </tr>
+        <tr class="asia">
+            <td>47678</td>
+            <td>Japan-47678</td>
+            <td>asia</td>
+            <td>59</td>
+            <td>48</td>
+            <td>231.0-997.0</td>
+            <td>-40.1 ~ 30.8</td>
+            <td>1043.5</td>
+            <td>2.2</td>
+            <td>40.4</td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="note">
+        美国站 (72249/72251/72340) 为高分辨率数据 (~4000-8000行/次, 1秒级)，中国站为标准分辨率 (~100-200行/次, 规定层)，日本站数据较稀疏 (~30-70行/次)。<br>
+        72251 (Dallas-FW) 12Z时次系统性无数据，该站可能仅在00Z进行探空观测。
+    </div>
+
+    <h2>2. 区域热力对流参数对比</h2>
+    <table>
+        <thead><tr>
+            <th>指数</th>
+            <th><span class="badge badge-texas">德州均值</span></th>
+            <th><span class="badge badge-asia">东亚均值</span></th>
+            <th>差异 (德州-东亚)</th>
+        </tr></thead>
+        <tbody>
+        <tr>
+            <td>DCAPE</td>
+            <td class="texas-val">1205.3</td>
+            <td class="asia-val">1029.1</td>
+            <td>176.2</td>
+        </tr>
+        <tr>
+            <td>SHOW</td>
+            <td class="texas-val">0.7</td>
+            <td class="asia-val">1.0</td>
+            <td>-0.3</td>
+        </tr>
+        <tr>
+            <td>TOTL</td>
+            <td class="texas-val">43.8</td>
+            <td class="asia-val">41.9</td>
+            <td>1.9</td>
+        </tr>
+        <tr>
+            <td>CINS</td>
+            <td class="texas-val">N/A</td>
+            <td class="asia-val">N/A</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>LIFT</td>
+            <td class="texas-val">N/A</td>
+            <td class="asia-val">N/A</td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="note">
+        <b>DCAPE</b> (下沉对流有效位能): 反映下沉气流强度，与雷暴大风相关，>1000 J/kg 表示强下沉潜势<br>
+        <b>SHOW</b> (Showalter指数): &lt;0°C 表示对流不稳定，&lt;-3°C 强不稳定<br>
+        <b>TOTL</b> (总指数): &gt;44 表示可能产生雷暴，&gt;50 强雷暴潜势<br>
+        <b>CINS</b> (对流抑制能量): 负值越大，抑制越强，需强触发才能突破<br>
+        <b>LIFT</b> (抬升指数): &lt;0°C 表示不稳定，&lt;-3°C 强不稳定
+    </div>
+
+    <h2>3. 平均垂直廓线对比</h2>
+    <div class="chart-container">
+        <canvas id="profileChart" style="height:500px;"></canvas>
+    </div>
+    <table>
+        <thead><tr>
+            <th>气压层 (hPa)</th>
+            <th>德州温度 (°C)</th><th>东亚温度 (°C)</th>
+            <th>德州露点 (°C)</th><th>东亚露点 (°C)</th>
+            <th>德州风速 (m/s)</th><th>东亚风速 (m/s)</th>
+        </tr></thead>
+        <tbody>
+        <tr>
+            <td class="level">1000</td>
+            <td>29.7</td>
+            <td>26.9</td>
+            <td>23.0</td>
+            <td>22.1</td>
+            <td>9.8</td>
+            <td>4.3</td>
+        </tr>
+        <tr>
+            <td class="level">925</td>
+            <td>25.9</td>
+            <td>23.9</td>
+            <td>17.8</td>
+            <td>19.2</td>
+            <td>7.4</td>
+            <td>7.4</td>
+        </tr>
+        <tr>
+            <td class="level">850</td>
+            <td>20.7</td>
+            <td>20.1</td>
+            <td>13.8</td>
+            <td>14.5</td>
+            <td>6.1</td>
+            <td>7.5</td>
+        </tr>
+        <tr>
+            <td class="level">700</td>
+            <td>11.2</td>
+            <td>11.6</td>
+            <td>-1.5</td>
+            <td>2.6</td>
+            <td>5.8</td>
+            <td>8.2</td>
+        </tr>
+        <tr>
+            <td class="level">500</td>
+            <td>-4.8</td>
+            <td>-3.7</td>
+            <td>-19.1</td>
+            <td>-15.0</td>
+            <td>6.7</td>
+            <td>9.4</td>
+        </tr>
+        <tr>
+            <td class="level">400</td>
+            <td>-15.6</td>
+            <td>-13.7</td>
+            <td>-29.8</td>
+            <td>-25.3</td>
+            <td>7.1</td>
+            <td>10.0</td>
+        </tr>
+        <tr>
+            <td class="level">300</td>
+            <td>-30.7</td>
+            <td>-27.8</td>
+            <td>-44.3</td>
+            <td>-39.7</td>
+            <td>8.6</td>
+            <td>12.6</td>
+        </tr>
+        <tr>
+            <td class="level">250</td>
+            <td>-40.4</td>
+            <td>-36.8</td>
+            <td>-53.2</td>
+            <td>-47.6</td>
+            <td>9.8</td>
+            <td>13.2</td>
+        </tr>
+        <tr>
+            <td class="level">200</td>
+            <td>-51.6</td>
+            <td>-48.0</td>
+            <td>-63.2</td>
+            <td>-58.8</td>
+            <td>11.2</td>
+            <td>13.2</td>
+        </tr>
+        <tr>
+            <td class="level">150</td>
+            <td>-63.3</td>
+            <td>-60.8</td>
+            <td>-73.8</td>
+            <td>-73.9</td>
+            <td>11.6</td>
+            <td>12.3</td>
+        </tr>
+        <tr>
+            <td class="level">100</td>
+            <td>-70.2</td>
+            <td>-70.0</td>
+            <td>-82.3</td>
+            <td>-85.4</td>
+            <td>9.2</td>
+            <td>9.1</td>
+        </tr>
+        <tr>
+            <td class="level">70</td>
+            <td>-65.3</td>
+            <td>-</td>
+            <td>-84.9</td>
+            <td>-</td>
+            <td>9.8</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td class="level">50</td>
+            <td>-60.1</td>
+            <td>-</td>
+            <td>-84.7</td>
+            <td>-</td>
+            <td>11.6</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td class="level">30</td>
+            <td>-53.8</td>
+            <td>-</td>
+            <td>-82.3</td>
+            <td>-</td>
+            <td>17.0</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td class="level">20</td>
+            <td>-48.6</td>
+            <td>-</td>
+            <td>-78.9</td>
+            <td>-</td>
+            <td>19.7</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td class="level">10</td>
+            <td>-40.4</td>
+            <td>-</td>
+            <td>-73.9</td>
+            <td>-</td>
+            <td>20.9</td>
+            <td>-</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>4. DCAPE 时间序列对比</h2>
+    <div class="chart-container">
+        <canvas id="dcapeTimeseriesChart" style="height:400px;"></canvas>
+    </div>
+    <div class="note">
+        德州 DCAPE 均值: <b>1209.8</b> J/kg, 最大值: <b>1763.3</b> J/kg<br>
+        东亚 DCAPE 均值: <b>1016.0</b> J/kg, 最大值: <b>1822.4</b> J/kg
+    </div>
+
+    <h2>5. DCAPE 分布对比</h2>
+    <div class="chart-container">
+        <canvas id="dcapeBoxChart" style="height:350px;"></canvas>
+    </div>
+
+    <div class="footer">
+        数据源: 怀俄明大学 WSGI 接口 (weather.uwyo.edu) |
+        分析脚本: sounding_analysis.py |
+        生成时间: 2026-08-11 11:37:57
+    </div>
+
+    <script>
+    // 垂直廓线图
+    new Chart(document.getElementById('profileChart'), {
+        type: 'line',
+        data: {
+            labels: ["1000", "925", "850", "700", "500", "400", "300", "250", "200", "150", "100", "70", "50", "30", "20", "10"],
+            datasets: [
+                {
+                    label: '德州温度 (°C)',
+                    data: [29.7, 25.9, 20.7, 11.2, -4.8, -15.6, -30.7, -40.4, -51.6, -63.3, -70.2, -65.3, -60.1, -53.8, -48.6, -40.4],
+                    borderColor: '#ff6b6b',
+                    backgroundColor: 'transparent',
+                    yAxisID: 'y',
+                    borderWidth: 2,
+                },
+                {
+                    label: '东亚温度 (°C)',
+                    data: [26.9, 23.9, 20.1, 11.6, -3.7, -13.7, -27.8, -36.8, -48.0, -60.8, -70.0, "null", "null", "null", "null", "null"],
+                    borderColor: '#4ecdc4',
+                    backgroundColor: 'transparent',
+                    yAxisID: 'y',
+                    borderWidth: 2,
+                },
+                {
+                    label: '德州露点 (°C)',
+                    data: [23.0, 17.8, 13.8, -1.5, -19.1, -29.8, -44.3, -53.2, -63.2, -73.8, -82.3, -84.9, -84.7, -82.3, -78.9, -73.9],
+                    borderColor: '#ff6b6b',
+                    backgroundColor: 'transparent',
+                    borderDash: [5, 5],
+                    yAxisID: 'y',
+                },
+                {
+                    label: '东亚露点 (°C)',
+                    data: [22.1, 19.2, 14.5, 2.6, -15.0, -25.3, -39.7, -47.6, -58.8, -73.9, -85.4, "null", "null", "null", "null", "null"],
+                    borderColor: '#4ecdc4',
+                    backgroundColor: 'transparent',
+                    borderDash: [5, 5],
+                    yAxisID: 'y',
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: { display: true, text: '区域平均垂直廓线 (温度 & 露点)', color: '#00d4ff', font: { size: 16 } },
+                legend: { labels: { color: '#e0e0e0' } }
+            },
+            scales: {
+                x: { ticks: { color: '#888' }, grid: { color: '#2a2f3e' }, title: { display: true, text: '气压 (hPa)', color: '#888' } },
+                y: {
+                    type: 'linear',
+                    reverse: true,
+                    position: 'left',
+                    title: { display: true, text: '气压 (hPa, 上至下: 地面→高空)', color: '#888' },
+                    ticks: { color: '#888' },
+                    grid: { color: '#2a2f3e' },
+                }
+            }
+        }
+    });
+
+    // DCAPE 时间序列
+    new Chart(document.getElementById('dcapeTimeseriesChart'), {
+        type: 'line',
+        data: {
+            labels: ["2026-07-13 00:00:00", "2026-07-13 00:00:00", "2026-07-13 12:00:00", "2026-07-13 12:00:00", "2026-07-14 00:00:00", "2026-07-14 00:00:00", "2026-07-14 00:00:00", "2026-07-14 12:00:00", "2026-07-14 12:00:00", "2026-07-15 00:00:00", "2026-07-15 00:00:00", "2026-07-15 00:00:00", "2026-07-15 12:00:00", "2026-07-15 12:00:00", "2026-07-16 00:00:00", "2026-07-16 00:00:00", "2026-07-16 00:00:00", "2026-07-16 12:00:00", "2026-07-16 12:00:00", "2026-07-17 00:00:00", "2026-07-17 00:00:00", "2026-07-17 00:00:00", "2026-07-17 12:00:00", "2026-07-17 12:00:00", "2026-07-18 00:00:00", "2026-07-18 00:00:00", "2026-07-18 00:00:00", "2026-07-18 12:00:00", "2026-07-18 12:00:00", "2026-07-19 00:00:00", "2026-07-19 00:00:00", "2026-07-19 00:00:00", "2026-07-19 12:00:00", "2026-07-19 12:00:00", "2026-07-20 00:00:00", "2026-07-20 00:00:00", "2026-07-20 00:00:00", "2026-07-20 12:00:00", "2026-07-20 12:00:00", "2026-07-20 12:00:00", "2026-07-21 00:00:00", "2026-07-21 00:00:00", "2026-07-21 00:00:00", "2026-07-21 12:00:00", "2026-07-21 12:00:00", "2026-07-21 12:00:00", "2026-07-22 00:00:00", "2026-07-22 00:00:00", "2026-07-22 00:00:00", "2026-07-22 12:00:00", "2026-07-22 12:00:00", "2026-07-22 12:00:00", "2026-07-23 00:00:00", "2026-07-23 00:00:00", "2026-07-23 00:00:00", "2026-07-23 12:00:00", "2026-07-23 12:00:00", "2026-07-24 00:00:00", "2026-07-24 00:00:00", "2026-07-24 00:00:00", "2026-07-24 12:00:00", "2026-07-24 12:00:00", "2026-07-25 00:00:00", "2026-07-25 00:00:00", "2026-07-25 00:00:00", "2026-07-25 12:00:00", "2026-07-25 12:00:00", "2026-07-26 00:00:00", "2026-07-26 00:00:00", "2026-07-26 00:00:00", "2026-07-26 12:00:00", "2026-07-26 12:00:00", "2026-07-27 00:00:00", "2026-07-27 00:00:00", "2026-07-27 00:00:00", "2026-07-27 12:00:00", "2026-07-27 12:00:00", "2026-07-28 00:00:00", "2026-07-28 00:00:00", "2026-07-28 00:00:00", "2026-07-28 12:00:00", "2026-07-28 12:00:00", "2026-07-29 00:00:00", "2026-07-29 00:00:00", "2026-07-29 00:00:00", "2026-07-29 12:00:00", "2026-07-29 12:00:00", "2026-07-30 00:00:00", "2026-07-30 00:00:00", "2026-07-30 00:00:00", "2026-07-30 12:00:00", "2026-07-30 12:00:00", "2026-07-31 00:00:00", "2026-07-31 00:00:00", "2026-07-31 00:00:00", "2026-07-31 12:00:00", "2026-07-31 12:00:00", "2026-08-01 00:00:00", "2026-08-01 00:00:00", "2026-08-01 00:00:00", "2026-08-01 12:00:00", "2026-08-01 12:00:00", "2026-08-02 00:00:00", "2026-08-02 00:00:00", "2026-08-02 00:00:00", "2026-08-02 12:00:00", "2026-08-02 12:00:00", "2026-08-03 00:00:00", "2026-08-03 00:00:00", "2026-08-03 00:00:00", "2026-08-03 12:00:00", "2026-08-03 12:00:00", "2026-08-04 00:00:00", "2026-08-04 00:00:00", "2026-08-04 00:00:00", "2026-08-04 12:00:00", "2026-08-05 00:00:00", "2026-08-05 00:00:00", "2026-08-05 12:00:00", "2026-08-06 00:00:00", "2026-08-06 00:00:00", "2026-08-06 12:00:00", "2026-08-07 00:00:00", "2026-08-07 00:00:00", "2026-08-07 12:00:00", "2026-08-07 12:00:00", "2026-08-08 00:00:00", "2026-08-08 00:00:00", "2026-08-08 12:00:00", "2026-08-08 12:00:00", "2026-08-09 00:00:00", "2026-08-09 00:00:00", "2026-08-09 00:00:00", "2026-08-09 12:00:00", "2026-08-09 12:00:00", "2026-08-10 00:00:00", "2026-08-10 00:00:00", "2026-08-10 00:00:00", "2026-08-10 12:00:00", "2026-08-10 12:00:00", "2026-08-11 00:00:00", "2026-08-11 00:00:00", "2026-08-11 00:00:00"],
+            datasets: [
+                {
+                    label: '德州 DCAPE (J/kg)',
+                    data: [1586.9, 1373.7, 954.5, 1043.2, 1248.7, 880.3, 946.7, 723.2, 952.8, 1225.3, 643.5, 891.6, 356.2, 726.2, 355.3, 423.8, 1350.3, 385.9, 456.2, 808.0, 1497.0, 990.0, 519.2, 764.2, 1395.7, 1215.8, 1035.2, 953.7, 1008.9, 1154.5, 1120.2, 1373.6, 1168.9, 1055.9, 1282.1, 1324.4, 1198.9, 927.0, 1032.5, 1378.2, 1200.8, 1141.5, 1143.1, 1144.3, 1083.1, 1470.0, 1590.0, 1390.5, 1681.9, 1389.2, 1230.7, 1763.3, 1666.0, 1360.6, 1067.6, 1694.7, 1393.1, 1218.4, 411.6, 1487.3, 1112.8, 1180.0, 1363.5, 1396.0, 1332.3, 1014.7, 645.3, 1480.2, 1096.2, 1559.2, 1410.1, 1392.7, 1201.9, 1632.8, 1640.9, 1473.0, 1558.1, 1493.5, 1557.3, 1296.0, 1309.8, 1446.8, 1392.3, 1461.2, 1605.1, 1404.1, 1184.7, 1451.6, 991.3, 1493.6, 896.8, 1329.5, 738.2, 1512.5, 1326.7, 696.5, 1341.0, 1276.6, 1249.8, 1539.6, 1681.4, 1221.2, 1116.8, 1253.2, 1277.3, 792.8, 1038.6, 1262.8, 1493.1, 1306.1, 879.0, 1185.2, 956.4, 1139.6, 1449.1, 1308.1, 1565.2, 1357.5, 1220.5, 1534.9, 1466.7, 1280.4, 1427.9, 1518.8, 1016.7, 1495.6, 1294.9, 1159.4, 516.5, 1615.6, 1743.7, 1133.3, 1310.3, 1382.6, 1116.8, 968.4, 1097.5, 1154.6, 1304.3, 1394.1, 718.7, 1671.6, 1430.2],
+                    borderColor: '#ff6b6b',
+                    backgroundColor: 'rgba(255,107,107,0.1)',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                },
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: { display: true, text: 'DCAPE 时间序列 (30天)', color: '#00d4ff', font: { size: 16 } },
+                legend: { labels: { color: '#e0e0e0' } }
+            },
+            scales: {
+                x: { ticks: { color: '#888', maxRotation: 45, autoSkip: true, maxTicksLimit: 15 }, grid: { color: '#2a2f3e' } },
+                y: { ticks: { color: '#888' }, grid: { color: '#2a2f3e' }, title: { display: true, text: 'DCAPE (J/kg)', color: '#888' } }
+            }
+        }
+    });
+
+    // DCAPE 分布柱状图
+    new Chart(document.getElementById('dcapeBoxChart'), {
+        type: 'bar',
+        data: {
+            labels: ['德州', '东亚'],
+            datasets: [{
+                label: 'DCAPE 均值 (J/kg)',
+                data: [1209.8, 1016.0],
+                backgroundColor: ['rgba(255,107,107,0.5)', 'rgba(78,205,196,0.5)'],
+                borderColor: ['#ff6b6b', '#4ecdc4'],
+                borderWidth: 2,
+            },
+            {
+                label: 'DCAPE 最大值 (J/kg)',
+                data: [1763.3, 1822.4],
+                backgroundColor: ['rgba(255,107,107,0.25)', 'rgba(78,205,196,0.25)'],
+                borderColor: ['#ff6b6b', '#4ecdc4'],
+                borderWidth: 2,
+                borderDash: [5, 5],
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: { display: true, text: 'DCAPE 区域对比 (均值 vs 最大值)', color: '#00d4ff', font: { size: 16 } },
+                legend: { labels: { color: '#e0e0e0' } }
+            },
+            scales: {
+                x: { ticks: { color: '#888', font: { size: 14 } }, grid: { color: '#2a2f3e' } },
+                y: { ticks: { color: '#888' }, grid: { color: '#2a2f3e' }, title: { display: true, text: 'DCAPE (J/kg)', color: '#888' } }
+            }
+        }
+    });
+    </script>
+</body>
+</html>
