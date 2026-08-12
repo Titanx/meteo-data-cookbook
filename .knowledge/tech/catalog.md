@@ -1,7 +1,7 @@
 # 技术知识清单（跨项目通用）
 
-> 最后更新: 2026-08-11
-> 总计: 18 条（全部 verified）
+> 最后更新: 2026-08-12
+> 总计: 21 条（全部 verified）
 
 ## 最佳实践 (guidelines/)
 
@@ -11,6 +11,7 @@
 | GL-005 | Meteostat 地面观测数据使用指南 | verified | meteostat, observation, surface, station, python, no-api-key, china, batch-download, asia, americas, real-time | implement, verify | 2026-07-20 |
 | GL-006 | NASA POWER 卫星同化数据使用指南 | verified | nasa-power, ceres, merra-2, satellite, reanalysis, radiation, ghi, dni, dhi, no-api-key, free | implement, verify | 2026-07-21 |
 | GL-007 | 探空数据热力指数提取与 DCAPE 分析指南 | verified | sounding, dcape, cape, thermodynamic, wyoming, wsgi, html-parsing, regex | implement, verify, analyze | 2026-08-11 |
+| GL-008 | 气象雷达数据匿名获取综合指南 | verified | radar, nexrad, rainviewer, iem, gcp, nws, nomads, hrrr, anonymous, ercot, texas | architect, implement | 2026-08-12 |
 
 ## 已知陷阱 (pitfalls/)
 
@@ -23,6 +24,7 @@
 | PF-008 | 怀俄明大学探空接口迁移与 SSL 证书问题 | verified | sounding, wyoming, ssl, certificate, china-network, server-migration, cgi-deprecated | implement, verify | 2026-08-11 |
 | PF-009 | 探空数据区域分辨率差异与标准化比较 | verified | sounding, resolution, high-resolution, standard-level, interpolation, comparison, texas, china | implement, verify, analyze | 2026-08-11 |
 | PF-010 | 探空 WSGI 格式中 CAPE 缺失与 HTML 热力指数提取 | verified | sounding, cape, dcape, wsgi, html-parsing, regex, missing-data, thermodynamic | implement, verify | 2026-08-11 |
+| PF-011 | NEXRAD 官方 S3 桶匿名访问限制与替代方案 | verified | nexrad, radar, s3, aws, anonymous, access-denied, forbidden, unidata, gcp, alternative | architect, implement | 2026-08-12 |
 
 ## 技术流程 (processes/)
 
@@ -34,6 +36,7 @@
 | PS-006 | ERCOT 电力市场数据下载流程（含 Resource Node） | verified | ercot, texas, electricity, price, spp, dam, rtm, eia-api, gridstatus, lmp, fuel-mix, load, resource-node, wind, solar | architect, implement | 2026-08-06 |
 | PS-007 | 雷暴事件 × 电力市场联动分析流程 | verified | thunderstorm, ercot, electricity-price, linkage-analysis, meteostat, load-zone, hub, wind-power, solar, statistical-test | architect, implement, verify | 2026-07-24 |
 | PS-008 | 探空廓线数据下载流程（怀俄明大学 WSGI） | verified | sounding, wyoming, wsgi, radiosonde, atmospheric-profile, temperature, humidity, wind, parallel-download | architect, implement | 2026-08-11 |
+| PS-009 | NEXRAD 雷达实时分块数据下载流程（unidata chunks） | verified | nexrad, radar, level2, s3, anonymous, unidata, chunks, real-time, texas, ercot, wsr-88d | architect, implement | 2026-08-12 |
 
 ## 参数清单
 
@@ -65,14 +68,15 @@
 | GOES | [PS-004](processes/PS-004.md) |
 | SURFRAD | [PS-005](processes/PS-005.md) |
 | ERCOT | [PS-006](processes/PS-006.md), [PF-005](pitfalls/PF-005.md), [PS-007](processes/PS-007.md) |
+| **NEXRAD 雷达** | **[GL-008](guidelines/GL-008.md), [PF-011](pitfalls/PF-011.md), [PS-009](processes/PS-009.md)** |
 
 ### 按处理阶段
 
 | 阶段 | 相关条目 |
 |------|---------|
-| 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PF-005, PF-007 |
+| 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PS-009, PF-005, PF-007, PF-011, GL-008 |
 | 实现开发 (implement) | 全部 |
-| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, PF-004, PF-008, PF-009, PF-010, PS-007, PS-008 |
+| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, PF-004, PF-008, PF-009, PF-010, PF-011, PS-007, PS-008, PS-009 |
 | 数据分析 (analyze) | GL-007, PF-009, PS-007 |
 | 调试修复 (debug) | PF-006 |
 
@@ -89,4 +93,7 @@
 | 统计检验 | PS-007 |
 | 反爬虫绕过 | PF-005 |
 | SSL 证书 | PF-008 |
-| 匿名 AWS S3 | PS-003, PS-004 |
+| 匿名 AWS S3 | PS-003, PS-004, PS-009, PF-011 |
+| GCP 公开数据集 | GL-008 |
+| HTTP API | GL-008, GL-004, GL-005 |
+| 雷达数据处理 | GL-008, PS-009, PF-011 |

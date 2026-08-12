@@ -10,6 +10,7 @@
 | Meteostat 观测 | `{ICAO}_{YYYY}.csv` | `ZSSS_2025.csv` |
 | ERCOT 电价 | `ercot_{市场}_{枢纽}_{起始YYYYMM}_{结束YYYYMM}.csv` | `ercot_DAM_HB_NORTH_202501_202607.csv` |
 | SURFRAD 辐射 | `{站代码}{YY}.dat` | `bon25.dat` |
+| NEXRAD 雷达分块 | `{SID}_{Volume}_{ChunkID}` | `KFWS_999_D00` |
 | 分析报告 | `{主题}_analysis_report.html` | `sounding_analysis_report.html` |
 | 深度分析 | `{主题}_deep_analysis.html` | `sounding_deep_analysis.html` |
 

@@ -1,6 +1,6 @@
 # 项目知识清单（当前项目特有）
 
-> 最后更新: 2026-08-11
+> 最后更新: 2026-08-12
 > 本分类记录气象项目特有的知识，跨项目通用知识见 tech/ 目录
 
 ## 项目数据源索引
@@ -11,6 +11,8 @@
 | Meteostat | 地面观测 | 东亚东南亚115机场 | 2025-2026 | `download_east_southeast_asia_*.py` | `data/meteostat/east_southeast_asia/` | 活跃 |
 | Meteostat | 地面观测 | 美洲85机场 | 2025-2026 | `download_americas_airports_2025_2026.py` | `data/meteostat/americas/` | 活跃 |
 | 怀俄明大学 WSGI | 探空廓线 | 德州3站 + 东亚7站 | 2026-07-13 ~ 2026-08-11 | `download_sounding_parallel.py` | `data/sounding/` | 活跃 |
+| NEXRAD L2 实时分块 | 天气雷达 | ERCOT 18站 | 实时（秒级延迟） | `test_radar_all_anonymous.py` | 无持久数据 | 已验证 |
+| RainViewer API | 雷达拼图 | 全球含德州 | 实时（5分钟延迟） | `test_radar_all_anonymous.py` | 无持久数据 | 已验证 |
 | GOES-19 | 卫星云图 | 美洲全圆盘 | 2026-07-20 | `goes19_pipeline.py` | `data/goes19/` | 已验证 |
 | Himawari-9 | 卫星云图 | 东亚区域 | 2025-11 ~ 2026-07 | `himawari9_segment_pipeline.py` | `data/himawari9/` | 活跃 |
 | SURFRAD | 地表辐射 | 美国7站 | 2025-2026 | `surfrad_pipeline.py` | `data/surfrad/` | 已验证 |
@@ -25,6 +27,7 @@
 |--------|--------|--------|------|------|
 | Meteostat 全球 | 847 | 180.4 MB | 606,069 | 246机场×2025-2026 |
 | 探空廓线 | 556 | — | 842,249 | 10站×30天×2时次 |
+| NEXRAD 雷达 (unidata chunks) | — | — | — | 18站×实时体扫（秒级延迟） |
 | ERCOT 枢纽电价 | 8 | — | 273,216 | 4枢纽×DAM+RTM×1.5年 |
 | ERCOT Resource Node | 8 | — | ~448,000 | 8节点×RTM×1.5年 |
 | ERCOT 负荷/发电 | 38 | 42.6 MB | 171,231 | 19个月×2路由 |
@@ -43,6 +46,7 @@
 | 雷暴×电价联动 | `thunderstorm_ercot_analysis.html` | 113事件, 22个电价尖峰, 光伏骤降主因 | 2026-07-24 |
 | ERCOT Resource Node | 8节点RTM数据 | 风电均价低于HB_WEST(阻塞), 光伏负电价23.4% | 2026-08-06 |
 | 德州vs东亚DCAPE日变化 | `sounding_deep_analysis.html` | 两区域日变化模式相反（当地傍晚vs早晨） | 2026-08-11 |
+| NEXRAD 雷达15类数据源匿名测试 | `radar_test_results_comprehensive.json` | unidata chunks 18站全覆盖, 官方桶 Access Denied | 2026-08-12 |
 | 中国机场Meteostat覆盖 | `check_data_integrity.py` | 46机场全部成功, 11机场综合评分"优" | 2026-07-19 |
 | NASA POWER vs SURFRAD | `test_nasa_power.py` | GHI MAE 38.6 W/m², 温度 MAE 1.4°C | 2026-07-20 |
 
@@ -69,6 +73,8 @@
 | `check_data_integrity.py` | 数据完整性检验 | Meteostat | 4维度 |
 | `check_meteostat_realtime.py` | 实时性测试(亚洲) | Meteostat | 8站 |
 | `check_meteostat_realtime_americas.py` | 实时性测试(美洲) | Meteostat | 10站 |
+| `test_radar_all_anonymous.py` | 15类雷达数据源匿名可达性测试 | NEXRAD/RainViewer/GCP/IEM/NWS | 无key, 匿名S3 |
+| `test_rainviewer_detail.py` | RainViewer API 详细测试 | RainViewer | 无key |
 
 ### 分析脚本 (analysis/)
 

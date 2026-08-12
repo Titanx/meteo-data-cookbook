@@ -2,6 +2,25 @@
 
 > 本文件只追加，不修改历史记录。
 
+## [2026-08-12] add | [GL-008 + PF-011 + PS-009 气象雷达数据匿名获取] | 新增 3 条
+
+### 新增条目
+- 新增 GL-008：气象雷达数据匿名获取综合指南（verified）
+- 新增 PF-011：NEXRAD 官方 S3 桶匿名访问限制与替代方案（verified）
+- 新增 PS-009：NEXRAD 雷达实时分块数据下载流程（unidata chunks）（verified）
+
+### 测试验证
+- 综合测试 15 类匿名数据源（2026-08-12 01:50 UTC）
+- 成功验证：unidata chunks（18站全覆盖）、RainViewer（全球拼图）、GCP 公开数据集、NWS API、NOMADS HRRR
+- 不可匿名：noaa-nexrad-level2（Access Denied）、noaa-nexrad-level3（桶不存在）、NCEI THREDDS（404）
+- 测试脚本：`test_radar_all_anonymous.py`
+- 测试结果：`radar_test_results_comprehensive.json`
+
+### 目录更新
+- 更新 tech/catalog.md：条目数从 18 → 21，新增 3 条
+- 更新 root catalog.md：全景目录同步更新，覆盖范围新增雷达
+- 知识库条目数：18 → 21（含 20 条编号条目 + 1 个参数清单文件，全部 verified）
+
 ## [2026-08-11] update | [全面知识库重构] | 新增 5 条 + 更新 3 条 + 目录重构
 
 ### 新增条目
