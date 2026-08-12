@@ -2,6 +2,23 @@
 
 > 本文件只追加，不修改历史记录。
 
+## [2026-08-12] update | [GL-004 全面重写 + HRRR/NWP 预报数据实测] | 更新 1 条
+
+### 更新条目
+- 更新 GL-004：Open-Meteo API 使用指南全面重写，新增 HRRR/GFS/NAM/NBM 等 NWP 预报模型详细说明
+
+### 测试验证
+- HRRR 实时预报 8 项测试全部通过（2026-08-12 11:18 UTC）
+- 关键验证：80m 风场（均值 31 m/s）、GHI/DNI（Houston 峰值 979 W/m²）、CAPE（最大 2620 J/kg）
+- 历史预报（Historical Forecast API）验证：2018-01 起，2024-07 数据 CAPE 最大 3280 J/kg
+- 多模型对比：HRRR/GFS/NAM/NBM 均返回数据
+- 测试脚本：`test_openmeteo_hrrr.py`
+- 测试结果：`openmeteo_hrrr_results.json`
+
+### 目录更新
+- 知识库条目数：21 条不变（GL-004 重写）
+- 数据源覆盖新增：NWP 数值预报大类
+
 ## [2026-08-12] add | [GL-008 + PF-011 + PS-009 气象雷达数据匿名获取] | 新增 3 条
 
 ### 新增条目
