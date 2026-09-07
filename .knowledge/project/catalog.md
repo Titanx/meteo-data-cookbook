@@ -13,6 +13,7 @@
 | 怀俄明大学 WSGI | 探空廓线 | 德州3站 + 东亚7站 | 2026-07-13 ~ 2026-08-11 | `download_sounding_parallel.py` | `data/sounding/` | 活跃 |
 | NEXRAD L2 实时分块 | 天气雷达 | ERCOT 18站 | 实时（秒级延迟） | `test_radar_all_anonymous.py` | 无持久数据 | 已验证 |
 | Open-Meteo HRRR | NWP 数值预报 | ERCOT 6站（CONUS全境） | 实时预报+历史2018起 | `test_openmeteo_hrrr.py` | `data/openmeteo_hrrr_results.json` | 已验证 |
+| GPM IMERG | 卫星降水 | ERCOT 区域 | 历史1998至今（延迟4h~3.5月） | `test_imerg_download.py` | `data/imerg/` | 已验证 |
 | RainViewer API | 雷达拼图 | 全球含德州 | 实时（5分钟延迟） | `test_radar_all_anonymous.py` | 无持久数据 | 已验证 |
 | GOES-19 | 卫星云图 | 美洲全圆盘 | 2026-07-20 | `goes19_pipeline.py` | `data/goes19/` | 已验证 |
 | Himawari-9 | 卫星云图 | 东亚区域 | 2025-11 ~ 2026-07 | `himawari9_segment_pipeline.py` | `data/himawari9/` | 活跃 |
@@ -34,7 +35,8 @@
 | ERCOT 负荷/发电 | 38 | 42.6 MB | 171,231 | 19个月×2路由 |
 | SURFRAD | 63 | ~21 MB | 63,715 | 7站×7天 |
 | GOES-19 | 3 | 281.4 MB | — | 全圆盘真彩色 |
-| 合计 | ~1,523 | ~525 MB | ~2.4M | — |
+| IMERG | 2 | 38.7 MB | — | 30分钟+日产品各1 |
+| 合计 | ~1,525 | ~564 MB | ~2.4M | — |
 
 ## 关键分析结果
 
@@ -77,6 +79,8 @@
 | `test_radar_all_anonymous.py` | 15类雷达数据源匿名可达性测试 | NEXRAD/RainViewer/GCP/IEM/NWS | 无key, 匿名S3 |
 | `test_openmeteo_hrrr.py` | HRRR/GFS/NAM/NBM 预报数据测试 | Open-Meteo | 无key |
 | `test_rainviewer_detail.py` | RainViewer API 详细测试 | RainViewer | 无key |
+| `test_imerg_download.py` | IMERG 30分钟/日产品下载测试 | earthaccess + GES DISC | 需 Earthdata 账号 |
+| `debug_imerg_search.py` | IMERG 搜索调试脚本 | earthaccess CMIP 搜索 | 需 Earthdata 账号 |
 
 ### 分析脚本 (analysis/)
 

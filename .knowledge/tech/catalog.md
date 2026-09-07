@@ -1,7 +1,7 @@
 # 技术知识清单（跨项目通用）
 
-> 最后更新: 2026-08-12
-> 总计: 21 条（全部 verified）
+> 最后更新: 2026-09-07
+> 总计: 22 条（全部 verified）
 
 ## 最佳实践 (guidelines/)
 
@@ -37,6 +37,7 @@
 | PS-007 | 雷暴事件 × 电力市场联动分析流程 | verified | thunderstorm, ercot, electricity-price, linkage-analysis, meteostat, load-zone, hub, wind-power, solar, statistical-test | architect, implement, verify | 2026-07-24 |
 | PS-008 | 探空廓线数据下载流程（怀俄明大学 WSGI） | verified | sounding, wyoming, wsgi, radiosonde, atmospheric-profile, temperature, humidity, wind, parallel-download | architect, implement | 2026-08-11 |
 | PS-009 | NEXRAD 雷达实时分块数据下载流程（unidata chunks） | verified | nexrad, radar, level2, s3, anonymous, unidata, chunks, real-time, texas, ercot, wsr-88d | architect, implement | 2026-08-12 |
+| PS-010 | GPM IMERG 降水数据下载流程 | verified | imerg, gpm, precipitation, earthdata, nasa, satellite, 降水, ercot, hdf5, netcdf | architect, implement | 2026-09-07 |
 
 ## 参数清单
 

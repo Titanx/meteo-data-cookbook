@@ -1,7 +1,7 @@
 # 气象知识全景目录
 
-> 最后更新: 2026-08-12
-> 总计: 21 条知识（全部 verified）
+> 最后更新: 2026-09-07
+> 总计: 22 条知识（全部 verified）
 
 ## 统计概览
 
@@ -9,9 +9,9 @@
 |------|------|----------|
 | 最佳实践 (tech/guidelines/) | 5 | 5 |
 | 已知陷阱 (tech/pitfalls/) | 8 | 8 |
-| 技术流程 (tech/processes/) | 7 | 7 |
+| 技术流程 (tech/processes/) | 8 | 8 |
 | 参数清单 (tech/) | 1 | 1 |
-| **合计** | **21** | **21** |
+| **合计** | **22** | **22** |
 
 ## 快速导航
 
@@ -26,8 +26,10 @@
 - **地面观测**：Meteostat、NOAA ISD 等地面气象站数据获取与处理
 - **卫星数据**：葵花 8/9（Himawari）、GOES-16/18/19 静止气象卫星数据下载与真彩色合成
 - **雷达数据**：NEXRAD WSR-88D 天气雷达实时分块数据获取、RainViewer 全球拼图、GCP 公开数据集
+- **数值预报 (NWP)**：HRRR 3km CONUS、GFS/NAM/NBM 等模式预报数据，Open-Meteo API 匿名获取
 - **再分析数据**：Open-Meteo API（ERA5 后端）、NASA POWER（MERRA-2 + CERES）使用
 - **探空数据**：怀俄明大学 WSGI 接口探空廓线数据下载与热力指数提取
+- **降水数据**：GPM IMERG 全球卫星降水产品（30 分钟/日/月，1998 年至今），NASA Earthdata 认证下载
 - **电力市场**：ERCOT 电力市场数据获取（EIA API + GridStatus.io API）
 - **地表辐射**：SURFRAD 实测辐射数据下载与处理
 - **AWS Open Data**：NOAA 卫星/雷达数据通过 AWS S3 匿名访问
