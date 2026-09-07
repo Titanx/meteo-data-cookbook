@@ -64,6 +64,15 @@ import json
 from datetime import datetime
 from pathlib import Path
 
+# 自动加载 .env 文件 (API key 不入 git)
+_env_path = Path(__file__).resolve().parents[2] / ".env"
+if _env_path.exists():
+    for line in _env_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip())
+
 import requests
 import pandas as pd
 

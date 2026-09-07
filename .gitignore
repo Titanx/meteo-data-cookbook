@@ -38,6 +38,9 @@ desktop.ini
 .env.*
 _netrc
 
+# nmc-met-io 配置（含 NSMC 账号密码）
+.nmcdev/
+
 # 临时文件
 *.tmp
 *.bak

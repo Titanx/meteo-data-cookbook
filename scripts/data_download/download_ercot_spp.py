@@ -74,6 +74,15 @@ import json
 from datetime import datetime
 from pathlib import Path
 
+# 自动加载 .env 文件 (API key 不入 git)
+_env_path = Path(__file__).resolve().parents[2] / ".env"
+if _env_path.exists():
+    for line in _env_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip())
+
 import pandas as pd
 
 # ── 常量 ──────────────────────────────────────────────
@@ -103,27 +112,50 @@ ALL_LOAD_ZONES = ["LZ_WEST", "LZ_NORTH", "LZ_SOUTH", "LZ_HOUSTON"]
 # 2026-08-06 通过 --list-locations 获取 1099 个 Resource Node 代码并完成匹配
 # 电厂名称 -> GridStatus.io location 代码
 
-# 风电 Resource Node (5 个电厂, 7 个 location 代码)
+# 风电 Resource Node (31 个 location 代码, 2026-09-07 从 --list-locations 获取)
 WIND_RESOURCE_NODES = [
-    "HHOLLW2_WND1",   # Horse Hollow Wind Energy Center (736 MW, unit 2)
-    "HHOLLW3_WND1",   # Horse Hollow Wind Energy Center (unit 3)
-    "HHOLLW4_WND1",   # Horse Hollow Wind Energy Center (unit 4)
-    "CAPRIDGE_ALL",   # Capricorn Ridge Wind LLC (662 MW)
-    "AVIAT_ALL",      # Aviator Wind (525 MW)
-    "WHMESA_U1",      # White Mesa Wind (501 MW)
-    "FOARDCTY_ALL",   # Foard City Wind (353 MW)
+    "AJAXWIND_RN", "AQLA_WND_RN", "BAIRDWND_ALL", "BRAZ_WND_ALL", "BRISCOE_WIND",
+    "CALLAHA_WND1", "CAMWIND_RN", "FTWIND_UNIT1", "GOA_GOATWIND", "H_HOLLO_WND1",
+    "HART_WND_RN", "HHOLLW2_WND1", "HHOLLW3_WND1", "HHOLLW4_WND1", "HRFDWIND_ALL",
+    "MONT_WND_RN", "MOZART_WIND1", "PHILLWND_ALL", "RN_SR_WIND1", "RRC_WIND_ALL",
+    "SSPURT_WIND1", "SWEETWND_1", "SWTWN4_WND45", "TYLRWIND_RN", "VERAWIND_ALL",
+    "WH_WIND_ALL", "WILDWIND_ALL", "WND_WHITNEY", "WNDTS2_UNIT1", "YCAT_WND_RN",
+    "YNG_WND_ALL",
 ]
 
-# 光伏 Resource Node (5 个电厂)
+# 光伏 Resource Node (89 个 location 代码, 2026-09-07 从 --list-locations 获取)
 SOLAR_RESOURCE_NODES = [
-    "LHORN_N_U1_2",   # Hecate Energy Longhorn Solar LLC (650 MW)
-    "HRNT_SLR_RN",    # Hornet Solar (600 MW)
-    "FRYE_SLR_ALL",   # Hecate Energy Frye Solar (500 MW, 替代 Aktina Solar)
-    "SAMSON_ALL",     # Samson Solar Energy (250 MW)
-    "FIVEWSLR_ALL",   # Five Wells Solar Center (355 MW, 替代 Red Tailed Hawk)
+    "7RNCHSLR_ALL", "ANDMDSLR_ALL", "ARMD_SLR_RN", "ASCK_SLR_RN", "AURO_SLR_RN",
+    "AZSP_SLR_RN", "BART_SLR_RN", "BELM_SLR_RN", "BUZI_SLR_RN", "BYNM_SLR_RN",
+    "CHAL_SLR_RN", "CHAR_SLR_RN", "CHIL_SLR", "CMPD_SLR_RN", "CORALSLR_ALL",
+    "CRWN_SLR_UN1", "CST1_SLR_RN", "CST2_SLR_RN", "DIVR_SLR_RN", "DORA_SLR_RN",
+    "DRCK_SLR_RN", "EIFSLR_UNIT1", "ELZA_SLR_RN", "ERKA_SLR_RN", "FAGUSSLR_RN",
+    "FENCESLR_ALL", "FILESSLR_PV1", "FIVEWSLR_ALL", "FRYE_SLR_ALL", "FWLR_SLR_1",
+    "GAIA_SLR_RN", "GODY_SLR_RN", "GRAN_SLR_RN", "GRIM_SLR_RN", "GRND_SLR_RN",
+    "GRYH_SLR_RN", "HKSN_SLR_ALL", "HOLZ_SLR_RN", "HOPKNSLR_ALL", "HRMS_SLR_RN",
+    "HRNT_SLR_RN", "HRZN_SLR_UN1", "JADE_SLR_ALL", "JAG_SLR_RN", "JKLP_SLR_RN",
+    "JUNG_SLR_RN", "LAMESASLR_G", "LEON_SLR_RN", "LMWD_SLR_RN", "MAND_SLR_RN",
+    "MCLNSLR_RN", "MIDP_SLR_RN", "MLB_SLR_RN", "MRKM_SLR_RN", "MROW_SLR_RN",
+    "NHKY_SLR_RN", "NOBLESLR_ALL", "NOVA1SLR_ALL", "NRTN_SLR_RN", "OGS_SLR_RN",
+    "OUTP_SLR_RN", "OYST_SLR_RN", "PDRA_SLR_RN", "PERE_SLR_RN", "PINN_SLR_RN",
+    "RADN_SLR_ALL", "RN_LNP_SLR", "RN_QTUM_SLR", "RN_SOLC_SLR", "SEQ2_SLR_RN",
+    "SHAW_SLR_RN", "SIG_SLR_RN", "SOLARA_UNIT1", "STAM_SLR_ALL", "STAR_SLR_RN",
+    "STRG_SLR_ALL", "SUNVASLR_ALL", "SWFT_SLR_RN", "SYBR_SLR_RN", "TI_SOLAR_ALL",
+    "TNS_SLR_ALL", "TRBT_SLR_RN", "TREB_SOLAR1", "TROJ_SLR_RN", "TUL_SLR_ALL",
+    "TYSN_SLR_RN", "ULYS_SLR_RN", "YAPN_SLR_RN", "ZIER_SLR_ALL",
 ]
 
-RECOMMENDED_RESOURCE_NODES = WIND_RESOURCE_NODES + SOLAR_RESOURCE_NODES
+# 已有的非 WND/SLR 命名的风电/光伏节点
+EXTRA_RESOURCE_NODES = [
+    "CAPRIDGE_ALL",   # Capricorn Ridge Wind
+    "AVIAT_ALL",      # Aviator Wind
+    "WHMESA_U1",      # White Mesa Wind
+    "FOARDCTY_ALL",   # Foard City Wind
+    "LHORN_N_U1_2",   # Longhorn Solar
+    "SAMSON_ALL",     # Samson Solar
+]
+
+RECOMMENDED_RESOURCE_NODES = WIND_RESOURCE_NODES + SOLAR_RESOURCE_NODES + EXTRA_RESOURCE_NODES
 
 
 def log(msg):
@@ -220,17 +252,13 @@ def main():
         log("  建议先用 --list-locations 查询实际可用的 location 列表进行匹配")
     elif args.location_type == "wind":
         locations = WIND_RESOURCE_NODES
-        log("下载风电 Resource Node (7个 location, 5个电厂)")
-        log("  RTM 约 382K 行, 在 500K 月限额内")
+        log(f"下载风电 Resource Node ({len(locations)}个 location)")
     elif args.location_type == "solar":
         locations = SOLAR_RESOURCE_NODES
-        log("下载光伏 Resource Node (5个 location)")
-        log("  RTM 约 273K 行, 在 500K 月限额内")
+        log(f"下载光伏 Resource Node ({len(locations)}个 location)")
     elif args.location_type == "recommended":
         locations = RECOMMENDED_RESOURCE_NODES
-        log("下载推荐的12个代表性 Resource Node (7风电+5光伏)")
-        log("  注意: 12个节点 RTM 约654K行, 超过免费方案500K/月限额")
-        log("  建议分2个月下载: --location-type wind (本月) + --location-type solar (下月)")
+        log(f"下载全部风电+光伏 Resource Node ({len(locations)}个 location)")
     else:  # all = Hub + LZ
         locations = ALL_HUBS + ALL_LOAD_ZONES
 

@@ -2,6 +2,29 @@
 
 > 本文件只追加，不修改历史记录。
 
+## [2026-09-07] add | [GL-009 + PF-012 + PS-013 凭证安全/CMA陷阱/ASTER地形] | 新增 3 条
+
+### 新增条目
+- 新增 GL-009：气象数据 API 凭证安全管理实践（verified）
+  - netrc (Earthdata) + .env (EIA/GridStatus) + config.ini (CMA) 三层管理
+  - .gitignore 防护：.env, _netrc, .netrc, .nmcdev/
+  - 7 个脚本已从硬编码改为自动加载凭证
+- 新增 PF-012：CMA 气象数据访问陷阱（verified）
+  - CMADaaS 需内网 VPN（10.20.76.55 内网 IP）
+  - data.cma.cn API 账号独立注册，网站账号 ≠ API 账号
+  - nmc-met-io 库不支持 FY-4 LMI 闪电数据
+  - 替代方案：NSMC/中科院公开数据集 + 国际数据源
+- 新增 PS-013：ASTER GDEM 地形与水体数据下载流程（verified）
+  - ASTGTM.003 (30m 高程) + ASTWBD.001 (30m 水体分类)
+  - ERCOT 区域 154 tiles, 8.48 GB
+  - earthaccess + netrc 认证, rasterio 读取
+
+### 目录更新
+- 知识库条目数：22 → 25（新增 3 条 verified）
+- 数据源覆盖新增：地形/水体数据（ASTER）、CMA 数据访问陷阱、凭证安全
+- 数据量新增：ASTER GDEM 2.89 GB + WBD 5.59 GB = 8.48 GB
+- project/catalog.md 更新：新增 6 个数据源, 8 个脚本, 凭证配置, 待办事项
+
 ## [2026-09-07] add | [PS-010 GPM IMERG 降水数据下载] | 新增 1 条
 
 ### 新增条目
