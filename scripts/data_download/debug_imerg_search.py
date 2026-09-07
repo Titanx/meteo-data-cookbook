@@ -1,17 +1,13 @@
 """
-IMERG 下载测试 v5 - 先登录后下载
+IMERG 下载测试 - 先登录后下载
 """
-import os
-os.environ['EARTHDATA_USERNAME'] = 'xhlcncn1997'
-os.environ['EARTHDATA_PASSWORD'] = 'Eath@19970703!'
-
 import earthaccess
 from datetime import datetime, timezone, timedelta
 import time
 from pathlib import Path
 
-# 先登录！
-auth = earthaccess.login(strategy='environment')
+# 凭证存储在 ~/_netrc
+auth = earthaccess.login(strategy='netrc')
 print(f"登录状态: {auth.authenticated}")
 
 OUT = Path("./imerg_test")

@@ -19,8 +19,9 @@ warnings.filterwarnings("ignore")
 # ============================================================
 # 配置
 # ============================================================
-os.environ['EARTHDATA_USERNAME'] = 'xhlcncn1997'
-os.environ['EARTHDATA_PASSWORD'] = 'Eath@19970703!'
+# 凭证存储在 ~/_netrc，无需硬编码
+import earthaccess
+earthaccess.login(strategy='netrc')
 
 OUTPUT_DIR = Path(__file__).parent / "imerg_test"
 OUTPUT_DIR.mkdir(exist_ok=True)
