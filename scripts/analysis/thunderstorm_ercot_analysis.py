@@ -113,15 +113,20 @@ def find_thunderstorm_events(df, icao):
 
 
 def load_ercot_rtm(hub, start, end):
-    """加载 ERCOT RTM 电价数据"""
-    fpath = ERCOT_DIR / f"ercot_rtm_{hub}_2025-01-01_2026-07-23.csv"
-    if not fpath.exists():
+    """加载 ERCOT RTM 电价数据 (合并全量+增量文件)"""
+    all_dfs = []
+    for fpath in sorted(glob(str(ERCOT_DIR / f"ercot_rtm_{hub}_*.csv"))):
+        df = pd.read_csv(fpath)
+        all_dfs.append(df)
+    if not all_dfs:
         return None
-    df = pd.read_csv(fpath)
+    df = pd.concat(all_dfs, ignore_index=True)
     df["interval_start_utc"] = pd.to_datetime(df["interval_start_utc"])
     if df["interval_start_utc"].dt.tz is None:
         df["interval_start_utc"] = df["interval_start_utc"].dt.tz_localize("UTC")
     df["spp"] = pd.to_numeric(df["spp"], errors="coerce")
+    df = df.drop_duplicates(subset="interval_start_utc", keep="last")
+    df = df.sort_values("interval_start_utc")
     mask = (df["interval_start_utc"] >= start) & (df["interval_start_utc"] <= end)
     return df[mask].copy()
 
