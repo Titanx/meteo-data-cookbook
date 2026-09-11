@@ -2,6 +2,21 @@
 
 > 本文件只追加，不修改历史记录。
 
+## [2026-09-11] add | [PS-015 GK2A AMI 卫星数据下载] | 新增 1 条
+
+### 新增条目
+- 新增 PS-015：GK2A (GEO-KOMPSAT-2A) AMI 卫星数据下载流程（verified）
+  - 韩国静止气象卫星, 定点 128.2°E, 16 通道, 10 分钟全圆盘
+  - AWS S3 匿名访问 (noaa-gk2a-pds), 无需认证
+  - IR105: 33.6 MB/文件 (5500×5500, 2km), WV073: 27.9 MB
+  - GEOS 投影, 需 satpy 重采样到 WGS84
+  - 与 Himawari-9/FY-4 覆盖重叠, 可交叉验证
+
+### 目录更新
+- 知识库条目数：26 → 27
+- 新增脚本: `scripts/data_download/download_gk2a.py`
+- 测试数据: IR105+WV073 各 4 文件, 246 MB
+
 ## [2026-09-09] add | [PS-014 ASTER地形×GLM闪电联动分析] | 新增 1 条
 
 ### 新增条目

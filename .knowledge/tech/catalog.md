@@ -1,7 +1,7 @@
 # 技术知识清单（跨项目通用）
 
-> 最后更新: 2026-09-09
-> 总计: 26 条（全部 verified）
+> 最后更新: 2026-09-11
+> 总计: 27 条（全部 verified）
 
 ## 最佳实践 (guidelines/)
 
@@ -44,6 +44,7 @@
 | PS-012 | FY-4A LMI 闪电数据下载流程 | verified | fy4, lmi, lightning, satellite, china, nsmc, netcdf, 闪电, 风云四号, 中国区域 | architect, implement | 2026-09-07 |
 | PS-013 | ASTER GDEM 地形与水体数据下载流程 | verified | aster, gdem, wbd, dem, terrain, water-body, earthdata, nasa, lp-daac, rasterio, tiff, ercot, texas | architect, implement | 2026-09-07 |
 | PS-014 | ASTER 地形与 GLM 闪电分布联动分析流程 | verified | aster, gdem, wbd, glm, lightning, terrain, elevation, slope, water-body, correlation, ercot, texas, analysis, rasterio, matplotlib | architect, implement, analyze | 2026-09-09 |
+| PS-015 | GK2A (GEO-KOMPSAT-2A) AMI 卫星数据下载流程 | verified | gk2a, geo-kompsat-2a, ami, satellite, s3, aws, korea, east-asia, china, geos, netcdf, satpy, himawari, fy-4, cross-validation | architect, implement | 2026-09-11 |
 ## 参数清单
 
 | 文件 | 说明 | 条目数 | 最后更新 |
