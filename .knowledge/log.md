@@ -2,6 +2,22 @@
 
 > 本文件只追加，不修改历史记录。
 
+## [2026-09-11] add | [PS-016 GEM 电站数据库 × ERCOT 电价联动分析] | 新增 1 条
+
+### 新增条目
+- 新增 PS-016：GEM 电站数据库下载与 ERCOT 电价联动分析流程（verified）
+  - GEM 2026-08 数据库 182,668 条（光伏 103,940 + 风电 35,089）
+  - 绕过邮箱注册：maps GitHub config.js 暴露 DigitalOcean CDN 直链
+  - ERCOT 474 座运行中电站（风电 38.0 GW + 光伏 33.0 GW = 71.0 GW）
+  - 三层分析：装机结构 / 发电×电价相关（风电夜间 r=-0.384）/ 雷暴×电站交叉（KIAH 1.43x）
+  - 电价尖峰本质：风光同时缺位 + 高负荷（风光渗透率 12.6% vs 39.4%）
+
+### 目录更新
+- 知识库条目数：27 → 28
+- 新增分析脚本：`scripts/analysis/gem_ercot_lz_analysis.py`、`gem_ercot_deep_dive.py`、`gem_storm_cross.py`
+- 新增数据：`data/gem/`（GEM 6 文件 + WRI 1 文件）
+- 新增输出：HTML 分析报告目录 + 3 个 CSV
+
 ## [2026-09-11] add | [PS-015 GK2A AMI 卫星数据下载] | 新增 1 条
 
 ### 新增条目

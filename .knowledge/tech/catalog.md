@@ -1,7 +1,7 @@
 # 技术知识清单（跨项目通用）
 
 > 最后更新: 2026-09-11
-> 总计: 27 条（全部 verified）
+> 总计: 28 条（全部 verified）
 
 ## 最佳实践 (guidelines/)
 
@@ -45,6 +45,7 @@
 | PS-013 | ASTER GDEM 地形与水体数据下载流程 | verified | aster, gdem, wbd, dem, terrain, water-body, earthdata, nasa, lp-daac, rasterio, tiff, ercot, texas | architect, implement | 2026-09-07 |
 | PS-014 | ASTER 地形与 GLM 闪电分布联动分析流程 | verified | aster, gdem, wbd, glm, lightning, terrain, elevation, slope, water-body, correlation, ercot, texas, analysis, rasterio, matplotlib | architect, implement, analyze | 2026-09-09 |
 | PS-015 | GK2A (GEO-KOMPSAT-2A) AMI 卫星数据下载流程 | verified | gk2a, geo-kompsat-2a, ami, satellite, s3, aws, korea, east-asia, china, geos, netcdf, satpy, himawari, fy-4, cross-validation | architect, implement | 2026-09-11 |
+| PS-016 | GEM 电站数据库下载与 ERCOT 电价联动分析流程 | verified | gem, global-energy-monitor, power-plant, wind, solar, ercot, price, lmp, load-zone, correlation, capacity, storm, linkage-analysis, cross-validation | architect, implement, analyze | 2026-09-11 |
 ## 参数清单
 
 | 文件 | 说明 | 条目数 | 最后更新 |
@@ -79,7 +80,8 @@
 | **ASTER GDEM/WBD** | **[PS-013](processes/PS-013.md)** |
 | **CMA 数据** | **[PF-012](pitfalls/PF-012.md)** |
 | SURFRAD | [PS-005](processes/PS-005.md) |
-| ERCOT | [PS-006](processes/PS-006.md), [PF-005](pitfalls/PF-005.md), [PS-007](processes/PS-007.md) |
+| ERCOT | [PS-006](processes/PS-006.md), [PF-005](pitfalls/PF-005.md), [PS-007](processes/PS-007.md), [PS-016](processes/PS-016.md) |
+| **GEM 电站数据库** | **[PS-016](processes/PS-016.md)** |
 | **NEXRAD 雷达** | **[GL-008](guidelines/GL-008.md), [PF-011](pitfalls/PF-011.md), [PS-009](processes/PS-009.md)** |
 | **凭证安全** | **[GL-009](guidelines/GL-009.md)** |
 
@@ -90,7 +92,7 @@
 | 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PS-009, PS-010, PS-011, PS-012, PS-013, PF-005, PF-007, PF-011, PF-012, GL-008, GL-009 |
 | 实现开发 (implement) | 全部 |
 | 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PS-007, PS-008, PS-009, PS-010, PS-013 |
-| 数据分析 (analyze) | GL-007, PF-009, PS-007 |
+| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016 |
 | 调试修复 (debug) | PF-006 |
 
 ### 按通用技术

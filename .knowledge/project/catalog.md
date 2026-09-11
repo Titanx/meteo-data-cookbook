@@ -1,6 +1,6 @@
 # 项目知识清单（当前项目特有）
 
-> 最后更新: 2026-09-07
+> 最后更新: 2026-09-11
 > 本分类记录气象项目特有的知识，跨项目通用知识见 tech/ 目录
 
 ## 项目数据源索引
@@ -22,6 +22,7 @@
 | NASA POWER | 卫星同化 | 全球 | 即时 | `test_nasa_power.py` | 无持久数据 | 已验证 |
 | EIA API v2 | 电力负荷/发电 | ERCOT | 2025-01 ~ 2026-09 | `download_ercot_prices.py` | `data/ercot/` | 活跃 |
 | GridStatus.io | 电价 | ERCOT 4枢纽+4负荷区+120资源节点 | 2025-01 ~ 2026-09 | `download_ercot_spp.py` | `data/ercot/` | 活跃 |
+| **GEM 电站数据库** | **电站坐标/装机** | **全球 (ERCOT 474 座)** | **2026-08 快照** | **`gem_ercot_*.py`** | **`data/gem/`** | **已验证** |
 | **GOES GLM** | **卫星闪电** | **ERCOT 区域** | **2026-09-07** | **`download_glm_l2.py`** | **`data/glm/l2/`** | **已验证** |
 | **FY-4 LMI** | **卫星闪电** | **中国区域** | **2019-2023 (订正集)** | **`download_fy4_lmi.py`** | **—** | **已验证** |
 | **ASTER GDEM** | **地形高程** | **ERCOT 154 tiles** | **静态** | **`download_aster_gdem.py`** | **`data/aster/gdem/`** | **已验证** |
@@ -43,7 +44,8 @@
 | GOES GLM | 180 | ~54 MB | — | 1小时×20秒文件 |
 | ASTER GDEM | 308 | 2.89 GB | — | 154 tiles×dem+num |
 | ASTER WBD | 308 | 5.59 GB | — | 154 tiles×dem+att |
-| 合计 | ~2,600+ | ~9.3 GB | ~2.5M | — |
+| GEM 电站数据库 | 7 | ~110 MB | 217,604 | GEM 6 + WRI 1 |
+| 合计 | ~2,600+ | ~9.4 GB | ~2.7M | — |
 
 ## 关键分析结果
 
@@ -59,6 +61,7 @@
 | NEXRAD 雷达15类数据源匿名测试 | `radar_test_results_comprehensive.json` | unidata chunks 18站全覆盖, 官方桶 Access Denied | 2026-08-12 |
 | 中国机场Meteostat覆盖 | `check_data_integrity.py` | 46机场全部成功, 11机场综合评分"优" | 2026-07-19 |
 | NASA POWER vs SURFRAD | `test_nasa_power.py` | GHI MAE 38.6 W/m², 温度 MAE 1.4°C | 2026-07-20 |
+| GEM电站×ERCOT电价三层联动 | `gem_ercot_price_analysis.html` | 风电是电价压制因子(夜间r=-0.38), 尖峰=风光缺位+高负荷, KIAH雷暴传导1.43x | 2026-09-11 |
 
 ## 项目脚本索引
 
@@ -102,6 +105,9 @@
 | `sounding_analysis.py` | 探空基础分析(加载/插值/统计) | 探空CSV | HTML报告 + CSV |
 | `sounding_deep_analysis.py` | 探空深度分析(统计检验/趋势) | 探空CSV | HTML报告 |
 | `thunderstorm_ercot_analysis.py` | 雷暴×电价联动分析 | Meteostat + ERCOT | HTML报告 + CSV事件表 |
+| `gem_ercot_lz_analysis.py` | 电站-LZ映射 + 装机结构分析 | GEM CSV | HTML报告 + CSV |
+| `gem_ercot_deep_dive.py` | 发电×电价×事件三层深度分析 | GEM + ERCOT + EIA | HTML报告 + CSV |
+| `gem_storm_cross.py` | 雷暴×电站坐标空间交叉 | Meteostat + GEM | CSV |
 
 ## 关键配置
 
