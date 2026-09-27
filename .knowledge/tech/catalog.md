@@ -1,7 +1,7 @@
 # 技术知识清单（跨项目通用）
 
 > 最后更新: 2026-09-27
-> 总计: 35 条（34 verified + 1 draft）
+> 总计: 36 条（35 verified + 1 draft）
 
 ## 最佳实践 (guidelines/)
 
@@ -53,6 +53,7 @@
 | PS-021 | NSRDB 辐照批量提取与 pvlib 光伏出力建模验证流程 | verified | nsrdb, pvlib, pvwatts, solar, ghi, dni, dhi, poa, single-axis, tracking, eia-930, ercot, validation, power-modeling, ilr, h5py, fsspec, chunked-extraction | architect, implement, verify, analyze | 2026-09-27 |
 | PS-022 | 光伏缺口 × 电价冲击推演流程（晴空反事实 + RTM 弹性标定） | verified | pv, solar, clearsky, counterfactual, shortfall, elasticity, rtm, price, panel-regression, hrrr, temperature, uscrn, ilr, eia-930, ercot, solis, event-attribution | implement, verify, analyze | 2026-09-27 |
 | PS-023 | RTM 尾部尖峰弹性标定与极端场景外推（分位数回归 + 凸性检验） | verified | rtm, price, tail, spike, quantile-regression, elasticity, shortfall, pv, extreme-scenario, extrapolation, convexity, logistic, simpson-paradox, hac, ercot, gridstatus, eia-930 | implement, verify, analyze | 2026-09-27 |
+| PS-024 | 光伏缺口口径统一：物理晴空反事实 vs P95 数据驱动包络 | verified | pv, solar, shortfall, counterfactual, clearsky, solis, pvlib, envelope, elasticity, rtm, price, simpson-paradox, hrrr, gem, nsrdb, eia-930, ercot, definition-consistency | implement, verify, analyze | 2026-09-27 |
 
 ## 参数清单
 
@@ -90,11 +91,11 @@
 | **CMA 数据** | **[PF-012](pitfalls/PF-012.md)** |
 | SURFRAD | [PS-005](processes/PS-005.md) |
 | **MRMS QPE** | **[PS-018](processes/PS-018.md)** |
-| **NSRDB** | **[PS-019](processes/PS-019.md), [PS-022](processes/PS-022.md), [PS-023](processes/PS-023.md)** |
+| **NSRDB** | **[PS-019](processes/PS-019.md), [PS-022](processes/PS-022.md), [PS-023](processes/PS-023.md), [PS-024](processes/PS-024.md)** |
 | **WMO S2S 库** | **[PS-020](processes/PS-020.md), PS-017** |
-| **GridStatus RTM** | **[PS-023](processes/PS-023.md)** |
-| ERCOT | [PS-006](processes/PS-006.md), [PF-005](pitfalls/PF-005.md), [PS-007](processes/PS-007.md), [PS-016](processes/PS-016.md), [PS-022](processes/PS-022.md), [PS-023](processes/PS-023.md) |
-| **GEM 电站数据库** | **[PS-016](processes/PS-016.md)** |
+| **GridStatus RTM** | **[PS-023](processes/PS-023.md), [PS-024](processes/PS-024.md)** |
+| ERCOT | [PS-006](processes/PS-006.md), [PF-005](pitfalls/PF-005.md), [PS-007](processes/PS-007.md), [PS-016](processes/PS-016.md), [PS-022](processes/PS-022.md), [PS-023](processes/PS-023.md), [PS-024](processes/PS-024.md) |
+| **GEM 电站数据库** | **[PS-016](processes/PS-016.md), [PS-024](processes/PS-024.md)** |
 | **NEXRAD 雷达** | **[GL-008](guidelines/GL-008.md), [PF-011](pitfalls/PF-011.md), [PS-009](processes/PS-009.md)** |
 | **凭证安全** | **[GL-009](guidelines/GL-009.md)** |
 
@@ -104,8 +105,8 @@
 |------|---------|
 | 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PS-009, PS-010, PS-011, PS-012, PS-013, PS-018, PS-019, PS-020, PF-005, PF-007, PF-011, PF-012, GL-008, GL-009 |
 | 实现开发 (implement) | 全部 |
-| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PS-007, PS-008, PS-009, PS-010, PS-013, PS-018, PS-019, PS-022, PS-023 |
-| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016, PS-017, PS-018, PS-019, PS-022, PS-023 |
+| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PS-007, PS-008, PS-009, PS-010, PS-013, PS-018, PS-019, PS-022, PS-023, PS-024 |
+| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016, PS-017, PS-018, PS-019, PS-022, PS-023, PS-024 |
 | 调试修复 (debug) | PF-006 |
 
 ### 按通用技术
@@ -130,7 +131,8 @@
 | 地形/水体数据 | PS-013 |
 | GRIB2 处理 | PS-018 |
 | HDF5 懒读取 (TB级) | PS-019 |
-| 电力/光伏建模 | PS-019, PS-021, PS-022, PS-023 |
-| 统计建模 (面板回归/弹性) | PS-022, PS-023 |
+| 电力/光伏建模 | PS-019, PS-021, PS-022, PS-023, PS-024 |
+| 统计建模 (面板回归/弹性) | PS-022, PS-023, PS-024 |
 | 分位数回归/尾部风险 | PS-023 |
+| 口径一致性检验 | PS-024 |
 | CMA 数据访问 | PF-012, PS-012 |

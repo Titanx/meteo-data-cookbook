@@ -34,6 +34,9 @@
 | **HRRR 2m 温度 (历史)** | **NWP 分析温度** | **ERCOT 56 光伏电站** | **2022-07 全月** | **`download_hrrr_temp_july2022.py`** | **`data/nsrdb/hrrr_t2m_2022-07.npz`** | **已完成** |
 | **USCRN subhourly** | **地面基准实测 (5min 辐照/气温)** | **德州 8 站** | **2022-07 全月** | **`download_uscrn_tx_july2022.py`** | **`data/uscrn/`** | **已完成** |
 | **WMO S2S 库** | **多中心延伸期回算** | **全球 (13 中心)** | **1981/1996 起 + 2015 起实时** | **`test_nsrdb_mrms_s2s.py`** | **—** | **调研完成, 待注册** |
+| **HRRR 2m 温度 (2025-26)** | **NWP 分析温度** | **ERCOT 141 光伏电站** | **2025-01-01 ~ 2026-09-06** | **`download_hrrr_temp_2025_2026.py`** | **`data/nsrdb/hrrr_t2m_2025_2026.npz`** | **已完成** |
+| **GEM 按年电站清单** | **光伏电站坐标/容量** | **ERCOT ≥100MW** | **2025/2026 快照 (141 座, 30.89 GW)** | **`match_nsrdb_ercot_solar_annual.py`** | **`data/nsrdb/ercot_solar_plants_pixels_{年}.csv`** | **已完成** |
+| **物理晴空反事实 (2025-26)** | **pvlib Solis 晴空出力** | **ERCOT 141 电站聚合** | **2025-01-01 ~ 2026-09-06 (小时)** | **`clearsky_counterfactual_2025_2026.py`** | **`data/nsrdb/pv_clearsky_hourly_2025_2026.csv`** | **已完成** |
 
 ## 数据量汇总
 
@@ -79,6 +82,7 @@
 | NSRDB+pvlib 光伏出力建模验证 | `output/nsrdb_pvlib_2022-07/nsrdb_pvlib_ercot_2022-07.html` | 小时r=0.9976, MAE 185MW(峰值1.9%), 月能量-2.1%; EIA-930时间戳为区间结束须-1h; pvlib角度参数是度数 | 2026-09-27 |
 | 光伏缺口×电价冲击推演 (PS-022) | `output/pv_event_price_impact_2022-07/pv_event_price_impact_ercot_2022-07.html` | 温度修复: HRRR实测温度使热浪正午偏差-327→+16MW, ILR 1.30, 全月MAE 174MW/能量+1.4%; USCRN验证NSRDB无热浪反演劣化(+10%水平差被标定吸收); 7骤降事件全云主导无弃光; 弹性β=+5.08%/GW(2025), 2026复验+5.43; 2022-07推演: 17事件/100.3GWh, RTM中位+11.0%/最大+25.0%(4.4GW), 热浪期25.6GWh | 2026-09-27 |
 | RTM 尾部尖峰弹性 (PS-023) | `output/price_tail_elasticity/ercot_rtm_tail_elasticity.html` | 15min口径抹平极端小时价格2.4x($3777→$1561)但q99不变→弹性估计无偏; 分位弹性2025单调升3.85→5.16%/GW、2026平坦→尾部放大不稳健; 原始尺度尾部冲击2.4x($1.0→$2.4/GW)但相对弹性更低(自洽); 凸性不成立(仅2025全样本t=2.6); 边际尖峰率随缺口反降(辛普森悖论, 尖峰主由需求/时段驱动); **高需求+5.84被推翻**(子样本法两年反向2025+5.84/2026+4.33, 交互项−1.95/−1.00); 2022-07分位情景P50+8.1%/P90+9.2%/P99+9.8%(最大+22.1%), PS-022均值口径+11.0%/+25.0%落上沿(未低估) | 2026-09-27 |
+| 缺口口径统一 (PS-024) | `output/shortfall_unification/ercot_shortfall_unification.html` | 2025/2026物理晴空反事实建成(141座30.89GW, 覆盖94.5%; HRRR 141站×14736h; GEM 2026-08版只到2025投产→2026比值1.133靠逐小时偏移吸收); **缺口量级差1.3~1.7x**(物理中位5.86/5.32GW vs 包络3.49/4.13GW); **弹性对口径不敏感**(物理OLS均值+5.60 vs 包络+5.26, 差0.34%/GW); **辛普森悖论归因被推翻**(物理口径下仍降2.0%→0.0%, 真因是天气组合负相关: 云致缺口↔降温低需求); 2022-07三口径收敛(P50+8.0~11.0%/最大+17.8~25.0%) | 2026-09-27 |
 
 ## 项目脚本索引
 
@@ -126,6 +130,8 @@
 | `download_hrrr_temp_july2022.py` | HRRR 2m 温度 56 电站 (温度链路修复) | Open-Meteo historical (ncep_hrrr_conus) | 无key, 744h×56站 |
 | `download_uscrn_tx_july2022.py` | USCRN 德州 8 站 5min 地面基准 | NOAA NCEI subhourly01 | CRNS0101-05-2022, 无表头 23 列 |
 | `download_nsrdb_uscrn_pixels_july2022.py` | USCRN 站点的 NSRDB 像素辐照提取 | nrel-pds-nsrdb S3 | 无key, 最近像素匹配 |
+| `download_hrrr_temp_2025_2026.py` | HRRR 2m 温度多年份下载 (多坐标批量) | Open-Meteo historical-forecast | 141 站 × 614 天, 20 站/批 |
+| `match_nsrdb_ercot_solar_annual.py` | GEM 按年 ERCOT 光伏清单 + NSRDB 像素匹配 | GEM 2026-08 + 像素索引 | `start-year ≤ 年`, ≥100MW |
 
 ### 分析脚本 (analysis/)
 
@@ -152,6 +158,11 @@
 | `calibrate_price_elasticity_tail.py` | RTM 尾部尖峰弹性标定 (分位回归+凸性+尾部概率+高需求交互+稳健性) | EIA-930 + GridStatus 15min RTM | price_elasticity_tail.csv |
 | `pv_event_price_impact_tail_2022-07.py` | 2022-07 分位情景推演 (P50/P90/P99 上浮) | 晴空反事实 CSV + 分位弹性 | pv_event_price_impact_tail_2022-07.csv |
 | `build_price_tail_report.py` | 生成尾部弹性 HTML 报告 | 标定 CSV + 事件 CSV + RTM | output/price_tail_elasticity/*.html |
+| `clearsky_counterfactual_2025_2026.py` | 2025/2026 物理晴空反事实 (pvlib Solis 同链路) | 电站清单 + HRRR npz | pv_clearsky_hourly_2025_2026.csv |
+| `build_physical_shortfall_2025_2026.py` | 逐小时偏移校准, 构造物理缺口 | 晴空反事实 + panel CSV | shortfall_physical_2025_2026.csv |
+| `compare_shortfall_definitions.py` | 两口径对比 (弹性/尾部概率/分箱尖峰率) | 两口径缺口 + 15min RTM | shortfall_definition_comparison.csv |
+| `pv_event_price_impact_physical_2022-07.py` | 统一口径的 2022-07 分位情景推演 | 2022 反事实 + 口径对比 CSV | pv_event_price_impact_physical_2022-07.csv |
+| `build_shortfall_unification_report.py` | 生成口径统一 HTML 报告 | 缺口/对比/推演 CSV | output/shortfall_unification/*.html |
 
 ## 关键配置
 
@@ -177,6 +188,6 @@
 | 联动分析：探空DCAPE × ERCOT电价 | 中 | 待定 | 探空DCAPE作为雷暴潜势指标，与电价波动关联 |
 | 联动分析：ASTER地形 × 闪电分布 | 低 | 待定 | 地形高程与GLM闪电空间分布关联 |
 | RTM 事件尾部建模 (稀缺定价 >$1000) | ~~低~~ 已完成 | 2026-09-27 | 已完成 → PS-023: 15min 口径 + 分位数回归 + 尾部概率 + 凸性检验; 高需求放大结论被推翻 |
-| 用物理晴空反事实统一缺口口径 | 中 | 待定 | PS-023 发现 P95 包络口径在低太阳高度角虚高, 致缺口与尖峰边际负相关; 宜改用 Solis 反事实统一 2025/2026 与 2022 两场景 |
+| 用物理晴空反事实统一缺口口径 | ~~中~~ 已完成 | 2026-09-27 | 已完成 → PS-024: 2025/2026 物理反事实建成, 弹性对口径不敏感(差 0.34 %/GW), 但**悖论归因被推翻**(非包络虚高, 属天气组合负相关) |
 | WMO S2S 库注册与回算获取 | 中 | 待定 | 注册 ECMWF/ECDS 账号, 拉取 ECMWF/NCEP 回算, 升级 PS-017 为多窗口统计 (PS-020) |
 | 延伸期预报精度多窗口重采样 | 低 | 待定 | 由单窗口扩为多窗口、多初始化 hindcast，附集合离散度置信带 (PS-017/PS-020) |
