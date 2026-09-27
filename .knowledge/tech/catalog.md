@@ -1,7 +1,7 @@
 # 技术知识清单（跨项目通用）
 
-> 最后更新: 2026-09-11
-> 总计: 28 条（全部 verified）
+> 最后更新: 2026-09-27
+> 总计: 34 条（33 verified + 1 draft）
 
 ## 最佳实践 (guidelines/)
 
@@ -46,6 +46,12 @@
 | PS-014 | ASTER 地形与 GLM 闪电分布联动分析流程 | verified | aster, gdem, wbd, glm, lightning, terrain, elevation, slope, water-body, correlation, ercot, texas, analysis, rasterio, matplotlib | architect, implement, analyze | 2026-09-09 |
 | PS-015 | GK2A (GEO-KOMPSAT-2A) AMI 卫星数据下载流程 | verified | gk2a, geo-kompsat-2a, ami, satellite, s3, aws, korea, east-asia, china, geos, netcdf, satpy, himawari, fy-4, cross-validation | architect, implement | 2026-09-11 |
 | PS-016 | GEM 电站数据库下载与 ERCOT 电价联动分析流程 | verified | gem, global-energy-monitor, power-plant, wind, solar, ercot, price, lmp, load-zone, correlation, capacity, storm, linkage-analysis, cross-validation | architect, implement, analyze | 2026-09-11 |
+| PS-017 | S2S 季节尺度预报获取与精度核验流程（EC46/SEAS5 vs GFS 10天） | verified | s2s, subseasonal, seasonal, ecmwf, ec46, seas5, gfs, ensemble, forecast-accuracy, lead-time, era5, verification, ercot, wind, precip, openmeteo | architect, implement, verify, analyze | 2026-09-16 |
+| PS-018 | MRMS 雷达定量降水 (QPE) 下载与 ERCOT 裁剪流程 | verified | mrms, radar, qpe, precipitation, noaa, s3, aws, anonymous, grib2, cfgrib, ercot, texas, multimission, near-realtime | architect, implement, verify, analyze | 2026-09-27 |
+| PS-019 | NSRDB 太阳辐照度数据 S3 懒读取与 ERCOT 像素定位流程 | verified | nsrdb, nrel, solar, irradiance, ghi, dni, dhi, goes, h5coro, h5py, fsspec, s3, aws, anonymous, lazy-read, hdf5, ercot, texas, pv | architect, implement, verify, analyze | 2026-09-27 |
+| PS-020 | WMO S2S 数据库获取路径（ECDS，多中心延伸期回算） | draft | s2s, wmo, subseasonal, reforecast, hindcast, ecds, ecmwf, ensemble, multi-model, lead-time, verification, openmeteo, ercot | architect, implement | 2026-09-27 |
+| PS-021 | NSRDB 辐照批量提取与 pvlib 光伏出力建模验证流程 | verified | nsrdb, pvlib, pvwatts, solar, ghi, dni, dhi, poa, single-axis, tracking, eia-930, ercot, validation, power-modeling, ilr, h5py, fsspec, chunked-extraction | architect, implement, verify, analyze | 2026-09-27 |
+| PS-022 | 光伏缺口 × 电价冲击推演流程（晴空反事实 + RTM 弹性标定） | verified | pv, solar, clearsky, counterfactual, shortfall, elasticity, rtm, price, panel-regression, hrrr, temperature, uscrn, ilr, eia-930, ercot, solis, event-attribution | implement, verify, analyze | 2026-09-27 |
 ## 参数清单
 
 | 文件 | 说明 | 条目数 | 最后更新 |
@@ -69,8 +75,9 @@
 | 数据源 | 相关条目 |
 |--------|---------|
 | Meteostat | [GL-005](guidelines/GL-005.md), [PF-004](pitfalls/PF-004.md) |
-| Open-Meteo | [GL-004](guidelines/GL-004.md) |
+| Open-Meteo | [GL-004](guidelines/GL-004.md), [PS-017](processes/PS-017.md), [PS-022](processes/PS-022.md) |
 | NASA POWER | [GL-006](guidelines/GL-006.md) |
+| USCRN | **[PS-022](processes/PS-022.md)** |
 | 怀俄明探空 | [GL-007](guidelines/GL-007.md), [PF-008](pitfalls/PF-008.md), [PF-009](pitfalls/PF-009.md), [PF-010](pitfalls/PF-010.md), [PS-008](processes/PS-008.md) |
 | Himawari | [PS-003](processes/PS-003.md) |
 | GOES | [PS-004](processes/PS-004.md) |
@@ -80,7 +87,10 @@
 | **ASTER GDEM/WBD** | **[PS-013](processes/PS-013.md)** |
 | **CMA 数据** | **[PF-012](pitfalls/PF-012.md)** |
 | SURFRAD | [PS-005](processes/PS-005.md) |
-| ERCOT | [PS-006](processes/PS-006.md), [PF-005](pitfalls/PF-005.md), [PS-007](processes/PS-007.md), [PS-016](processes/PS-016.md) |
+| **MRMS QPE** | **[PS-018](processes/PS-018.md)** |
+| **NSRDB** | **[PS-019](processes/PS-019.md), [PS-022](processes/PS-022.md)** |
+| **WMO S2S 库** | **[PS-020](processes/PS-020.md), PS-017** |
+| ERCOT | [PS-006](processes/PS-006.md), [PF-005](pitfalls/PF-005.md), [PS-007](processes/PS-007.md), [PS-016](processes/PS-016.md), [PS-022](processes/PS-022.md) |
 | **GEM 电站数据库** | **[PS-016](processes/PS-016.md)** |
 | **NEXRAD 雷达** | **[GL-008](guidelines/GL-008.md), [PF-011](pitfalls/PF-011.md), [PS-009](processes/PS-009.md)** |
 | **凭证安全** | **[GL-009](guidelines/GL-009.md)** |
@@ -89,10 +99,10 @@
 
 | 阶段 | 相关条目 |
 |------|---------|
-| 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PS-009, PS-010, PS-011, PS-012, PS-013, PF-005, PF-007, PF-011, PF-012, GL-008, GL-009 |
+| 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PS-009, PS-010, PS-011, PS-012, PS-013, PS-018, PS-019, PS-020, PF-005, PF-007, PF-011, PF-012, GL-008, GL-009 |
 | 实现开发 (implement) | 全部 |
-| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PS-007, PS-008, PS-009, PS-010, PS-013 |
-| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016 |
+| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PS-007, PS-008, PS-009, PS-010, PS-013, PS-018, PS-019, PS-022 |
+| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016, PS-017, PS-018, PS-019, PS-022 |
 | 调试修复 (debug) | PF-006 |
 
 ### 按通用技术
@@ -108,11 +118,15 @@
 | 统计检验 | PS-007 |
 | 反爬虫绕过 | PF-005 |
 | SSL 证书 | PF-008 |
-| 匿名 AWS S3 | PS-003, PS-004, PS-009, PF-011 |
+| 匿名 AWS S3 | PS-003, PS-004, PS-009, PS-018, PS-019, PF-011 |
 | GCP 公开数据集 | GL-008 |
 | HTTP API | GL-008, GL-004, GL-005 |
 | 雷达数据处理 | GL-008, PS-009, PF-011 |
 | Earthdata 认证 | GL-009, PS-010, PS-013, PF-012 |
 | 凭证安全 | GL-009, PF-012 |
 | 地形/水体数据 | PS-013 |
+| GRIB2 处理 | PS-018 |
+| HDF5 懒读取 (TB级) | PS-019 |
+| 电力/光伏建模 | PS-019, PS-021, PS-022 |
+| 统计建模 (面板回归/弹性) | PS-022 |
 | CMA 数据访问 | PF-012, PS-012 |

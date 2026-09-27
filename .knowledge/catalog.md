@@ -1,7 +1,7 @@
 # 气象知识全景目录
 
-> 最后更新: 2026-09-11
-> 总计: 28 条知识（全部 verified）
+> 最后更新: 2026-09-27
+> 总计: 34 条知识（33 verified + 1 draft）
 
 ## 统计概览
 
@@ -9,9 +9,9 @@
 |------|------|----------|
 | 最佳实践 (tech/guidelines/) | 6 | 6 |
 | 已知陷阱 (tech/pitfalls/) | 9 | 9 |
-| 技术流程 (tech/processes/) | 12 | 12 |
+| 技术流程 (tech/processes/) | 18 | 17 (PS-020 draft) |
 | 参数清单 (tech/) | 1 | 1 |
-| **合计** | **28** | **28** |
+| **合计** | **34** | **33** |
 
 ## 快速导航
 
@@ -27,14 +27,17 @@
 - **卫星数据**：葵花 8/9（Himawari）、GOES-16/18/19 静止气象卫星数据下载与真彩色合成
 - **雷达数据**：NEXRAD WSR-88D 天气雷达实时分块数据获取、RainViewer 全球拼图、GCP 公开数据集
 - **数值预报 (NWP)**：HRRR 3km CONUS、GFS/NAM/NBM 等模式预报数据，Open-Meteo API 匿名获取
+- **S2S 季节尺度预报**：ECMWF EC46/SEAS5 45 天~7 个月集合预报，Open-Meteo seasonal API，ERA5 逐时效核验；WMO S2S 数据库（ECDS）多中心回算
 - **再分析数据**：Open-Meteo API（ERA5 后端）、NASA POWER（MERRA-2 + CERES）使用
 - **探空数据**：怀俄明大学 WSGI 接口探空廓线数据下载与热力指数提取
 - **降水数据**：GPM IMERG 全球卫星降水产品（30 分钟/日/月，1998 年至今），NASA Earthdata 认证下载
+- **高分辨率降水**：MRMS 多雷达多传感器 QPE（1 km/小时，AWS S3 归档 2020-2023 + NCEP 官网实时），ERCOT 裁剪
+- **太阳辐照度**：NSRDB v3.2.2 GOES 版（5 min/2 km GHI/DNI/DHI），TB 级 HDF5 S3 懒读取（h5coro/h5py+fsspec），ERCOT 像素定位；分块批量提取 + pvlib PVWatts 出力建模 + EIA-930 验证（小时 r=0.998）
 - **电力市场**：ERCOT 电力市场数据获取（EIA API + GridStatus.io API）
 - **地表辐射**：SURFRAD 实测辐射数据下载与处理
 - **AWS Open Data**：NOAA 卫星/雷达数据通过 AWS S3 匿名访问
 - **地形数据**：ASTER GDEM v3 30m 数字高程模型 + ASTWBD 水体分类数据
-- **联动分析**：雷暴事件 × 电力市场联动分析
+- **联动分析**：雷暴事件 × 电力市场联动分析；光伏缺口 × 电价冲击推演（晴空反事实 + RTM 弹性标定，HRRR 温度修复 + USCRN 地面验证）
 - **电站数据库**：GEM/WRI 全球电站数据库（坐标、装机、业主），绕过注册的 CDN 直链
 - **数据处理**：satpy/pyresample 卫星数据处理、pandas 数据分析、线程池并行下载
 - **凭证安全**：netrc/.env 管理 API 凭证，禁止硬编码，.gitignore 防护
@@ -52,11 +55,11 @@
 │             │ GOES-19     │ NASA POWER   │GridStatus│(PS-009)│
 │ SURFRAD     │ (PS-004)    │ (GL-006)     │ (PS-006) │RainView│
 │ (PS-005)    │ GOES GLM    │              │          │(GL-008)│
-│ 怀俄明探空  │ (PS-011)    │              │雷暴联动  │ GCP   │
-│ (PS-008)    │ FY-4 LMI    │              │ (PS-007) │(GL-008)│
+│ 怀俄明探空  │ (PS-011)    │  MRMS QPE    │雷暴联动  │ GCP   │
+│ (PS-008)    │ FY-4 LMI    │  (PS-018)    │ (PS-007) │(GL-008)│
 │             │ (PS-012)    │              │          │       │
-│             │ IMERG降水   │  ASTER地形   │          │       │
-│             │ (PS-010)    │  (PS-013)    │          │       │
+│  NSRDB辐照  │ IMERG降水   │  ASTER地形   │          │       │
+│  (PS-019)   │ (PS-010)    │  (PS-013)    │          │       │
 └─────────────┴─────────────┴──────────────┴──────────┴───────┘
 ```
 
@@ -121,6 +124,36 @@ PS-016 GEM电站×电价  ────→  PS-006 ERCOT (电价/发电数据)
                            ├──→ PS-007 雷暴联动 (交叉方法)
                            ├──→ PF-005 反爬虫 (GEM CDN 绕过注册)
                            └──→ PF-006 时区问题 (多源对齐)
+                           │
+PS-017 S2S季节预报  ────→  GL-004 Open-Meteo (端点/模型)
+                           ├──→ PS-006 ERCOT (出力/电价链路)
+                           ├──→ PS-010 IMERG (降水实测交叉)
+                           ├──→ PS-018 MRMS (高分辨率降水核验基准)
+                           └──→ ERA5 再分析 (实测基准, GL-004/archive-api)
+                           │
+PS-018 MRMS QPE  ────────→  GL-008 雷达匿名获取 (同雷达体系)
+                           ├──→ PS-010 IMERG (1km vs 10km 互补)
+                           └──→ PS-007 雷暴联动 (极端降水核验)
+                           │
+PS-019 NSRDB 懒读取  ────→  PS-005 SURFRAD (实测验证基准)
+                           ├──→ GL-006 NASA POWER (同化对照)
+                           ├──→ PS-016 GEM (光伏电站坐标映射)
+                           └──→ PS-006 ERCOT (pvlib 出力链路)
+                           │
+PS-020 WMO S2S 库  ──────→  PS-017 (多窗口重采样的数据基础)
+                           └──→ GL-009 凭证安全 (ECDS API key)
+                           │
+PS-021 NSRDB×pvlib 出力  →  PS-019 (懒读取/像素定位前置)
+                           ├──→ PS-016 GEM (电站坐标映射)
+                           ├──→ PS-006 ERCOT (EIA-930 验证基准)
+                           └──→ PS-022 光伏缺口×电价 (下游推演)
+                           │
+PS-022 光伏缺口×电价  ──→  PS-021 (出力底模 + 温度修复前置)
+                           ├──→ PS-019 NSRDB (辐照提取)
+                           ├──→ PS-016 GEM (电站坐标)
+                           ├──→ PS-006 ERCOT (EIA-930/RTM 电价)
+                           ├──→ PS-017 S2S (季节预报辐照推广方向)
+                           └──→ PS-007 雷暴联动 (事件口径交叉)
 ```
 
 ## 变更历史
