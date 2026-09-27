@@ -78,6 +78,7 @@
 | 45天季节预报精度核验 | `seasonal_forecast_accuracy.html` | 45天风速MAE 1.49 vs GFS10天 1.30 km/h; 降水1.26 vs 0.26 mm(~5x); 降水误差事件型尖峰 | 2026-09-16 |
 | NSRDB+pvlib 光伏出力建模验证 | `output/nsrdb_pvlib_2022-07/nsrdb_pvlib_ercot_2022-07.html` | 小时r=0.9976, MAE 185MW(峰值1.9%), 月能量-2.1%; EIA-930时间戳为区间结束须-1h; pvlib角度参数是度数 | 2026-09-27 |
 | 光伏缺口×电价冲击推演 (PS-022) | `output/pv_event_price_impact_2022-07/pv_event_price_impact_ercot_2022-07.html` | 温度修复: HRRR实测温度使热浪正午偏差-327→+16MW, ILR 1.30, 全月MAE 174MW/能量+1.4%; USCRN验证NSRDB无热浪反演劣化(+10%水平差被标定吸收); 7骤降事件全云主导无弃光; 弹性β=+5.08%/GW(2025), 2026复验+5.43; 2022-07推演: 17事件/100.3GWh, RTM中位+11.0%/最大+25.0%(4.4GW), 热浪期25.6GWh | 2026-09-27 |
+| RTM 尾部尖峰弹性 (PS-023) | `output/price_tail_elasticity/ercot_rtm_tail_elasticity.html` | 15min口径抹平极端小时价格2.4x($3777→$1561)但q99不变→弹性估计无偏; 分位弹性2025单调升3.85→5.16%/GW、2026平坦→尾部放大不稳健; 原始尺度尾部冲击2.4x($1.0→$2.4/GW)但相对弹性更低(自洽); 凸性不成立(仅2025全样本t=2.6); 边际尖峰率随缺口反降(辛普森悖论, 尖峰主由需求/时段驱动); **高需求+5.84被推翻**(子样本法两年反向2025+5.84/2026+4.33, 交互项−1.95/−1.00); 2022-07分位情景P50+8.1%/P90+9.2%/P99+9.8%(最大+22.1%), PS-022均值口径+11.0%/+25.0%落上沿(未低估) | 2026-09-27 |
 
 ## 项目脚本索引
 
@@ -148,6 +149,9 @@
 | `calibrate_price_elasticity_2025.py` | RTM 缺口弹性面板标定 (2025/2026) | EIA-930 + GridStatus RTM | price_elasticity_2025.csv |
 | `pv_event_price_impact_2022-07.py` | 晴空反事实缺口×电价冲击推演主脚本 | 辐照 nc + HRRR npz + EIA CSV | 逐时反事实表 + 事件冲击 CSV |
 | `build_pv_event_price_report.py` | 生成缺口×电价冲击 HTML 报告 | 反事实/事件/弹性 CSV | output/pv_event_price_impact_2022-07/*.html |
+| `calibrate_price_elasticity_tail.py` | RTM 尾部尖峰弹性标定 (分位回归+凸性+尾部概率+高需求交互+稳健性) | EIA-930 + GridStatus 15min RTM | price_elasticity_tail.csv |
+| `pv_event_price_impact_tail_2022-07.py` | 2022-07 分位情景推演 (P50/P90/P99 上浮) | 晴空反事实 CSV + 分位弹性 | pv_event_price_impact_tail_2022-07.csv |
+| `build_price_tail_report.py` | 生成尾部弹性 HTML 报告 | 标定 CSV + 事件 CSV + RTM | output/price_tail_elasticity/*.html |
 
 ## 关键配置
 
@@ -172,6 +176,7 @@
 | 更新探空数据范围 | 低 | 滚动 | 按需下载新日期数据 |
 | 联动分析：探空DCAPE × ERCOT电价 | 中 | 待定 | 探空DCAPE作为雷暴潜势指标，与电价波动关联 |
 | 联动分析：ASTER地形 × 闪电分布 | 低 | 待定 | 地形高程与GLM闪电空间分布关联 |
-| RTM 事件尾部建模 (稀缺定价 >$1000) | 低 | 待定 | PS-022 β 为条件均值, 尾部需分位数/持续时间建模, 需 GridStatus RTM 多年样本 |
+| RTM 事件尾部建模 (稀缺定价 >$1000) | ~~低~~ 已完成 | 2026-09-27 | 已完成 → PS-023: 15min 口径 + 分位数回归 + 尾部概率 + 凸性检验; 高需求放大结论被推翻 |
+| 用物理晴空反事实统一缺口口径 | 中 | 待定 | PS-023 发现 P95 包络口径在低太阳高度角虚高, 致缺口与尖峰边际负相关; 宜改用 Solis 反事实统一 2025/2026 与 2022 两场景 |
 | WMO S2S 库注册与回算获取 | 中 | 待定 | 注册 ECMWF/ECDS 账号, 拉取 ECMWF/NCEP 回算, 升级 PS-017 为多窗口统计 (PS-020) |
 | 延伸期预报精度多窗口重采样 | 低 | 待定 | 由单窗口扩为多窗口、多初始化 hindcast，附集合离散度置信带 (PS-017/PS-020) |
