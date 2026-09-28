@@ -40,6 +40,10 @@
 | **物理晴空反事实 (2025-26)** | **pvlib Solis 晴空出力** | **ERCOT 141 电站聚合** | **2025-01-01 ~ 2026-09-06 (小时)** | **`clearsky_counterfactual_2025_2026.py`** | **`data/nsrdb/pv_clearsky_hourly_2025_2026.csv`** | **已完成** |
 | **GEM 风电清单 (按年)** | **风电场坐标/容量** | **ERCOT bbox (165 点位)** | **2025/2026 快照 (37.93 GW)** | **`prep_ercot_wind_fleet.py`** | **`data/gem/ercot_wind_plants_{年}.csv`** | **已完成** |
 | **HRRR 80m 风速 (2025-26)** | **NWP 轮毂高度风速** | **ERCOT 165 风电点位** | **2025-01-01 ~ 2026-09-06** | **`download_hrrr_wind_2025_2026.py`** | **`data/nsrdb/hrrr_wind80m_2025_2026.npz`** | **已完成** |
+| **OMIE 日前市场文件** | **电价 (ES+PT, 小时/15min)** | **伊比利亚** | **历史至今 (日文件, D-1 13:30发布)** | **`build_spain_market_survey_report.py`** | **无持久数据** | **已验证(免注册)** |
+| **PVGIS 5.3 API** | **逐小时辐照 G(i)+气温+风速** | **欧洲(SAHARA3)/全球(ERA5)** | **2005-2023** | **—** | **无持久数据** | **已验证(免注册)** |
+| **ESIOS API** | **实时分技术发电/需求/PVPC** | **西班牙** | **指标而异** | **—** | **—** | **待个人token(匿名403)** |
+| **ENTSO-E Transparency** | **泛欧分技术发电/负荷/日前价/风光预测** | **欧洲 bidding zones** | **2015-至今** | **—** | **—** | **待免费token** |
 
 ## 数据量汇总
 
@@ -90,6 +94,7 @@
 | 缺口日际/跨日持续 (PS-026) | `output/shortfall_duration_crossday/index.html` | **阈值敏感性**: 8~15GW下≥3h能量89~96%(多小时持续与阈值无关); **跨日持续时间溢价为负/不显著**(2025连阴序号−1.1%/天显著, 连阴后期价格走低=天气负相关日尺度重演); **危险云系(高缺×高需)日尺度常见但温和**: 占高缺日42%、价格仅1.2×良性($37vs$31)⇒持续时间不放大电价冲击, 尾部是特定极端小时×需求峰而非整个连阴云系 | 2026-09-28 |
 | 季节预报→缺口概率化 (PS-027) | `output/seasonal_shortfall_risk/index.html` | EC46/SEAS5 50成员辐照聚合→未来45天光伏缺口概率先验; **关键校准**: 季节逐日短波重度平滑致绝对τ阈值下缺日近乎0(伪结论), 改用历史τ分布(602天)Q25/Q10作轻缺/重缺相对阈值; 初始窗口(秋): τ中位0.68~0.76≈常年(near-normal), 轻缺日均~7%/重缺~2%, 无成员≥5天连阴, **"缺∧热"危险云系季节缺席**(峰值P~2%, 10/01后=0); 概率未校准欠发散, 只宜读风险排序 | 2026-09-28 |
 | 风电缺口×电价 (PS-028) | `output/wind_shortfall_elasticity/index.html` | 物理风功率链路: HRRR 80m+标准曲线(η=0.90), 165点位37.9GW, **r=0.956/能量比1.02/CF 0.355vs0.346**; **风光不对称(核心)**: 光伏缺口→电价 **+4.5~+5.7%/GW**(外生云缺), 风电"潜力−实际"缺口→ **−2.8~−3.3%/GW** 且**控实际风电后≈0**(内生弃风); 高缺口小时<$5负价占比13% vs 低缺口2%(6~7倍)+高风低需求夜间 ⇒ 缺口=供给过剩标记非缺电; **低风异常弹性 +7.4%/GW**(SE 0.17)才是风电的"天气供给缺口"类比物 ⇒ 不能把光伏弹性套到风电 | 2026-09-28 |
+| 西班牙市场数据调研 (PS-029) | `output/espana_esios_survey/index.html` | 实测: **OMIE免注册可用**(2024-04-29日均58.27€/MWh与公开报道吻合, MTU已由24→96点15min)、**PVGIS API免注册可用**(SARAH3 2005-2023逐小时)、**ESIOS匿名403需邮件token**; 西班牙=最极端高可再生市场(2025风21.6%+光18.4%, 负价2024年247h/2025年477~798h, 弃电1.6%→3.2%、2025-07峰值11%)⇒PS-028"缺口=内生弃风"的极端检验样本; **结构差异**: 西班牙分区+日前为主无ERCOT式RTM, "缺口→实时尖峰"须改口径; ⚠二手报道称4-29最高97.9(22h)与原始文件不符(实为08h 102.26) | 2026-09-28 |
 
 ## 项目脚本索引
 
@@ -161,6 +166,7 @@
 | `build_seasonal_risk_report.py` | 生成季节缺口风险 HTML 报告(τ轨迹/逐周/连阴/明细) | seasonal_shortfall_risk*.csv + streak | output/seasonal_shortfall_risk/index.html |
 | `model_wind_power_shortfall.py` | 风电缺口×电价: HRRR 80m→功率曲线→fleet潜力→缺口/低风异常→弹性(含机制检验A~F) | hrrr_wind80m npz + panel | wind_power_hourly / wind_shortfall / wind_elasticity csv |
 | `build_wind_shortfall_report.py` | 生成风电缺口×电价 HTML 报告(双斜率/时段/负价频率/弹性表) | wind_power_hourly + wind_elasticity | output/wind_shortfall_elasticity/index.html |
+| `build_spain_market_survey_report.py` | 西班牙市场数据调研报告(实时拉OMIE验证+数据源对比) | OMIE 公开文件 | output/espana_esios_survey/index.html |
 | `verify_temp_fix.py` | 温度参数化 vs HRRR 实测温度分窗对比 | 出力 CSV ×2 | 分窗指标表 (stdout) |
 | `ilr_sweep_heatwave.py` | ILR 四窗口扫描 (热浪/非热浪×正午/全月) | 辐照 nc + EIA CSV | 最优 ILR=1.30 |
 | `verify_nsrdb_vs_uscrn_july2022.py` | NSRDB×USCRN 交叉验证 (反演劣化排除) | USCRN CSV + NSRDB 提取 | nsrdb_uscrn_daily.csv |
