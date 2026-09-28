@@ -86,6 +86,7 @@
 | 缺口口径统一 (PS-024) | `output/shortfall_unification/ercot_shortfall_unification.html` | 2025/2026物理晴空反事实建成(141座30.89GW, 覆盖94.5%; HRRR 141站×14736h; GEM 2026-08版只到2025投产→2026比值1.133靠逐小时偏移吸收); **缺口量级差1.3~1.7x**(物理中位5.86/5.32GW vs 包络3.49/4.13GW); **弹性对口径不敏感**(物理OLS均值+5.60 vs 包络+5.26, 差0.34%/GW); **辛普森悖论归因被推翻**(物理口径下仍降2.0%→0.0%, 真因是天气组合负相关: 云致缺口↔降温低需求); 2022-07三口径收敛(P50+8.0~11.0%/最大+17.8~25.0%) | 2026-09-27 |
 | 缺口持续时间维度 (PS-025) | `output/shortfall_duration/index.html` | 恶劣缺口(≥12GW≈39%舰队)298事件; **多小时持续常态**(≥2h承98%、≥3h承92%、≥4h承85%能量; 单发1h仅16%; 最长连续11h填满白天; 单日最大286GWh); **持续时间溢价跨年不稳健**(2025事件第5h较第1h约+9%、Q99累积+0.38%/GWh; 2026无)⇒逐小时弹性×缺口外推未因时间维度低估; **日际连阴聚簇最长25~26天**(周级低日照气候型, 指向储能充足性) | 2026-09-28 |
 | 缺口日际/跨日持续 (PS-026) | `output/shortfall_duration_crossday/index.html` | **阈值敏感性**: 8~15GW下≥3h能量89~96%(多小时持续与阈值无关); **跨日持续时间溢价为负/不显著**(2025连阴序号−1.1%/天显著, 连阴后期价格走低=天气负相关日尺度重演); **危险云系(高缺×高需)日尺度常见但温和**: 占高缺日42%、价格仅1.2×良性($37vs$31)⇒持续时间不放大电价冲击, 尾部是特定极端小时×需求峰而非整个连阴云系 | 2026-09-28 |
+| 季节预报→缺口概率化 (PS-027) | `output/seasonal_shortfall_risk/index.html` | EC46/SEAS5 50成员辐照聚合→未来45天光伏缺口概率先验; **关键校准**: 季节逐日短波重度平滑致绝对τ阈值下缺日近乎0(伪结论), 改用历史τ分布(602天)Q25/Q10作轻缺/重缺相对阈值; 初始窗口(秋): τ中位0.68~0.76≈常年(near-normal), 轻缺日均~7%/重缺~2%, 无成员≥5天连阴, **"缺∧热"危险云系季节缺席**(峰值P~2%, 10/01后=0); 概率未校准欠发散, 只宜读风险排序 | 2026-09-28 |
 
 ## 项目脚本索引
 
@@ -147,10 +148,12 @@
 | `gem_ercot_deep_dive.py` | 发电×电价×事件三层深度分析 | GEM + ERCOT + EIA | HTML报告 + CSV |
 | `gem_storm_cross.py` | 雷暴×电站坐标空间交叉 | Meteostat + GEM | CSV |
 | `build_forecast_accuracy_summary.py` | 季节预报精度汇总统计(各段MAE/重叠区对比) | verif CSV | 汇总JSON + stdout |
+| `model_seasonal_shortfall_risk.py` | 季节预报50成员辐照→光伏缺口风险概率化(晴朗基准缓存+fleet加权+历史τ分布相对校准+连阴/危险组合) | seasonal JSON + 物理缺口CSV | seasonal_shortfall_risk*.csv + streak |
 | `rebuild_full_chart_arrays.py` | 重建完整逐lead误差数组(含GFS lead1-5) | series JSON | chart_arrays_full.json |
 | `nsrdb_pvlib_power.py` | NSRDB 辐照→pvlib PVWatts 出力→EIA-930 对比 | 辐照 nc + EIA CSV | 出力 CSV + 精度统计 |
 | `nsrdb_eia_comparison.py` | 模型 vs 实际深入对比(昼夜/日能量/爬坡/事件日) | 出力 CSV | 对比摘要 md |
 | `build_nsrdb_pvlib_report.py` | 生成 NSRDB+pvlib 验证 HTML 报告 | 出力 CSV + 辐照 nc | output/nsrdb_pvlib_2022-07/*.html |
+| `build_seasonal_risk_report.py` | 生成季节缺口风险 HTML 报告(τ轨迹/逐周/连阴/明细) | seasonal_shortfall_risk*.csv + streak | output/seasonal_shortfall_risk/index.html |
 | `verify_temp_fix.py` | 温度参数化 vs HRRR 实测温度分窗对比 | 出力 CSV ×2 | 分窗指标表 (stdout) |
 | `ilr_sweep_heatwave.py` | ILR 四窗口扫描 (热浪/非热浪×正午/全月) | 辐照 nc + EIA CSV | 最优 ILR=1.30 |
 | `verify_nsrdb_vs_uscrn_july2022.py` | NSRDB×USCRN 交叉验证 (反演劣化排除) | USCRN CSV + NSRDB 提取 | nsrdb_uscrn_daily.csv |
