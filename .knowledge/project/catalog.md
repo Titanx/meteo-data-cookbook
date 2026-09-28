@@ -38,6 +38,8 @@
 | **HRRR 2m 温度 (2025-26)** | **NWP 分析温度** | **ERCOT 141 光伏电站** | **2025-01-01 ~ 2026-09-06** | **`download_hrrr_temp_2025_2026.py`** | **`data/nsrdb/hrrr_t2m_2025_2026.npz`** | **已完成** |
 | **GEM 按年电站清单** | **光伏电站坐标/容量** | **ERCOT ≥100MW** | **2025/2026 快照 (141 座, 30.89 GW)** | **`match_nsrdb_ercot_solar_annual.py`** | **`data/nsrdb/ercot_solar_plants_pixels_{年}.csv`** | **已完成** |
 | **物理晴空反事实 (2025-26)** | **pvlib Solis 晴空出力** | **ERCOT 141 电站聚合** | **2025-01-01 ~ 2026-09-06 (小时)** | **`clearsky_counterfactual_2025_2026.py`** | **`data/nsrdb/pv_clearsky_hourly_2025_2026.csv`** | **已完成** |
+| **GEM 风电清单 (按年)** | **风电场坐标/容量** | **ERCOT bbox (165 点位)** | **2025/2026 快照 (37.93 GW)** | **`prep_ercot_wind_fleet.py`** | **`data/gem/ercot_wind_plants_{年}.csv`** | **已完成** |
+| **HRRR 80m 风速 (2025-26)** | **NWP 轮毂高度风速** | **ERCOT 165 风电点位** | **2025-01-01 ~ 2026-09-06** | **`download_hrrr_wind_2025_2026.py`** | **`data/nsrdb/hrrr_wind80m_2025_2026.npz`** | **已完成** |
 
 ## 数据量汇总
 
@@ -87,6 +89,7 @@
 | 缺口持续时间维度 (PS-025) | `output/shortfall_duration/index.html` | 恶劣缺口(≥12GW≈39%舰队)298事件; **多小时持续常态**(≥2h承98%、≥3h承92%、≥4h承85%能量; 单发1h仅16%; 最长连续11h填满白天; 单日最大286GWh); **持续时间溢价跨年不稳健**(2025事件第5h较第1h约+9%、Q99累积+0.38%/GWh; 2026无)⇒逐小时弹性×缺口外推未因时间维度低估; **日际连阴聚簇最长25~26天**(周级低日照气候型, 指向储能充足性) | 2026-09-28 |
 | 缺口日际/跨日持续 (PS-026) | `output/shortfall_duration_crossday/index.html` | **阈值敏感性**: 8~15GW下≥3h能量89~96%(多小时持续与阈值无关); **跨日持续时间溢价为负/不显著**(2025连阴序号−1.1%/天显著, 连阴后期价格走低=天气负相关日尺度重演); **危险云系(高缺×高需)日尺度常见但温和**: 占高缺日42%、价格仅1.2×良性($37vs$31)⇒持续时间不放大电价冲击, 尾部是特定极端小时×需求峰而非整个连阴云系 | 2026-09-28 |
 | 季节预报→缺口概率化 (PS-027) | `output/seasonal_shortfall_risk/index.html` | EC46/SEAS5 50成员辐照聚合→未来45天光伏缺口概率先验; **关键校准**: 季节逐日短波重度平滑致绝对τ阈值下缺日近乎0(伪结论), 改用历史τ分布(602天)Q25/Q10作轻缺/重缺相对阈值; 初始窗口(秋): τ中位0.68~0.76≈常年(near-normal), 轻缺日均~7%/重缺~2%, 无成员≥5天连阴, **"缺∧热"危险云系季节缺席**(峰值P~2%, 10/01后=0); 概率未校准欠发散, 只宜读风险排序 | 2026-09-28 |
+| 风电缺口×电价 (PS-028) | `output/wind_shortfall_elasticity/index.html` | 物理风功率链路: HRRR 80m+标准曲线(η=0.90), 165点位37.9GW, **r=0.956/能量比1.02/CF 0.355vs0.346**; **风光不对称(核心)**: 光伏缺口→电价 **+4.5~+5.7%/GW**(外生云缺), 风电"潜力−实际"缺口→ **−2.8~−3.3%/GW** 且**控实际风电后≈0**(内生弃风); 高缺口小时<$5负价占比13% vs 低缺口2%(6~7倍)+高风低需求夜间 ⇒ 缺口=供给过剩标记非缺电; **低风异常弹性 +7.4%/GW**(SE 0.17)才是风电的"天气供给缺口"类比物 ⇒ 不能把光伏弹性套到风电 | 2026-09-28 |
 
 ## 项目脚本索引
 
@@ -123,6 +126,8 @@
 | `download_aster_gdem.py` | ASTER GDEM v3 + ASTWBD 地形/水体 | NASA LP DAAC (Earthdata) | netrc 认证 |
 | `download_seasonal_forecast.py` | Open-Meteo 45天集合预报下载(6站,含50成员) | Open-Meteo seasonal | 无key |
 | `verify_seasonal_vs_gfs.py` | 45天预报 vs ERA5/GFS10天 逐lead误差 | Open-Meteo seasonal+archive+historical | 无key |
+| `prep_ercot_wind_fleet.py` | GEM 风电→ERCOT 点位清单(按年, 0.1°去重聚合) | GEM wind 2026-08 | 165 点位 37.9 GW |
+| `download_hrrr_wind_2025_2026.py` | HRRR 80m 风速+2m 气温批量下载(165 点位) | Open-Meteo historical-forecast | 无key, 14,736h |
 | `test_cma_api.py` | CMA data.cma.cn API 连接测试 | data.cma.cn | 需CMA账号 |
 | `test_nsrdb_mrms_s2s.py` | 三源连通性探测 (NSRDB/MRMS/S2S) | AWS S3 + ECDS | 无key, 匿名S3 |
 | `test_nsrdb_h5coro.py` | NSRDB h5coro 部分读取 + 日循环量纲验证 | nrel-pds-nsrdb S3 | 无key, 懒读取 |
@@ -154,6 +159,8 @@
 | `nsrdb_eia_comparison.py` | 模型 vs 实际深入对比(昼夜/日能量/爬坡/事件日) | 出力 CSV | 对比摘要 md |
 | `build_nsrdb_pvlib_report.py` | 生成 NSRDB+pvlib 验证 HTML 报告 | 出力 CSV + 辐照 nc | output/nsrdb_pvlib_2022-07/*.html |
 | `build_seasonal_risk_report.py` | 生成季节缺口风险 HTML 报告(τ轨迹/逐周/连阴/明细) | seasonal_shortfall_risk*.csv + streak | output/seasonal_shortfall_risk/index.html |
+| `model_wind_power_shortfall.py` | 风电缺口×电价: HRRR 80m→功率曲线→fleet潜力→缺口/低风异常→弹性(含机制检验A~F) | hrrr_wind80m npz + panel | wind_power_hourly / wind_shortfall / wind_elasticity csv |
+| `build_wind_shortfall_report.py` | 生成风电缺口×电价 HTML 报告(双斜率/时段/负价频率/弹性表) | wind_power_hourly + wind_elasticity | output/wind_shortfall_elasticity/index.html |
 | `verify_temp_fix.py` | 温度参数化 vs HRRR 实测温度分窗对比 | 出力 CSV ×2 | 分窗指标表 (stdout) |
 | `ilr_sweep_heatwave.py` | ILR 四窗口扫描 (热浪/非热浪×正午/全月) | 辐照 nc + EIA CSV | 最优 ILR=1.30 |
 | `verify_nsrdb_vs_uscrn_july2022.py` | NSRDB×USCRN 交叉验证 (反演劣化排除) | USCRN CSV + NSRDB 提取 | nsrdb_uscrn_daily.csv |
