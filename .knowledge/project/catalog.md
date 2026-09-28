@@ -97,6 +97,7 @@
 | 风电缺口×电价 (PS-028) | `output/wind_shortfall_elasticity/index.html` | 物理风功率链路: HRRR 80m+标准曲线(η=0.90), 165点位37.9GW, **r=0.956/能量比1.02/CF 0.355vs0.346**; **风光不对称(核心)**: 光伏缺口→电价 **+4.5~+5.7%/GW**(外生云缺), 风电"潜力−实际"缺口→ **−2.8~−3.3%/GW** 且**控实际风电后≈0**(内生弃风); 高缺口小时<$5负价占比13% vs 低缺口2%(6~7倍)+高风低需求夜间 ⇒ 缺口=供给过剩标记非缺电; **低风异常弹性 +7.4%/GW**(SE 0.17)才是风电的"天气供给缺口"类比物 ⇒ 不能把光伏弹性套到风电 | 2026-09-28 |
 | 西班牙市场数据调研 (PS-029) | `output/espana_esios_survey/index.html` | 实测: **OMIE免注册可用**(2024-04-29日均58.27€/MWh与公开报道吻合, MTU已由24→96点15min)、**PVGIS API免注册可用**(SARAH3 2005-2023逐小时)、**ESIOS匿名403需邮件token**; 西班牙=最极端高可再生市场(2025风21.6%+光18.4%, 负价2024年247h/2025年477~798h, 弃电1.6%→3.2%、2025-07峰值11%)⇒PS-028"缺口=内生弃风"的极端检验样本; **结构差异**: 西班牙分区+日前为主无ERCOT式RTM, "缺口→实时尖峰"须改口径; ⚠二手报道称4-29最高97.9(22h)与原始文件不符(实为08h 102.26) | 2026-09-28 |
 | 西班牙光伏最小链路 (PS-030) | `output/spain_minchain/index.html` | 全免注册复刻 pvlib 链路(GEM+NASA POWER+Energy-Charts/OMIE): 120点/26.65GW, **r=0.9845/标定后年能量比0.979**(潜力39.6 vs 实际40.4 TWh), CF 0.170vs0.173, 月比0.878-1.197; **核心: ERCOT 标定参数不可移植** — ILR 1.30→高估50%(比值1.496), 西班牙需 **ILR≈0.85**; 电价"光伏水平−2.52%/GW"与ERCOT −4.9 同号; 缺口系数(−53.7)是共线性伪象不可解读; 2023无负价+伊比利亚例外机制 ⇒ 弹性仅方向参考 | 2026-09-28 |
+| 西班牙光伏多年市场区间对比 (PS-031) | `output/spain_regime/index.html` | 同链路跑 2023/2024/2025: 装机26.6→31.3GW, **负价小时 0→247→544**(2024与公开统计完全一致), 标定ILR 0.85→0.95→1.05(仍远低于ERCOT 1.30); **核心: 高缺口小时负价频率 0%→27.6%→55.5%**(低缺口仅0~0.2%)+高缺口组负荷更低 ⇒ 缺口=内生过剩标记(与PS-028 ERCOT风电同构); **同一市场晴空缺口弹性恒正(+1.6~+2.8) vs 天气缺口恒负(−6.4~−0.1)** ⇒ 升级PS-028判据: 决定缺口符号的是**成因(外生供给损失 vs 内生供给过剩)而非电源类型**; 光伏水平弹性 −3.42→−4.86€/MWh per GW 随渗透率增强 | 2026-09-28 |
 
 ## 项目脚本索引
 
@@ -136,6 +137,8 @@
 | `prep_ercot_wind_fleet.py` | GEM 风电→ERCOT 点位清单(按年, 0.1°去重聚合) | GEM wind 2026-08 | 165 点位 37.9 GW |
 | `prep_spain_pv_fleet.py` | GEM 光伏→西班牙采样点(按年, 网格聚合) | GEM solar 2026-08 | 212 点位 27.66 GW |
 | `download_spain_data.py` | 西班牙三源下载(NASA POWER 辐照 + PVGIS 校验 + Energy-Charts 发电/电价) | NASA POWER / PVGIS / Energy-Charts | 全免注册 |
+| `prep_spain_pv_fleet_multi.py` | GEM 光伏→西班牙多点位多年份容量清单(按年回推) | GEM solar 2026-08 | 120 点位, 2023/24/25 各 ~96% 覆盖 |
+| `download_spain_data_multi.py` | 西班牙三年数据下载(NASA POWER + Energy-Charts) | NASA POWER / Energy-Charts | 全免注册, 2023-2025 |
 | `download_hrrr_wind_2025_2026.py` | HRRR 80m 风速+2m 气温批量下载(165 点位) | Open-Meteo historical-forecast | 无key, 14,736h |
 | `test_cma_api.py` | CMA data.cma.cn API 连接测试 | data.cma.cn | 需CMA账号 |
 | `test_nsrdb_mrms_s2s.py` | 三源连通性探测 (NSRDB/MRMS/S2S) | AWS S3 + ECDS | 无key, 匿名S3 |
@@ -173,6 +176,8 @@
 | `build_spain_market_survey_report.py` | 西班牙市场数据调研报告(实时拉OMIE验证+数据源对比) | OMIE 公开文件 | output/espana_esios_survey/index.html |
 | `model_spain_pv_power.py` | 西班牙光伏链路: NASA POWER→pvlib跟踪→fleet潜力→ILR标定→缺口→电价弹性 | nasa_power npz + energy_charts | data/spain/*.csv |
 | `build_spain_minchain_report.py` | 西班牙最小链路 HTML 报告(月能量/ILR曲线/价格-出力) | data/spain/*.csv | output/spain_minchain/index.html |
+| `model_spain_pv_regime.py` | 西班牙光伏多年市场区间: 逐年ILR标定→缺口/负价机制→晴空vs天气缺口弹性 | nasa_power multi npz + energy_charts | data/spain/spain_regime_*.csv |
+| `build_spain_regime_report.py` | 西班牙多年对比 HTML 报告(负价/机制/弹性) | spain_regime_*.csv | output/spain_regime/index.html |
 | `verify_temp_fix.py` | 温度参数化 vs HRRR 实测温度分窗对比 | 出力 CSV ×2 | 分窗指标表 (stdout) |
 | `ilr_sweep_heatwave.py` | ILR 四窗口扫描 (热浪/非热浪×正午/全月) | 辐照 nc + EIA CSV | 最优 ILR=1.30 |
 | `verify_nsrdb_vs_uscrn_july2022.py` | NSRDB×USCRN 交叉验证 (反演劣化排除) | USCRN CSV + NSRDB 提取 | nsrdb_uscrn_daily.csv |
