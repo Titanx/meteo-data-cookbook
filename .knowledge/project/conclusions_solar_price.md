@@ -1,7 +1,7 @@
 # 项目结论总览：光伏缺口 × 电价冲击链路
 
 > 最后更新: 2026-09-28
-> 覆盖条目: PS-021 → PS-022 → PS-023 → PS-024 → **PS-025/PS-026（持续时间维度：小时内+跨日）** → **PS-027（季节预报→缺口概率化）** → **PS-028（风电对照：风光不对称）** → **PS-029/PS-030/PS-031（西班牙外部市场：跨市场标定 + 缺口成因判据升级）**
+> 覆盖条目: PS-021 → PS-022 → PS-023 → PS-024 → **PS-025/PS-026（持续时间维度：小时内+跨日）** → **PS-027（季节预报→缺口概率化）** → **PS-028（风电对照：风光不对称）** → **PS-029/PS-030/PS-031（西班牙外部市场：跨市场标定 + 缺口成因判据升级）** → **PS-032（判据可逆性检验：外生正号不稳健，内生负号稳健）**
 > 一句话结论: ERCOT 光伏缺口对 RTM 电价的条件均值弹性约 **+5.3 %/GW**（区间 +3.5~+5.7），
 > 该结论对**缺口定义**、**评估口径**（均值/分位）、**样本年份**、**缺口持续时间**（小时内+跨日）四重变换均稳健；
 > 2022-07 全月 44 个缺口事件小时（100.3 GWh）对应 RTM 中位上浮 **+8~+11%**、
@@ -113,6 +113,23 @@ GEM 电站数据库 ──→ NSRDB 像素匹配 ──→ 辐照提取 ──�
   - **内生供给过剩**（弃光/弃风、资源充沛但需求低）→ 供给过剩标记 → 电价 **↓**
 - ⇒ "光伏 +5 / 风电 −3"的**风光不对称是表象**；把风电的"低风异常"（+7.4 %/GW）与光伏的"晴空缺口"（+5.3 %/GW）并列，二者才是**同源的"外生天气缺口"**。**跨技术与跨市场引用弹性前，必须先判定缺口成因。**
 
+### 2.7 判据的可逆性与边界（PS-032 检验）
+
+在**同一设定**下把 PS-031 判据放进 **6 个「市场 × 技术 × 成因」格子**（ERCOT 光伏/风电 × 外生/内生，西班牙光伏 × 外生/内生）：
+
+| 市场·技术 | 成因 | 缺口单独 (log %/GW) | 控制出力水平后 | corr(缺口,水平) |
+|---|---|---|---|---|
+| ERCOT 光伏 | 外生 | **+6.30** | −2.32（反号） | +0.04 |
+| ERCOT 光伏 | 内生 | **−5.94** | −8.24（保留） | +0.01 |
+| ERCOT 风电 | 外生 | **+8.05** | +0.74（塌缩） | −0.70 |
+| ERCOT 风电 | 内生 | **−4.31** | −0.97（保留） | +0.29 |
+| 西班牙 光伏 | 外生 | **+1.78** | −5.59（反号） | +0.33 |
+| 西班牙 光伏 | 内生 | **−27.73** | −28.14（保留） | +0.33 |
+
+- **成立的部分（方向）**：缺口单列时**外生全正、内生全负**；同一技术（光伏）跨市场、同一市场（ERCOT）跨技术**都同时出现两种符号** ⇒ 符号随**成因**变、不随**电源**变。PS-032 用 NASA POWER 全天候辐照 + pvlib **补齐了 ERCOT 光伏的内生缺口**（136 点/30.89 GW，标定 ILR=1.30 与 PS-021 一致，逐时 r=0.976/0.980），使 ERCOT 单市场 2×2 齐备。
+- **边界（可逆性有保留）**：控制该技术**出力水平**后，**外生缺口 6 个估计中 5 个转负**（风电低风异常与水平 corr=−0.70，几近同义），其正号本质是"出力↓→电价↑"的镜像；**内生缺口 6 个估计全部保留负号**，且与水平近乎正交（ERCOT 光伏 corr≈0）。
+- ⇒ 判据中**唯一设定稳健、跨市场跨技术可复现**的是 **"内生缺口（潜力−实际）→ 负"**；**"外生缺口 → 正"依赖不控制水平，不宜当作独立成因通道**。引用缺口弹性必须同时声明口径与设定（是否控制水平）。
+
 ## 3. 已修正的结论（含对前序条目的更正）
 
 ### 3.1 PS-022 的"高需求区弹性 +5.84 %/GW"不成立（PS-023 修正）
@@ -169,4 +186,5 @@ GEM 电站数据库 ──→ NSRDB 像素匹配 ──→ 辐照提取 ──�
 | 弹性标定 | `calibrate_price_elasticity_2025.py`、`calibrate_price_elasticity_tail.py`、`compare_shortfall_definitions.py` |
 | 报告 | `output/nsrdb_pvlib_2022-07/`、`output/pv_event_price_impact_2022-07/`、`output/price_tail_elasticity/`、`output/shortfall_unification/` |
 | 西班牙跨市场 | `prep_spain_pv_fleet{,_multi}.py`、`download_spain_data{,_multi}.py`、`model_spain_pv_{power,regime}.py`、`build_spain_{minchain,regime}_report.py` → `output/spain_minchain/`、`output/spain_regime/` |
-| 流程文档 | [PS-021](../tech/processes/PS-021.md)、[PS-022](../tech/processes/PS-022.md)、[PS-023](../tech/processes/PS-023.md)、[PS-024](../tech/processes/PS-024.md)、[PS-028](../tech/processes/PS-028.md)、[PS-030](../tech/processes/PS-030.md)、[PS-031](../tech/processes/PS-031.md) |
+| 判据可逆性 | `download_nasa_power_ercot_pv.py`、`build_ercot_pv_potential.py`、`reversibility_test_shortfall.py`、`build_reversibility_report.py` → `output/reversibility_shortfall/` |
+| 流程文档 | [PS-021](../tech/processes/PS-021.md)、[PS-022](../tech/processes/PS-022.md)、[PS-023](../tech/processes/PS-023.md)、[PS-024](../tech/processes/PS-024.md)、[PS-028](../tech/processes/PS-028.md)、[PS-030](../tech/processes/PS-030.md)、[PS-031](../tech/processes/PS-031.md)、[PS-032](../tech/processes/PS-032.md) |

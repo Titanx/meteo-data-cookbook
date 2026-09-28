@@ -98,6 +98,7 @@
 | 西班牙市场数据调研 (PS-029) | `output/espana_esios_survey/index.html` | 实测: **OMIE免注册可用**(2024-04-29日均58.27€/MWh与公开报道吻合, MTU已由24→96点15min)、**PVGIS API免注册可用**(SARAH3 2005-2023逐小时)、**ESIOS匿名403需邮件token**; 西班牙=最极端高可再生市场(2025风21.6%+光18.4%, 负价2024年247h/2025年477~798h, 弃电1.6%→3.2%、2025-07峰值11%)⇒PS-028"缺口=内生弃风"的极端检验样本; **结构差异**: 西班牙分区+日前为主无ERCOT式RTM, "缺口→实时尖峰"须改口径; ⚠二手报道称4-29最高97.9(22h)与原始文件不符(实为08h 102.26) | 2026-09-28 |
 | 西班牙光伏最小链路 (PS-030) | `output/spain_minchain/index.html` | 全免注册复刻 pvlib 链路(GEM+NASA POWER+Energy-Charts/OMIE): 120点/26.65GW, **r=0.9845/标定后年能量比0.979**(潜力39.6 vs 实际40.4 TWh), CF 0.170vs0.173, 月比0.878-1.197; **核心: ERCOT 标定参数不可移植** — ILR 1.30→高估50%(比值1.496), 西班牙需 **ILR≈0.85**; 电价"光伏水平−2.52%/GW"与ERCOT −4.9 同号; 缺口系数(−53.7)是共线性伪象不可解读; 2023无负价+伊比利亚例外机制 ⇒ 弹性仅方向参考 | 2026-09-28 |
 | 西班牙光伏多年市场区间对比 (PS-031) | `output/spain_regime/index.html` | 同链路跑 2023/2024/2025: 装机26.6→31.3GW, **负价小时 0→247→544**(2024与公开统计完全一致), 标定ILR 0.85→0.95→1.05(仍远低于ERCOT 1.30); **核心: 高缺口小时负价频率 0%→27.6%→55.5%**(低缺口仅0~0.2%)+高缺口组负荷更低 ⇒ 缺口=内生过剩标记(与PS-028 ERCOT风电同构); **同一市场晴空缺口弹性恒正(+1.6~+2.8) vs 天气缺口恒负(−6.4~−0.1)** ⇒ 升级PS-028判据: 决定缺口符号的是**成因(外生供给损失 vs 内生供给过剩)而非电源类型**; 光伏水平弹性 −3.42→−4.86€/MWh per GW 随渗透率增强 | 2026-09-28 |
+| 缺口成因判据可逆性检验 (PS-032) | `output/reversibility_shortfall/index.html` | 把PS-031判据放进**6个「市场×技术×成因」格子**做双向检验: **缺口单独时外生全正(+1.8~+8.1%/GW)、内生全负(−4.3~−27.7%/GW)** ⇒ 符号随成因变不随电源变(同市场内光伏/风电各两号, 同技术光伏跨市场两号); **补齐ERCOT光伏内生缺口**(新增 NASA POWER全天候辐照+pvlib重建潜力, 136点/30.89GW, 标定ILR 1.30与PS-021一致, r=0.976/0.980); **可逆性边界**: 控制出力水平后外生6估计中5个转负(正号只是"出力↓→电价↑"镜像, 风电低风异常corr−0.70), **仅"内生缺口→负"设定稳健**且与水平近正交(ERCOT光伏corr≈0); ⚠NASA POWER hourly默认LST需显式`time-standard=UTC`(否则r从0.98塌到0.31) | 2026-09-28 |
 
 ## 项目脚本索引
 
@@ -139,6 +140,7 @@
 | `download_spain_data.py` | 西班牙三源下载(NASA POWER 辐照 + PVGIS 校验 + Energy-Charts 发电/电价) | NASA POWER / PVGIS / Energy-Charts | 全免注册 |
 | `prep_spain_pv_fleet_multi.py` | GEM 光伏→西班牙多点位多年份容量清单(按年回推) | GEM solar 2026-08 | 120 点位, 2023/24/25 各 ~96% 覆盖 |
 | `download_spain_data_multi.py` | 西班牙三年数据下载(NASA POWER + Energy-Charts) | NASA POWER / Energy-Charts | 全免注册, 2023-2025 |
+| `download_nasa_power_ercot_pv.py` | ERCOT 光伏 136 点位 NASA POWER 逐时辐照/气温 | NASA POWER hourly | ⚠须 `time-standard=UTC`(默认LST), 2025-01~2026-09 |
 | `download_hrrr_wind_2025_2026.py` | HRRR 80m 风速+2m 气温批量下载(165 点位) | Open-Meteo historical-forecast | 无key, 14,736h |
 | `test_cma_api.py` | CMA data.cma.cn API 连接测试 | data.cma.cn | 需CMA账号 |
 | `test_nsrdb_mrms_s2s.py` | 三源连通性探测 (NSRDB/MRMS/S2S) | AWS S3 + ECDS | 无key, 匿名S3 |
@@ -178,6 +180,9 @@
 | `build_spain_minchain_report.py` | 西班牙最小链路 HTML 报告(月能量/ILR曲线/价格-出力) | data/spain/*.csv | output/spain_minchain/index.html |
 | `model_spain_pv_regime.py` | 西班牙光伏多年市场区间: 逐年ILR标定→缺口/负价机制→晴空vs天气缺口弹性 | nasa_power multi npz + energy_charts | data/spain/spain_regime_*.csv |
 | `build_spain_regime_report.py` | 西班牙多年对比 HTML 报告(负价/机制/弹性) | spain_regime_*.csv | output/spain_regime/index.html |
+| `build_ercot_pv_potential.py` | ERCOT 光伏全天候潜力重建(NASA POWER → pvlib → PVWatts, ILR逐年标定) | nasa_power npz + panel | ercot_pv_potential_2025_2026.csv |
+| `reversibility_test_shortfall.py` | 缺口成因判据可逆性检验(6格 × ln/水平 × 单独/+水平) | panels + spain_regime_hourly | reversibility_matrix.csv |
+| `build_reversibility_report.py` | 可逆性检验 HTML 报告(矩阵/双斜率/边界) | reversibility_matrix.csv | output/reversibility_shortfall/index.html |
 | `verify_temp_fix.py` | 温度参数化 vs HRRR 实测温度分窗对比 | 出力 CSV ×2 | 分窗指标表 (stdout) |
 | `ilr_sweep_heatwave.py` | ILR 四窗口扫描 (热浪/非热浪×正午/全月) | 辐照 nc + EIA CSV | 最优 ILR=1.30 |
 | `verify_nsrdb_vs_uscrn_july2022.py` | NSRDB×USCRN 交叉验证 (反演劣化排除) | USCRN CSV + NSRDB 提取 | nsrdb_uscrn_daily.csv |
