@@ -134,7 +134,10 @@
 | `download_ercot_spp.py` | ERCOT 电价/结算点 | GridStatus.io API | API key: $env:GRIDSTATUS_API_KEY |
 | `goes19_pipeline.py` | GOES-19 卫星云图 | AWS S3 noaa-goes19 | `--region fulldisk/namerica/samerica` |
 | `himawari9_segment_pipeline.py` | 葵花9 卫星云图 | AWS S3 noaa-himawari9 | 分段下载 S0210+S0310 |
+| `test_himawari.py` | 葵花数据基本测试 | JMA / AWS S3 | 无key |
+| `test_himawari_s3.py` | AWS S3 匿名访问测试 | AWS S3 noaa-himawari* | UNSIGNED |
 | `surfrad_pipeline.py` | SURFRAD 辐射数据 | NOAA GML | `--days 7` |
+| `surfrad_assessment.py` | SURFRAD 可用性评估 | NOAA GML | 站点/字段盘点 |
 | `test_openmeteo.py` | Open-Meteo API 测试 | Open-Meteo | 无key |
 | `test_meteostat.py` | Meteostat 单站测试 | Meteostat | 无key |
 | `test_nasa_power.py` | NASA POWER 测试 | NASA POWER | 无key |
@@ -142,6 +145,12 @@
 | `download_china_airports_2026.py` | 中国46机场2026年 | Meteostat | ICAO列表 |
 | `download_east_southeast_asia_2025_2026.py` | 东亚东南亚115机场 | Meteostat | 16国ICAO |
 | `download_americas_airports_2025_2026.py` | 美洲85机场 | Meteostat | 20国ICAO |
+| `download_east_china_airports_2026.py` | 华东12机场 | Meteostat | ICAO列表 |
+| `download_japan_additional.py` | 日本补充机场 | Meteostat | 站点清单 |
+| `download_east_southeast_asia_supplement.py` | 亚洲补充 62 机场 | Meteostat | 补下载 |
+| `retry_failed_airports.py` | 失败机场重试(逐级扩半径) | Meteostat | 见 PF-004 |
+| `check_asia_integrity.py` | 亚洲数据完整性检验 | Meteostat | 4维度 |
+| `check_noaa_isd_frequency.py` | NOAA ISD 更新频率检验 | NOAA ISD | 判断延迟 |
 | `check_data_integrity.py` | 数据完整性检验 | Meteostat | 4维度 |
 | `check_meteostat_realtime.py` | 实时性测试(亚洲) | Meteostat | 8站 |
 | `check_meteostat_realtime_americas.py` | 实时性测试(美洲) | Meteostat | 10站 |
@@ -153,7 +162,9 @@
 | `download_glm_l2.py` | GOES GLM L2 闪电数据下载 | AWS S3 noaa-goes{16/18/19} | 无key, 匿名S3 |
 | `parse_glm.py` | GLM 闪电数据解析 | netCDF-4 | 闪击位置/能量提取 |
 | `download_fy4_lmi.py` | FY-4 LMI 闪电数据下载指引 | NSMC / 中科院数据集 | NSMC注册或公开下载 |
+| `download_fy4_lmi_ftp.py` | FY-4 LMI FTP 通道下载 | NSMC FTP | 备用通道 |
 | `parse_fy4_lmi.py` | FY-4 LMI 数据解析 | NetCDF | 事件位置/辐射强度 |
+| `download_gk2a.py` | GK2A AMI 卫星数据下载 | AWS S3 gk2a / 韩国 KMA | 见 PS-015 |
 | `download_aster_gdem.py` | ASTER GDEM v3 + ASTWBD 地形/水体 | NASA LP DAAC (Earthdata) | netrc 认证 |
 | `download_seasonal_forecast.py` | Open-Meteo 45天集合预报下载(6站,含50成员) | Open-Meteo seasonal | 无key |
 | `download_spain_seasonal.py` | Open-Meteo 45天集合预报下载(西班牙9光伏区, 50成员×45天) | Open-Meteo seasonal | 无key, 窗口 2026-09-29~11-12 |
@@ -177,6 +188,9 @@
 | `test_nsrdb_mrms_s2s.py` | 三源连通性探测 (NSRDB/MRMS/S2S) | AWS S3 + ECDS | 无key, 匿名S3 |
 | `test_nsrdb_h5coro.py` | NSRDB h5coro 部分读取 + 日循环量纲验证 | nrel-pds-nsrdb S3 | 无key, 懒读取 |
 | `test_nsrdb_meta.py` | NSRDB meta 流式下载 + ERCOT 像素定位 | nrel-pds-nsrdb S3 | 无key, 生成像素索引 npz |
+| `test_nsrdb_extract_speed.py` | NSRDB 分块提取速度基准 | nrel-pds-nsrdb S3 | 无key, 评估 h5coro 懒读收益 |
+| `list_power_params.py` | NASA POWER 全参数清单导出 | NASA POWER | 1660 参数, 供选用 |
+| `build_spain_entsoe_panel.py` | ENTSO-E 西班牙逐日面板构建 | entsoe raw 月缓存 | 发电/负荷/价格对齐 |
 | `test_mrms_download.py` | MRMS QPE 归档列举+下载+ERCOT裁剪 | noaa-mrms-pds S3 + NCEP | 无key, cfgrib |
 | `match_nsrdb_ercot_solar.py` | GEM 光伏电站→NSRDB 像素映射 | GEM + NSRDB 像素索引 | 100 座, 中位距离 0.9km |
 | `download_nsrdb_ercot_july2022.py` | NSRDB 2022-07 辐照分块提取 (自愈+断点续传) | nrel-pds-nsrdb S3 | 无key, 735 chunks × GHI/DNI/DHI |
@@ -203,6 +217,7 @@
 | `gem_ercot_lz_analysis.py` | 电站-LZ映射 + 装机结构分析 | GEM CSV | HTML报告 + CSV |
 | `gem_ercot_deep_dive.py` | 发电×电价×事件三层深度分析 | GEM + ERCOT + EIA | HTML报告 + CSV |
 | `gem_storm_cross.py` | 雷暴×电站坐标空间交叉 | Meteostat + GEM | CSV |
+| `terrain_lightning_analysis.py` | ASTER 地形/水体 × GLM 闪电分布联动 (PS-014) | ASTER tiles + GLM 闪击 | 逐 tile 相关表 + stdout |
 | `build_forecast_accuracy_summary.py` | 季节预报精度汇总统计(各段MAE/重叠区对比) | verif CSV | 汇总JSON + stdout |
 | `model_seasonal_shortfall_risk.py` | 季节预报50成员辐照→光伏缺口风险概率化(晴朗基准缓存+fleet加权+历史τ分布相对校准+连阴/危险组合) | seasonal JSON + 物理缺口CSV | seasonal_shortfall_risk*.csv + streak |
 | `rebuild_full_chart_arrays.py` | 重建完整逐lead误差数组(含GFS lead1-5) | series JSON | chart_arrays_full.json |
@@ -264,6 +279,8 @@
 | `compare_shortfall_definitions.py` | 两口径对比 (弹性/尾部概率/分箱尖峰率) | 两口径缺口 + 15min RTM | shortfall_definition_comparison.csv |
 | `pv_event_price_impact_physical_2022-07.py` | 统一口径的 2022-07 分位情景推演 | 2022 反事实 + 口径对比 CSV | pv_event_price_impact_physical_2022-07.csv |
 | `build_shortfall_unification_report.py` | 生成口径统一 HTML 报告 | 缺口/对比/推演 CSV | output/shortfall_unification/*.html |
+| `model_shortfall_duration_2025_2026.py` | 缺口持续时间维度建模(多小时持续占比 + 时长溢价) (PS-025) | shortfall_physical + 15min RTM | shortfall_duration*.csv |
+| `model_shortfall_duration_crossday.py` | 缺口日际/跨日持续时间(阈值敏感性 + 连阴聚簇) (PS-026) | shortfall_physical + RTM | shortfall_duration_crossday*.csv |
 
 ## 关键配置
 

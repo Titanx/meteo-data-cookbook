@@ -520,6 +520,11 @@ PS-043 §7-2 的下一步是"取西班牙光伏区的 NWP 预报，把 `noon_rat
 | 反事实/缺口 | `clearsky_counterfactual_2025_2026.py`、`build_physical_shortfall_2025_2026.py`、`pv_event_price_impact_2022-07.py` |
 | 弹性标定 | `calibrate_price_elasticity_2025.py`、`calibrate_price_elasticity_tail.py`、`compare_shortfall_definitions.py` |
 | 报告 | `output/nsrdb_pvlib_2022-07/`、`output/pv_event_price_impact_2022-07/`、`output/price_tail_elasticity/`、`output/shortfall_unification/` |
+| 缺口持续时间 (PS-025/PS-026) | `model_shortfall_duration_2025_2026.py`、`model_shortfall_duration_crossday.py` → `output/shortfall_duration/`、`output/shortfall_duration_crossday/` |
+| 季节预报精度与缺口风险 (PS-017/PS-027) | `verify_seasonal_vs_gfs.py`、`model_seasonal_shortfall_risk.py`、`build_seasonal_risk_report.py`、`rebuild_full_chart_arrays.py` → `output/seasonal_forecast_accuracy/`、`output/seasonal_shortfall_risk/` |
+| 风电缺口 × 电价 (PS-028) | `prep_ercot_wind_fleet.py`、`download_hrrr_wind_2025_2026.py`、`model_wind_power_shortfall.py`、`build_wind_shortfall_report.py` → `output/wind_shortfall_elasticity/` |
+| GEM 电站 × 电价 (PS-016) | `gem_ercot_lz_analysis.py`、`gem_ercot_deep_dive.py`、`gem_storm_cross.py` → `output/gem_ercot_price_analysis/` |
+| 西班牙市场数据源调研 (PS-029) | `build_spain_market_survey_report.py` → `output/espana_esios_survey/` |
 | 西班牙跨市场 | `prep_spain_pv_fleet{,_multi}.py`、`download_spain_data{,_multi}.py`、`model_spain_pv_{power,regime}.py`、`build_spain_{minchain,regime}_report.py` → `output/spain_minchain/`、`output/spain_regime/` |
 | 判据可逆性 | `download_nasa_power_ercot_pv.py`、`build_ercot_pv_potential.py`、`reversibility_test_shortfall.py`、`build_reversibility_report.py` → `output/reversibility_shortfall/` |
 | 工况指纹 | `model_shortfall_fingerprint.py`、`build_fingerprint_report.py` → `output/shortfall_fingerprint/` |

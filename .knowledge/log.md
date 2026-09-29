@@ -2,6 +2,43 @@
 
 > 本文件只追加，不修改历史记录。
 
+## [2026-09-30] docs | [知识库一致性 review：补齐根目录索引、脚本索引、报告索引与团队约定] | 修正 6 处 + 补记 2 项
+
+### 本轮审计方式
+按"索引 vs 实际文件"逐个核对：①三份 catalog 的声明计数与条目行；②log 对每个 ID 的覆盖；③脚本索引对 `scripts/` 实际文件的覆盖；④`output/` 报告目录在结论总览中的覆盖；⑤团队约定对新增数据类型的覆盖。
+
+### 修正条目（6 处）
+- **根目录 `.knowledge/catalog.md` 严重陈旧**（原标注 2026-09-27、36 条）⇒ 重写：
+  计数改为 **61 条（60 verified + 1 draft）**，统计概览改为 指南 6 / 陷阱 12 / 流程 42 / 参数 1；
+  领域说明补入电力市场（ERCOT / 西班牙 / 法国）、NWP 与历史预报归档、西班牙负价链；
+  数据源图谱由 5 列扩为 6 列（新增电力市场列与其他列）；知识图谱补全 **PS-025 ~ PS-044** 段（原图止于 PS-024）
+- **`README.md` 严重陈旧**（原仅覆盖 2026-07-18~20、5 条知识、19 个脚本）⇒ 重写：
+  标题与定位改为"气象 × 电力市场数据实战指南"；条目总览补全 GL-004~009 / PF-004~015 / PS-003~044；
+  新增"数据源覆盖"（14 组）、"分析链路与报告产物"（26 份 `output/` 报告逐条对应流程号）；
+  更新目录树、依赖清单、agent 提示词示例；"为什么不是 Skill"一节改用当前规模（61 条 / 约 8,800 行）
+- **`project/catalog.md` 脚本索引缺 17 个脚本** ⇒ 补齐：
+  下载侧 14 个（`download_east_china_airports_2026.py`、`download_japan_additional.py`、`download_east_southeast_asia_supplement.py`、
+  `retry_failed_airports.py`、`check_asia_integrity.py`、`check_noaa_isd_frequency.py`、`test_himawari.py`、`test_himawari_s3.py`、
+  `surfrad_assessment.py`、`download_fy4_lmi_ftp.py`、`download_gk2a.py`、`test_nsrdb_extract_speed.py`、`list_power_params.py`、
+  `build_spain_entsoe_panel.py`）；分析侧 3 个（`terrain_lightning_analysis.py`、`model_shortfall_duration_2025_2026.py`、
+  `model_shortfall_duration_crossday.py`）
+- **`conventions/README.md` 未覆盖新增数据类型** ⇒ 补：
+  数据命名表增 7 行（Energy-Charts 年度整块 / ENTSO-E 月缓存 / NWP 历史预报归档 npz / ERA5 归档 npz / 日面板 / 模型中间产物 / 报告目录）；
+  条目约定区分"已启用"（GL/PF/PS）与"预留"（DEC/MD），并补成熟度三档定义与报告产物约定；
+  单位表补 €/MWh、GWh/TWh、份额口径；Git 约定补"流程号开头 + 关键结论入正文"的当前实践与本仓库不提交目录
+- **`project/conclusions_solar_price.md` §6 漏 5 行报告索引** ⇒ 补齐 PS-016 / PS-017+PS-027 / PS-025+PS-026 / PS-028 / PS-029 的脚本与产物行
+- **本轮新增汇总产物** `output/data-knowledge-review/`（数据知识总览，跨项目汇总）—— 已在 README 的产物表中登记；因其跨链路，不列入 conclusions §6
+
+### 补记事项（2 项，均为历史留痕缺失，此处补记而非改写历史）
+- **PF-004 自创建以来未在 log 中留痕**：它属 2026-07-19/20 首批沉淀（同期 GL-004/GL-005、PS-003/004/005 已留痕）
+- **9 条流程从未在 log 中留痕**：PS-004、PS-011、PS-012、PS-026、PS-027、PS-028、PS-032、PS-033、PS-034。
+  这些条目文件本身齐全且已进 `tech/catalog.md`，仅缺变更记录；今后每轮应"创建条目 + 更新 catalog + 追加 log"三件套同时完成
+
+### 明确保留的空白（非遗漏）
+- `analysis/` 下的探空与雷暴联动报告（PS-007/PS-008/PS-014 产物）不属"缺口 → 电价"链路，故不入 `conclusions_solar_price.md` §6，改由 `project/catalog.md` 与 README 覆盖
+- `output/` 内 26 个报告目录中的 `data-knowledge-review` 为跨链路汇总，按同上原则处理
+- `GL-001~003`、`PF-001~003`、`PS-001~002`、`DEC-*`、`MD-*` 为预留编号，见 `tech/catalog.md` 的编号索引与 `conventions/README.md`
+
 ## [2026-09-29] add | [PS-044 补齐 ES 侧 NWP: 西班牙侧可预报(AUC 0.880)但接到负价日增量仅 +0.003 ⇒ 上界低, 预警以持续性为骨架] | 新增 1 条 + 更新 5 处
 
 ### 新增条目
