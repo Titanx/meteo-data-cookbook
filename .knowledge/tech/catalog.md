@@ -1,7 +1,7 @@
 # 技术知识清单（跨项目通用）
 
 > 最后更新: 2026-09-29
-> 总计: 39 条（37 verified + 2 draft）
+> 总计: 52 条（51 verified + 1 draft）
 
 ## 最佳实践 (guidelines/)
 
@@ -56,7 +56,19 @@
 | PS-022 | 光伏缺口 × 电价冲击推演流程（晴空反事实 + RTM 弹性标定） | verified | pv, solar, clearsky, counterfactual, shortfall, elasticity, rtm, price, panel-regression, hrrr, temperature, uscrn, ilr, eia-930, ercot, solis, event-attribution | implement, verify, analyze | 2026-09-27 |
 | PS-023 | RTM 尾部尖峰弹性标定与极端场景外推（分位数回归 + 凸性检验） | verified | rtm, price, tail, spike, quantile-regression, elasticity, shortfall, pv, extreme-scenario, extrapolation, convexity, logistic, simpson-paradox, hac, ercot, gridstatus, eia-930 | implement, verify, analyze | 2026-09-27 |
 | PS-024 | 光伏缺口口径统一：物理晴空反事实 vs P95 数据驱动包络 | verified | pv, solar, shortfall, counterfactual, clearsky, solis, pvlib, envelope, elasticity, rtm, price, simpson-paradox, hrrr, gem, nsrdb, eia-930, ercot, definition-consistency | implement, verify, analyze | 2026-09-27 |
-| PS-036 | 西班牙 ENTSO-E Transparency 数据链路（替代 ESIOS） | draft | entsoe, transparency-platform, spain, generation-by-type, load, day-ahead-price, eic, iec62325, xml, api, token, proxy, alternative | architect, implement | 2026-09-29 |
+| PS-025 | 光伏缺口的持续时间维度建模（2025/2026 ERCOT，物理晴空反事实口径） | verified | pv, solar, shortfall, duration, persistence, counterfactual, clearsky, rtm, price, multi-hour, physical, ercot | implement, verify, analyze | 2026-09-28 |
+| PS-026 | 光伏缺口的日际/跨日持续时间建模（阈值敏感性与连阴聚簇） | verified | pv, solar, shortfall, duration, cross-day, threshold-sensitivity, cloud-streak, price, physical, ercot | implement, verify, analyze | 2026-09-28 |
+| PS-027 | 季节预报 → 光伏缺口风险概率化（Open-Meteo Seasonal，50成员） | verified | seasonal, ensemble, openmeteo, ec46, seas5, pv, shortfall, risk, probability, tau, cloud-streak, calibration, ercot | architect, implement, verify, analyze | 2026-09-28 |
+| PS-028 | 风电缺口 × 电价：风功率物理链路与"风光不对称"（2025/2026 ERCOT） | verified | wind, wind-power, shortfall, elasticity, hrrr, power-curve, gem, exogenous, endogenous, asymmetry, ercot | implement, verify, analyze | 2026-09-28 |
+| PS-029 | 西班牙电力市场数据源调研（ESIOS / OMIE / PVGIS / ENTSO-E） | verified | spain, esios, omie, pvgis, entsoe, market-survey, data-source, negative-price, curtailment, day-ahead | architect, verify | 2026-09-28 |
+| PS-030 | 西班牙光伏最小链路（免注册数据源复刻 pvlib 出力建模） | verified | spain, pv, pvlib, nasa-power, energy-charts, omie, ilr, calibration, shortfall, price-elasticity, no-api-key | implement, verify, analyze | 2026-09-28 |
+| PS-031 | 西班牙光伏链路多年份市场区间对比（2023 vs 2024 vs 2025） | verified | spain, pv, multi-year, ilr, negative-price, curtailment, shortfall, clearsky-gap, weather-gap, elasticity, regime | implement, verify, analyze | 2026-09-28 |
+| PS-032 | 缺口成因判据 · 可逆性检验（ERCOT × 西班牙） | verified | shortfall, causality, reversibility, exogenous, endogenous, panel-regression, two-way-test, wind, solar, ercot, spain | implement, verify, analyze | 2026-09-28 |
+| PS-033 | 缺口"工况指纹"：外生 vs 内生（ERCOT × 西班牙） | verified | shortfall, fingerprint, decile, negative-price-frequency, demand, time-of-day, exogenous, endogenous, ercot, spain | implement, verify, analyze | 2026-09-29 |
+| PS-034 | 缺口 → 电价：日尺度转移函数与 45 天展望（含"预报桥"可行性判定） | verified | shortfall, price, daily-transfer-function, seasonal-forecast, 45-day, outlook, negative-price, forecability, ercot, spain | architect, implement, verify, analyze | 2026-09-29 |
+| PS-035 | 西班牙 负价概率：季节预报链路（未来 45 天） | verified | spain, negative-price, seasonal-forecast, ensemble, s-index, tau, calibration, season-bias, auc, 45-day-outlook | architect, implement, verify, analyze | 2026-09-29 |
+| PS-036 | 西班牙 ENTSO-E Transparency 数据链路（替代 ESIOS） | verified | entsoe, transparency-platform, spain, generation-by-type, load, day-ahead-price, eic, iec62325, xml, api, token, proxy, alternative | architect, implement | 2026-09-29 |
+| PS-037 | 西班牙链路 · ENTSO-E 官方口径复核 + 2026 样本外检验 | verified | spain, entsoe, official-tsd, cross-validation, out-of-sample, 2026, auc, two-factor, temperature-driven-load, season-bias, negative-price, pot-cs | implement, verify, analyze | 2026-09-29 |
 
 ## 参数清单
 
@@ -93,7 +105,7 @@
 | **ASTER GDEM/WBD** | **[PS-013](processes/PS-013.md)** |
 | **CMA 数据** | **[PF-012](pitfalls/PF-012.md)** |
 | **ESIOS / REE（西班牙电力）** | **[PF-013](pitfalls/PF-013.md)** |
-| **ENTSO-E Transparency** | **[PS-036](processes/PS-036.md)**（西班牙链路，免注册但需免费 token）, **[PF-014](pitfalls/PF-014.md)** |
+| **ENTSO-E Transparency** | **[PS-036](processes/PS-036.md)**（西班牙链路，免注册但需免费 token）, **[PS-037](processes/PS-037.md)**（官方口径复核 + 2026 样本外）, **[PF-014](pitfalls/PF-014.md)** |
 | SURFRAD | [PS-005](processes/PS-005.md) |
 | **MRMS QPE** | **[PS-018](processes/PS-018.md)** |
 | **NSRDB** | **[PS-019](processes/PS-019.md), [PS-022](processes/PS-022.md), [PS-023](processes/PS-023.md), [PS-024](processes/PS-024.md)** |
@@ -108,10 +120,10 @@
 
 | 阶段 | 相关条目 |
 |------|---------|
-| 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PS-009, PS-010, PS-011, PS-012, PS-013, PS-018, PS-019, PS-020, PS-036, PF-005, PF-007, PF-011, PF-012, PF-013, GL-008, GL-009 |
+| 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PS-009, PS-010, PS-011, PS-012, PS-013, PS-018, PS-019, PS-020, PS-027, PS-029, PS-034, PS-035, PS-036, PF-005, PF-007, PF-011, PF-012, PF-013, GL-008, GL-009 |
 | 实现开发 (implement) | 全部 |
-| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PF-014, PS-007, PS-008, PS-009, PS-010, PS-013, PS-018, PS-019, PS-022, PS-023, PS-024 |
-| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016, PS-017, PS-018, PS-019, PS-022, PS-023, PS-024 |
+| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PF-014, PS-007, PS-008, PS-009, PS-010, PS-013, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-029, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037 |
+| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016, PS-017, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037 |
 | 调试修复 (debug) | PF-006, PF-014 |
 
 ### 按通用技术
@@ -142,3 +154,7 @@
 | 口径一致性检验 | PS-024 |
 | CMA 数据访问 | PF-012, PS-012 |
 | IEC 62325 / 变长块解析 | PF-014, PS-036 |
+| 季节/延伸期预报概率化 | PS-017, PS-027, PS-034, PS-035, PS-037 |
+| 样本外检验 / AUC 排序评估 | PS-035, PS-037 |
+| 缺口成因与工况识别 | PS-028, PS-031, PS-032, PS-033 |
+| 西班牙电力市场链路 | PS-029, PS-030, PS-031, PS-035, PS-036, PS-037, PF-013 |

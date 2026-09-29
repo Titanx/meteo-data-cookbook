@@ -16,6 +16,7 @@
 | Open-Meteo HRRR | NWP 数值预报 | ERCOT 6站（CONUS全境） | 实时预报+历史2018起 | `test_openmeteo_hrrr.py` | `data/openmeteo_hrrr_results.json` | 已验证 |
 | Open-Meteo S2S (EC46/SEAS5) | 45天延伸期集合预报 | ERCOT 6站 | 未来6周~7个月+历史回导 | `verify_seasonal_vs_gfs.py` | `data/openmeteo_seasonal/` | 已验证 |
 | **Open-Meteo Seasonal (西班牙)** | **45天延伸期集合预报 (逐日短波/气温)** | **西班牙 9 光伏区** | **未来45天** | **`download_spain_seasonal.py`** | **`data/openmeteo_seasonal_spain/`** | **已验证(免注册)** |
+| **Open-Meteo Archive 温度 (西班牙)** | **逐日 Tmax/Tmin/Tmean (历史/当期)** | **西班牙 9 光伏区** | **2022-12-01 ~ 2026-09-28** | **`download_spain_temperature.py`** | **`data/openmeteo_temperature_spain/daily_temp.json`** | **已验证(免注册)** |
 | GPM IMERG | 卫星降水 | ERCOT 区域 | 历史1998至今（延迟4h~3.5月） | `test_imerg_download.py` | `data/imerg/` | 已验证 |
 | RainViewer API | 雷达拼图 | 全球含德州 | 实时（5分钟延迟） | `test_radar_all_anonymous.py` | 无持久数据 | 已验证 |
 | GOES-19 | 卫星云图 | 美洲全圆盘 | 2026-07-20 | `goes19_pipeline.py` | `data/goes19/` | 已验证 |
@@ -104,6 +105,7 @@
 | 缺口工况指纹 (PS-033) | `output/shortfall_fingerprint/index.html` | 把PS-032符号落到可观测工况(缺口十分位分组→低价/负价频率+需求+时段): **内生缺口=供给过剩标记坐实** — ERCOT光伏最高两档负价频率 **0.0%→16.0%**(需求同向 60.5→51.7GW)、风电0.7%→5.5%、西班牙光伏2025达**33.4%**; **外生缺口不含过剩信号** — ERCOT风电低风异常高的小时负价**6.4%→0.1%**+价格中位21.2→34.3(corr+0.25, 真稀缺), ERCOT光伏晴空缺口两年不稳定(corr−0.06/+0.02); **时间截面**: 西班牙内生高缺口档负价频率 **0%(2023零负价)→15.7%(2024)→33.4%(2025)** 与负价小时0→247→544同步 ⇒ 标记随市场成熟增强 | 2026-09-29 |
 | 缺口→电价 日尺度转移函数与45天展望 (PS-034) | `output/forecast_price_bridge/index.html` | 把PS-027季节预报接PS-032/033判据: **ERCOT"预报桥"不成立** — 季节预报的云量缺口在日尺度对电价近乎无信息(**R²=0.016**, corr+0.13)且**不标记负价**(+0.06), 因缺口与需求强负相关(五分位需求63.8→55.6GW, 云来天凉→PS-024天气负相关在日尺度重演); 白天溢价=−0.40+9.15×缺口分数; **唯一可用负价曲线在西班牙** — gap_w最高档**P(负价日) 52%(2024)/77%(2025)**(R²0.49/0.42, 2023年0%), 但缺西班牙季节预报; ERCOT 45天展望: 溢价中位+1.18$/MWh(P10−0.37~P90+3.54), 第1周热日叠加多云最高+2.0; 判定: 要建可用预警需①小时级②需求/温度预报③选负价常态市场 | 2026-09-29 |
 | 西班牙负价概率季节预报链路 (PS-035) | `output/spain_negprice_forecast/index.html` | **补上PS-034缺的西班牙季节预报并建成完整链路**: Open-Meteo Seasonal(9光伏区×50成员×45天, 2026-09-29~11-12) 逐日短波→fleet τ(31.3GW, k=1.053尺度校正)→**可预报指数 S = 晴空气候(doy)×τ/负荷气候(月,工作日)** →标定 P(负价日); **跨年 AUC 0.722/0.721 双向一致**(2024↔2025) ⇒ S有真实排序能力; S五分位负价日占比 **0/6/27/32/26%**(Q1–Q5, 高档32% vs 全年基准18%); **季节偏差校正为必需一步** — 原始曲线用于当前秋季窗口高估近一倍(14.9% vs 实测7.8%) ⇒ 截距 −0.072→−0.143; 未来45天负价日概率均值**8.2%**(W1 10.5%→W7 2.0%随入秋走低); 对照PS-034: 同一"预报桥"思路在西班牙成立而在ERCOT失效 ⇒ **可预报性取决于驱动是否外生且可算** | 2026-09-29 |
+| ENTSO-E 官方口径复核 + 2026 样本外 (PS-037) | `output/spain_entsoe_verification/index.html` | **换官方源不改变结论, 但暴露模型设定不足**: Energy-Charts ≡ ENTSO-E **逐位相同**(4变量×3年 r=1.000000/MAE=0/能量比1.000000, 2025光伏 r=0.999995) ⇒ PS-030~035 本就站在官方 TSO 口径上; **PS-035 单因子 S 在全新 2026 失效 (AUC 0.491≈无技能)**, 因 2026 起负荷通道主导(逐年 corr(负荷,负价日) −0.41→−0.51→**−0.59**, 资源通道 +0.18→−0.11), 而 S 只用月度负荷气候代理负荷; 改两因子(τ + **温度驱动负荷预报**, 2024–2026.09 标定 n=1001: P=+1.6487+0.0402×S−0.0588×负荷GW, 拟合AUC 0.809) 后 **2026 AUC 回 0.733**(含实际负荷 0.811); 官方口径逐年负价日率 **0%→12.6%→24.2%→42.3%**; 季节偏差仍为 **低估春(4–5月 70/42, 62/47)高估秋(10–11月 8/32, 2/21, 偏差+21.9pp)**, 校正后未来45天负价日概率 **6.8%**(原始25.9%, 校正后P10全为0) ⇒ **与PS-035的8.2%差1.4pp, 结论稳健于模型设定但前提是必须做季节校正**; ⚠跨年比较 pot_cs 须重新定标否则 τ 饱和到1 (2026用2025形状模板+年能量比合成) | 2026-09-29 |
 
 ## 项目脚本索引
 
@@ -144,6 +146,7 @@
 | `download_spain_esios.py` | ESIOS 分技术出力/需求/电价下载(代理可感知+按月续传) | ESIOS API | `--check`/`--list`/`--start --end`; 需换网或代理(PF-013) |
 | `test_entsoe_api.py` | ENTSO-E 连通性/鉴权自检(退出码4=缺token, 与403拦截区分) | ENTSO-E API | 需 ENTSOE_API_TOKEN; 无 token 亦可用于判断端点可达性 |
 | `download_spain_entsoe.py` | ENTSO-E 西班牙 A44日前价/A75分技术发电/A65负荷下载(按月续传) | ENTSO-E API | `--check`/`--start --end`/`--docs`; 免注册但需免费 token(PS-036) |
+| `download_spain_temperature.py` | 西班牙 9 光伏区逐日 Tmax/Tmin/Tmean 下载 | Open-Meteo Archive | 无key, 2022-12-01~2026-09-28, 1398 天(PS-037) |
 | `verify_seasonal_vs_gfs.py` | 45天预报 vs ERA5/GFS10天 逐lead误差 | Open-Meteo seasonal+archive+historical | 无key |
 | `prep_ercot_wind_fleet.py` | GEM 风电→ERCOT 点位清单(按年, 0.1°去重聚合) | GEM wind 2026-08 | 165 点位 37.9 GW |
 | `prep_spain_pv_fleet.py` | GEM 光伏→西班牙采样点(按年, 网格聚合) | GEM solar 2026-08 | 212 点位 27.66 GW |
@@ -199,6 +202,9 @@
 | `build_forecast_bridge_report.py` | 转移函数与45天展望 HTML 报告 | forecast_bridge_calibration + outlook | output/forecast_price_bridge/index.html |
 | `model_spain_negprice_forecast.py` | 西班牙负价日概率季节预报(S指数标定+τ尺度校正+季节偏差校正+逐成员45天传播) | seasonal_spain + spain_regime_hourly + spain_solar_hubs_multi | spain_negprice_calibration.csv + spain_negprice_outlook.csv |
 | `build_spain_negprice_report.py` | 西班牙负价概率季节预报 HTML 报告(标定曲线/AUC/45天展望) | spain_negprice_calibration + outlook | output/spain_negprice_forecast/index.html |
+| `verify_spain_entsoe_official.py` | ENTSO-E 官方口径逐日面板 + S 指数 + 2026 样本外/五分位/季节结构 | spain_entsoe_hourly + spain_regime_hourly + entsoe | spain_official_{daily,quintile,yearly}.csv |
+| `model_spain_negprice_v2.py` | 负价日两因子模型(τ+S+温度驱动负荷) + 季节偏差校正 + 逐成员45天 | spain_official_daily + temp json + seasonal_spain + hubs | spain_negprice_v2_{skill,outlook}.csv |
+| `build_spain_entsoe_verification_report.py` | 官方口径复核 + 2026 样本外 HTML 报告(比对/模型设定/五分位/展望) | spain_official_* + v2_* | output/spain_entsoe_verification/index.html |
 | `verify_temp_fix.py` | 温度参数化 vs HRRR 实测温度分窗对比 | 出力 CSV ×2 | 分窗指标表 (stdout) |
 | `ilr_sweep_heatwave.py` | ILR 四窗口扫描 (热浪/非热浪×正午/全月) | 辐照 nc + EIA CSV | 最优 ILR=1.30 |
 | `verify_nsrdb_vs_uscrn_july2022.py` | NSRDB×USCRN 交叉验证 (反演劣化排除) | USCRN CSV + NSRDB 提取 | nsrdb_uscrn_daily.csv |

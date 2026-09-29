@@ -2,6 +2,44 @@
 
 > 本文件只追加，不修改历史记录。
 
+## [2026-09-29] add | [PS-037 ENTSO-E 官方口径复核 + 2026 样本外：口径逐位一致，但暴露 PS-035 模型设定不足] | 新增 1 条 + 更新 4 条
+
+### 新增条目
+- 新增 PS-037：西班牙链路 **ENTSO-E 官方口径复核 + 2026 样本外检验**（verified）
+  - **问题一：要不要"换源重算"？→ 不要。** Energy-Charts 与 ENTSO-E **逐位相同**——
+    4 变量（光伏/风电/负荷/电价）× 3 年（2023–25）**r 全为 1.000000、MAE ≈ 0、能量比 1.000000**
+    （仅 2025 光伏 r = 0.999995 / MAE 0.24 MW）；官方 A44 2024-04-29 日均/最低/最高 = 58.27 / 35.00 / 102.26，
+    与一手 OMIE 一致 ⇒ **PS-030~035 本就站在官方 TSO 口径之上**
+  - **问题二：PS-035 的模型在全新 2026 上成立吗？→ 不成立，可修。**
+    单因子 S 的 AUC 由 2024/2025 的 0.726/0.732 **塌到 0.491（≈无技能）**；2026 五分位被打乱（27/70/43/26/45%），
+    S 最高 20% 子集负价日占比 45.5% 仅略高于基准 42.3%
+  - **根因**：负价日 = 云量修正后的资源 **和** 负荷水平；S 只用**月度负荷气候**代理负荷。
+    逐年 `corr(负荷, 负价日) = −0.41 → −0.51 → −0.59`（负荷通道渐成主导），资源通道 `+0.18 → −0.11`
+  - **修法（两因子）**：`P(负价日) = a + b·S + c·负荷[GW]`，负荷由**温度回归**给出
+    （CDD>22℃ / HDD<15℃ / 周末 / trend / 星期，2023-25 R² = 0.7385，逐年 OOS R² 0.72~0.76）；
+    运营期（2024–2026.09，n=1001）`P = +1.6487 + 0.0402×S − 0.0588×负荷GW`，拟合 AUC **0.809**；
+    →2026 AUC **0.733**（实际负荷 0.811 / `τ+预报负荷` 0.797）
+  - **季节偏差双向可见**：低估春季（4–5 月 实际/预测 70/42、62/47）、高估秋季（10–11 月 8/32、2/21，**+21.9pp**）
+  - **45 天展望**：两因子 + 季节校正均值 **6.8%**（原始 25.9%）⇒ 与 PS-035 的 **8.2%** 差 **1.4pp**，
+    **结论稳健于模型设定，前提是必须做季节偏差校正**
+  - **口径陷阱（新）**：`pot_cs ∝ 装机 × ILR`，**跨年必须重新定标**，否则 `τ = solar/pot_cs` **饱和到 1.000**
+    （2026 实测直接饱和）；本流程用 2025 (doy, hour) 形状模板 + 年能量比定标合成（自检 r ≈ 1.0000）
+- 官方口径逐年负价日率：**0%（2023）→ 12.6%（2024）→ 24.2%（2025）→ 42.3%（2026，1–9 月）**
+
+### 更新条目
+- 新增脚本：`scripts/data_download/build_spain_entsoe_panel.py`（由临时诊断脚本提升为正式脚本，
+  ENTSO-E 三表 → 官方小时面板 `data/spain/spain_entsoe_hourly.csv` + 口径对齐诊断）；
+  `scripts/data_download/download_spain_temperature.py`；`scripts/analysis/verify_spain_entsoe_official.py`
+  （官方日面板 + S 指数 + 样本外/五分位）、`model_spain_negprice_v2.py`（两因子 + 季节校正）、
+  `build_spain_entsoe_verification_report.py` → `output/spain_entsoe_verification/index.html`
+- 新增数据：`data/spain/spain_official_{daily,quintile,yearly}.csv`、`spain_negprice_v2_{skill,outlook}.csv`、
+  `data/openmeteo_temperature_spain/daily_temp.json`（9 光伏区 × 1398 天）
+- `project/catalog.md`：数据源索引加 Open-Meteo Archive 温度 + 脚本索引 + 关键分析结果加 PS-037 行
+- `project/conclusions_solar_price.md`：新增 §2.11（官方复核与 2026 样本外）、§3.4（PS-035 单因子设定不足，结论值保留）、
+  §4 加"西班牙数据源 / 跨年 `pot_cs` 重定标 / 技能检验"三条规范、§5/§6 同步
+- `tech/catalog.md`：**补齐缺失的 PS-025~PS-035 共 11 行**、PS-036 draft→verified、新增 PS-037；
+  计数更正为 52 条（51 verified + 1 draft）；architect/verify/analyze 阶段与主题索引同步
+
 ## [2026-09-29] add | [PS-036 ENTSO-E 西班牙 45 个月数据下载完成 + 数据质量结论] | 更新 3 条
 
 ### 更新条目
