@@ -17,6 +17,9 @@
   python download_spain_entsoe.py --start 2025-01 --end 2025-12 --docs price_da,load
 
 设计：按月分块 + 原始 XML 落盘缓存（重复运行自动跳过已下载月份），符合平台"避免冗余请求"的要求。
+
+⚠ 解析要点：ENTSO-E 用 curveType=A03（变长块）压缩——连续相同的值只存一个 Point，
+   其值延续到下一个 Point 之前。解析器按 position 前向填充展开到整段，否则会丢一半以上小时。
 """
 import ssl
 import sys
@@ -121,32 +124,47 @@ def strip_ns(tag):
 
 
 def parse_iec(raw):
-    """把 Publication/GL_MarketDocument 解析成 (datetime_utc, psr_type, kind_value) 行"""
+    """把 Publication/GL_MarketDocument 解析成 (datetime_utc, psr_type, value, value_tag) 行。
+
+    ⚠ 关键：ENTSO-E 这些文档用 curveType=A03（变长块 / variable sized block）压缩表示——
+    连续相同的值只写一个 Point，该值一直延续到**下一个 Point 之前**。因此缺失的 position
+    不是缺数据，而是"与上一个点相同"。必须按 position 前向填充并展开到整段
+    （例如 2024-04 的 A44 每天只给 9~21 个点，展开后才是完整的 24 小时）。
+    """
     root = ET.fromstring(maybe_unzip(raw))
     rows = []
     for ts in root:
         if strip_ns(ts.tag) != "TimeSeries":
             continue
-        psr = None
+        psr, curve = None, None
         for ch in ts:
-            if strip_ns(ch.tag) == "MktPSRType":
+            n = strip_ns(ch.tag)
+            if n == "MktPSRType":
                 for g in ch:
                     if strip_ns(g.tag) == "psrType":
                         psr = (g.text or "").strip()
+            elif n == "curveType":
+                curve = (ch.text or "").strip()
+
         for per in ts:
             if strip_ns(per.tag) != "Period":
                 continue
-            start, res, points = None, "PT60M", []
+            start = end = None
+            res = "PT60M"
+            pts = {}
             for ch in per:
                 n = strip_ns(ch.tag)
                 if n == "timeInterval":
                     for g in ch:
-                        if strip_ns(g.tag) == "start":
+                        gn = strip_ns(g.tag)
+                        if gn == "start":
                             start = g.text
+                        elif gn == "end":
+                            end = g.text
                 elif n == "resolution":
                     res = (ch.text or "PT60M").strip()
                 elif n == "Point":
-                    pos, val, vt = None, None, None
+                    pos = val = vt = None
                     for g in ch:
                         gn = strip_ns(g.tag)
                         if gn == "position":
@@ -155,18 +173,33 @@ def parse_iec(raw):
                             val = float(g.text)
                             vt = gn
                     if pos is not None and val is not None:
-                        points.append((pos, val, vt))
-            if start is None or not points:
+                        pts[pos] = (val, vt)
+            if start is None or not pts:
                 continue
+
             t0 = pd.Timestamp(start).tz_convert("UTC")
             step = timedelta(minutes=RES_MIN.get(res, 60))
-            for pos, val, vt in points:
-                rows.append({
-                    "datetime_utc": t0 + step * (pos - 1),
-                    "psr_type": psr,
-                    "value": val,
-                    "value_tag": vt,
-                })
+            # A03（或缺省）→ 前向填充展开；其他 curveType → 只取显式给出的点
+            expand = curve in ("A03", None)
+            if expand and end:
+                n_slots = int(round((pd.Timestamp(end) - pd.Timestamp(start)).total_seconds()
+                                    / step.total_seconds()))
+            else:
+                n_slots = max(pts)
+
+            if expand:
+                last = None
+                for p in range(1, n_slots + 1):
+                    if p in pts:
+                        last = pts[p]
+                    if last is None:
+                        continue
+                    rows.append({"datetime_utc": t0 + step * (p - 1),
+                                 "psr_type": psr, "value": last[0], "value_tag": last[1]})
+            else:
+                for p in sorted(pts):
+                    rows.append({"datetime_utc": t0 + step * (p - 1),
+                                 "psr_type": psr, "value": pts[p][0], "value_tag": pts[p][1]})
     return pd.DataFrame(rows)
 
 
@@ -247,14 +280,17 @@ def cmd_download(start, end, keys):
             got += 1
             print("  [%s] %s -> %d 行" % (key, ym, len(df)))
         if frames:
-            all_df = pd.concat(frames, ignore_index=True).drop_duplicates("datetime_utc")
-            all_df = all_df.sort_values("datetime_utc").reset_index(drop=True)
+            spec = DOCS[key]
+            subset = ["datetime_utc"] if spec["kind"] != "gen" else ["datetime_utc", "psr_type"]
+            all_df = pd.concat(frames, ignore_index=True).drop_duplicates(subset)
+            all_df = all_df.sort_values(subset).reset_index(drop=True)
             dst = OUT_DIR / ("%s.csv" % key)
             all_df.to_csv(dst, index=False)
             extra = ""
             if key == "gen_by_type":
                 techs = sorted(all_df["psr_type"].dropna().unique())
-                extra = " | 技术: %s" % ", ".join("%s(%s)" % (t, PSR.get(t, "?")) for t in techs)
+                extra = " | 技术(%d): %s" % (
+                    len(techs), ", ".join("%s=%s" % (t, PSR.get(t, "?")) for t in techs))
             print("  => %s : %d 行 (新取 %d 月, 复用 %d 月)%s" %
                   (dst.name, len(all_df), got, skipped, extra))
 

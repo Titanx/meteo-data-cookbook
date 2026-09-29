@@ -2,6 +2,27 @@
 
 > 本文件只追加，不修改历史记录。
 
+## [2026-09-29] update | [PS-036 转 verified + 新增 PF-014（A03 压缩陷阱）] | 新增 1 条 + 更新 4 条
+
+### 新增条目
+- 新增 PF-014：ENTSO-E / IEC 62325 的 **curveType=A03 压缩陷阱**（verified）
+  - **现象**：A44 2024-04 解析出 **573 行**（应为 744），逐日点数 9~21 不等，看似大规模缺测
+  - **根因**：报文的 `<curveType>A03</curveType>` = 变长块，**连续相同的值只写一个 Point，其值延续到下一个 Point 之前**
+    （第 1 天 `pos3=0`→`pos7=0.13` ⇒ 4/5/6 都是 0）。旁证：B02/B07 等技术只有 **1 个 Point**（整月恒定 0）
+  - **危害**：静默丢失 20%~35% 小时，且**折叠掉的正是零价/负价时段** ⇒ 会系统性压低西班牙负价概率
+  - **修复**：按 `position` 前向填充、用 `timeInterval` 的 start/end 与 `resolution` 算槽位数展开；
+    去重键须带维度（A75 按 `["datetime_utc","psr_type"]`，单键会把多技术压成一条）
+  - 修复后核对：2024-04 A44 = **744/744**；A75 = **2880 个唯一时刻 = 30×96**
+
+### 更新条目
+- `PS-036`：**draft → verified**。用户取得 ENTSO-E security token，A44/A75/A65 **全部 HTTP 200**；
+  2023-01~2026-09（45 个月）按月下载；实测分辨率 A44=`PT60M`、A75/A65=`PT15M`；
+  补入 A03 解析陷阱指引、更新局限（无弃电指标、尚未与 Energy-Charts/OMIE 交叉校验）
+- `scripts/data_download/download_spain_entsoe.py`：解析器加 A03 前向填充展开；发电数据去重键改为
+  `["datetime_utc","psr_type"]`（原按时间戳单键去重会把多技术压成一条 —— 另一个静默 bug）
+- `tech/catalog.md`：PF 表 + 计数（39 条）+ 数据源索引 + verify/debug 阶段 + 新增"IEC 62325/变长块解析"技术项
+- `project/catalog.md` 与项目记忆同步
+
 ## [2026-09-29] add | [PS-036 西班牙 ENTSO-E Transparency 数据链路] | 新增 1 条
 
 ### 新增条目

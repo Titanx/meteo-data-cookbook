@@ -45,7 +45,7 @@
 | **OMIE 日前市场文件** | **电价 (ES+PT, 小时/15min)** | **伊比利亚** | **历史至今 (日文件, D-1 13:30发布)** | **`build_spain_market_survey_report.py`** | **无持久数据** | **已验证(免注册)** |
 | **PVGIS 5.3 API** | **逐小时辐照 G(i)+气温+风速** | **欧洲(SAHARA3)/全球(ERA5)** | **2005-2023** | **—** | **无持久数据** | **已验证(免注册)** |
 | **ESIOS API** | **实时分技术发电/需求/PVPC** | **西班牙** | **指标而异** | **`download_spain_esios.py`** | **`data/esios/`** | **token已获(09-29); 本机被域名级WAF拦截(见PF-013), 需换网/代理** |
-| **ENTSO-E Transparency** | **泛欧分技术发电/负荷/日前价/风光预测** | **欧洲 bidding zones（西班牙 10YES-REE------0）** | **2015-至今** | **`download_spain_entsoe.py`** | **`data/entsoe/`** | **端点实测可达(09-29, 401=缺token); token 待申请(≤3工作日); 见PS-036** |
+| **ENTSO-E Transparency** | **泛欧分技术发电/负荷/日前价/风光预测** | **欧洲 bidding zones（西班牙 10YES-REE------0）** | **2015-至今（已下 2023-01~2026-09）** | **`download_spain_entsoe.py`** | **`data/entsoe/`** | **已验证(09-29 token到手, A44/A75/A65 全200); ⚠须处理 curveType=A03 压缩(PF-014)** |
 
 ## 数据量汇总
 
