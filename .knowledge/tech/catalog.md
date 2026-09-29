@@ -1,7 +1,7 @@
 # 技术知识清单（跨项目通用）
 
 > 最后更新: 2026-09-29
-> 总计: 56 条（55 verified + 1 draft）
+> 总计: 57 条（56 verified + 1 draft）
 
 ## 最佳实践 (guidelines/)
 
@@ -73,6 +73,7 @@
 | PS-039 | 西班牙负价"爆发阈值"模型（12 年历史） | verified | spain, negative-price, threshold, hockey-stick, regime-shift, solar-share, penetration, long-panel, seasonal-threshold, scenario-convergence, out-of-sample, energy-charts | implement, verify, analyze | 2026-09-29 |
 | PS-040 | 西班牙负价 · 正午窗口份额 vs 月度份额（机制定位与外推边界） | verified | spain, negative-price, noon-window, local-time, solar-share, threshold, logistic, bounded-saturation, season-dependence, out-of-sample, extrapolation-limit, energy-charts | implement, verify, analyze | 2026-09-29 |
 | PS-041 | 西班牙负价的跨境结构 · ES–FR 耦合与"区域过剩" | verified | spain, negative-price, cross-border, es-fr-spread, regional-surplus, mibel, day-ahead-price, poisson-intensity, bounded-features, out-of-sample, mechanism, energy-charts | implement, verify, analyze | 2026-09-29 |
+| PS-042 | 法国正午负价的可预报化 · "区域过剩"能预报吗 | verified | france, spain, negative-price, forecastability, ex-ante, leave-one-year-out, climatology, two-stage, persistence, reliability-calibration, zero-inflation, poisson-intensity, out-of-sample, energy-charts | implement, verify, analyze | 2026-09-29 |
 
 ## 参数清单
 
@@ -110,7 +111,7 @@
 | **CMA 数据** | **[PF-012](pitfalls/PF-012.md)** |
 | **ESIOS / REE（西班牙电力）** | **[PF-013](pitfalls/PF-013.md)** |
 | **ENTSO-E Transparency** | **[PS-036](processes/PS-036.md)**（西班牙链路，免注册但需免费 token）, **[PS-037](processes/PS-037.md)**（官方口径复核 + 2026 样本外）, **[PF-014](pitfalls/PF-014.md)** |
-| **Energy-Charts (Fraunhofer ISE)** | **[PS-030](processes/PS-030.md)**（光伏链路）, **[PS-039](processes/PS-039.md)**（12 年长面板）, **[PS-040](processes/PS-040.md)**（Load/Solar 序列）, **[PS-041](processes/PS-041.md)**（`/price?bzn=` 邻国电价，ENTSO-E 限流替代） |
+| **Energy-Charts (Fraunhofer ISE)** | **[PS-030](processes/PS-030.md)**（光伏链路）, **[PS-039](processes/PS-039.md)**（12 年长面板）, **[PS-040](processes/PS-040.md)**（Load/Solar 序列）, **[PS-041](processes/PS-041.md)**（`/price?bzn=` 邻国电价，ENTSO-E 限流替代）, **[PS-042](processes/PS-042.md)**（`country=fr` 法国光伏/核电/负荷） |
 | SURFRAD | [PS-005](processes/PS-005.md) |
 | **MRMS QPE** | **[PS-018](processes/PS-018.md)** |
 | **NSRDB** | **[PS-019](processes/PS-019.md), [PS-022](processes/PS-022.md), [PS-023](processes/PS-023.md), [PS-024](processes/PS-024.md)** |
@@ -127,8 +128,8 @@
 |------|---------|
 | 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PS-009, PS-010, PS-011, PS-012, PS-013, PS-018, PS-019, PS-020, PS-027, PS-029, PS-034, PS-035, PS-036, PF-005, PF-007, PF-011, PF-012, PF-013, GL-008, GL-009 |
 | 实现开发 (implement) | 全部 |
-| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PF-014, PS-007, PS-008, PS-009, PS-010, PS-013, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-029, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038, PS-039, PS-040, PS-041 |
-| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016, PS-017, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038, PS-039, PS-040, PS-041 |
+| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PF-014, PS-007, PS-008, PS-009, PS-010, PS-013, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-029, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042 |
+| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016, PS-017, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042 |
 | 调试修复 (debug) | PF-006, PF-014 |
 
 ### 按通用技术
@@ -160,14 +161,16 @@
 | CMA 数据访问 | PF-012, PS-012 |
 | IEC 62325 / 变长块解析 | PF-014, PS-036 |
 | 季节/延伸期预报概率化 | PS-017, PS-027, PS-034, PS-035, PS-037, PS-038, PS-039, PS-040 |
-| 样本外检验 / AUC 排序评估 | PS-035, PS-037, PS-038, PS-039, PS-040, PS-041 |
-| 概率校准评估 (Brier/可靠性) | PS-038 |
+| 样本外检验 / AUC 排序评估 | PS-035, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042 |
+| 概率校准评估 (Brier/可靠性) | PS-038, **PS-042** |
 | **阈值/结构断点建模** | **PS-039**, **PS-040** |
 | **长历史面板构建 (12 年)** | **PS-039**, **PS-040** |
 | **当地时窗口/日内时段口径** | **PS-040** |
 | **有界/饱和设定 (logistic、占比 ∈[0,1])** | **PS-040**, **PS-041** |
-| **泊松强度模型 (过散布诊断)** | **PS-038**, **PS-041** |
+| **泊松强度模型 (过散布诊断)** | **PS-038**, **PS-041**, **PS-042** |
 | **跨境耦合/区域过剩 (ES–FR、MIBEL)** | **PS-041** |
 | **符号协定经验裁定 (未文档化字段)** | **PS-041** |
+| **可预报性检验 (事前 vs 同期)** | **PS-042** |
+| **零膨胀/过散布计数的概率换算** | **PS-042** |
 | 缺口成因与工况识别 | PS-028, PS-031, PS-032, PS-033 |
-| 西班牙电力市场链路 | PS-029, PS-030, PS-031, PS-035, PS-036, PS-037, PS-038, PS-039, PS-040, PS-041, PF-013 |
+| 西班牙电力市场链路 | PS-029, PS-030, PS-031, PS-035, PS-036, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042, PF-013 |
