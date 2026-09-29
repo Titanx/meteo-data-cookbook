@@ -16,6 +16,8 @@
 | Open-Meteo HRRR | NWP 数值预报 | ERCOT 6站（CONUS全境） | 实时预报+历史2018起 | `test_openmeteo_hrrr.py` | `data/openmeteo_hrrr_results.json` | 已验证 |
 | Open-Meteo S2S (EC46/SEAS5) | 45天延伸期集合预报 | ERCOT 6站 | 未来6周~7个月+历史回导 | `verify_seasonal_vs_gfs.py` | `data/openmeteo_seasonal/` | 已验证 |
 | **Open-Meteo Seasonal (西班牙)** | **45天延伸期集合预报 (逐日短波/气温)** | **西班牙 9 光伏区** | **未来45天** | **`download_spain_seasonal.py`** | **`data/openmeteo_seasonal_spain/`** | **已验证(免注册)** |
+| **Open-Meteo previous-runs (法国光伏区)** | **历史预报(带 lead D1-D7): 逐时 GHI/气温** | **法国 20 个 GEM 容量加权点位** | **2024-07 ~ 2026-09 (归档起点≈2024-07-01)** | **`download_france_nwp_prevruns.py`** | **`data/openmeteo_nwp_france/`** | **已验证(免注册); 🔴 必须显式 `models=ecmwf_ifs025` 否则全 null; 🔴 `start_date/end_date` 与 `past_days/forecast_days` 不可混用; 🔴 **D6/D7 在 2024-07~2025-04 段被系统性放大(+37/+143 W/m²)**, 用前必须做逐 lead×分段偏差筛查(PS-043 §2, PF-015)** |
+| **Open-Meteo Archive ERA5 (法国光伏区)** | **实测逐时 GHI/气温(预报核验与训练基准)** | **法国 20 点位** | **2023-01 ~ 2026-09** | **`download_france_ghi_archive.py`** | **`data/openmeteo_nwp_france/fr_ghi_archive.npz`** | **已验证(免注册)** |
 | **Open-Meteo Archive 温度 (西班牙)** | **逐日 Tmax/Tmin/Tmean (历史/当期)** | **西班牙 9 光伏区** | **2022-12-01 ~ 2026-09-28** | **`download_spain_temperature.py`** | **`data/openmeteo_temperature_spain/daily_temp.json`** | **已验证(免注册)** |
 | GPM IMERG | 卫星降水 | ERCOT 区域 | 历史1998至今（延迟4h~3.5月） | `test_imerg_download.py` | `data/imerg/` | 已验证 |
 | RainViewer API | 雷达拼图 | 全球含德州 | 实时（5分钟延迟） | `test_radar_all_anonymous.py` | 无持久数据 | 已验证 |
@@ -73,6 +75,7 @@
 | USCRN 2022-07 | 9 | 38 MB | 8 站 × 8928 步 × 23 列 | 5min 辐照/气温地面基准 |
 | **Energy-Charts 邻国电价 (ES/FR/PT)** | **9** | **~3.4 MB** | **98,567 行** | **price_{ES,FR,PT}.csv 各 ~32,856 行(2023-01~2026-09 小时) + 12 个年度 JSON 缓存; 派生 spain_xborder_daily.csv 1368 天(PS-041)** |
 | **Energy-Charts 法国分技术发电** | **5** | **~10.4 MB** | **32,822 小时** | **fr_power_hourly.csv(2.68 MB, 含 Solar/Load/Nuclear/Residual load/Wind/Hydro) + 4 个年度 JSON(7.7 MB); 派生 france_noon_panel.csv 1368 日 × 41 列(PS-042)** |
+| **法国光伏区 NWP 历史预报 + ERA5** | **7** | **~8.0 MB** | **19,704 小时 × 7 lead × 20 点位** | **5 个 180 天分块 npz(ghi/t2m, 形状 [7 lead, 20 hub, T]) + ERA5 archive npz(20×32,832) + meta; 派生 france_nwp_panel.csv 1368 日 × 57 列(PS-043)** |
 | **ENTSO-E 西班牙** | **657** | **~0.4 GB** | **304.2 万行** | **合并表: 日前价 129,167 行(2015-01~2026-09, 2025-10 起 15min) / 分技术发电 2,654,432 行(2023-01~2026-09) / 负荷 217,279 行(2015-01~2026-09); raw 月缓存 642 文件(321 csv + 321 xml)** |
 | 合计 | ~3,295+ | ~10.3 GB | ~5.85M+ | — |
 
@@ -113,6 +116,7 @@
 | 西班牙负价 · 正午窗口份额 (PS-040) | `output/spain_negprice_noon/index.html` | **机制定位**: **72% 的负价小时落在当地 10–16h**(窗口仅占全月小时 25%; 2024/25/26 = 71/72/72%) ⇒ 负价确由正午过剩决定; 正午份额年度均值 2015 **11.1%** → 2023 41.3% → 2025 52.3% → 2026 **63.5%**(全天份额仅 5.1%→28.4%); **换驱动量只买到小改善且改善在"偏差"**: 全样本 MAE 11.0→**10.4**(9-17h 最优)、R² 0.339→0.363, 样本外 MAE 55.6→55.7 但**偏差 −29.2→−24.5**; **秋季 2026 区间未收敛反变宽**: 四种设定 8.2%(秋季正午θ=27%)/**20.1%**(全样本有界 logistic)/**31.6%**(全样本正午θ=31%, 线性式被外推到 2 倍阈值而失效) ⇒ 区间 2→约 4 倍; **根因是映射非单调且强季节依赖**(同 59-64% 份额下 2025-05 窗口负价占比 **86.6%** vs 2024-05 **14.0%**; 2026 年内份额升而占比降 3月58.7%→52.2%、9月77.6%→11.5%) ⇒ **PS-039 的 8.6%–17.1% 应保留**, PS-040 补独立下界 8.2%; 🔴 **更正 PS-039**: Energy-Charts `public_power` **含 `Load` 序列**(与 A65 逐时 r=0.999587/能量比 0.999981), 不是"无负荷字段" | 2026-09-29 |
 | 西班牙负价 · 跨境结构 ES–FR (PS-041) | `output/spain_negprice_xborder/index.html` | **补上缺失的结构通道: 负价是"法–伊区域过剩", 不只是国内过剩**: 用 Energy-Charts `/price?bzn=ES\|FR\|PT` 建 2023-01~2026-09 **1368 天**跨境日面板(EC 价与官方 ENTSO-E A44 **r=0.999984/MAE 0.006**); **FR 同窗口负价小时数是支配性预测量** — corr(负价h, FR负价h)=**+0.620** vs 国内正午份额仅 **+0.284**, 且**控制国内份额后残差相关仍 +0.540**; 泊松强度模型 **AUC 0.808(S2 仅国内) → 0.903(S8a 加 FR负价h)**; **2026 样本外 AUC 0.761→0.828**(MAE 2.51→1.91, 偏差 −1.68→−0.85) ⇒ 解释了 PS-037"2026 国内资源通道失效"——缺的是**跨境/区域通道**; **物理净出口量本身无信息**(corr(负价h, 净出口)=+0.020, 独立性检验 p=0.46) ⇒ 有效的是"价格信号/区域同质过剩"而非"流向"; ES−FR 价差**非单调**(峰值在价差≈0, 负价日率 43.9%); **MIBEL 单一价确认**(|ES−PT| 中位 **0.00** €/MWh) ⇒ 真外部耦合只有 ES–FR; 🔴 **两处工程陷阱**: ①泊松**对数链接 × 无界水平变量(FR 电价)** = 外推炸弹(S7 在 2026 **MAE 160.42** h/日), 须用有界特征(FR 负价小时∈[0,6]); ②EC `Cross border electricity trading` 符号未文档化, 经经验裁定(负价小时均值 −3031 vs 其余 −1075 MW ⇒ **正号=净进口**); ⚠ENSTO-E A44 PT 全部 EIC 候选返回 0 行 + A11 单边流被限流, 故用聚合序列并记入限制 | 2026-09-29 |
 | 法国正午负价的可预报化 (PS-042) | `output/spain_negprice_frforecast/index.html` | **"区域过剩"不能用基本面事前化 —— PS-041 那条通道是同期共振, 不是可预报驱动**: 给法国侧建独立模型(正午光伏份额 + **核电份额**(中位占正午负荷 76%) + 周末; Poisson; AUC **0.792**, 加月份FE **0.864**) ⇒ 机制是"核电压舱 + 光伏叠加 + 周末需求塌陷"; 再用**留一年气候学**(其他年份同月份/周末均值)把 FR 负价h 变成事前量 ⇒ **增量技能完全消失**: 全样本 AUC **0.808(仅国内) → 0.891(FR 同期) → 0.805(FR 事前)**; **2026 样本外 0.761 → 0.817 → 0.764**(MAE 2.515 → 1.913 → 2.442); **反面(正面结果): 只用事前可得特征(滞后/滚动+日历) 2026 样本外 AUC 0.753**(纯日历 0.680; 三方对照 **事前 0.75 ｜ 同期国内 0.761 ｜ 同期区域 0.817**); **两项交付**: ①**条件结构表** P(ES 负价日\|正午份额, FR负价h)(份额55%: FR 0h→10.8%, FR 4h→**46.6%**); ②**可靠性校准**(泊松 `1−exp(−λ)` 均值 0.449 vs 实际 0.182 ⇒ **高估 2.5 倍**, 因负价 h **过散布+零膨胀**, 1368 日中 75% 为 0); **秋季独立口径 15.8%(不带 FR)~17.9%(带 FR 气候学)**, 落在 PS-039 的 8.6%–17.1% 上沿 ⇒ **秋季数字不动, 但新增第三条独立支撑** | 2026-09-29 |
+| 用真实 NWP 预报填法国侧 (PS-043) | `output/spain_negprice_nwpfr/index.html` | **换掉气候学也没用 —— 区域通道携带的是"当下"而非"未来"的信息**: 用 Open-Meteo `previous-runs`(ECMWF IFS, 真正带 lead)建法国 20 点位 D1-D7 历史预报(100 次请求) + ERA5 核验; **①先做 lead 同质性筛查(关键)**: D1-D3 两段偏差同质(+3.1/+3.6/+8.0 vs +0.9/+2.2/+2.4 W/m²), 而 **D6/D7 在 2024-07~2025-04 段被系统性放大(偏差 +37.3/**+142.6**, 约为实测 1.4-1.6 倍)**, 2025-05 起正常(-21.1/-26.0) ⇒ 主分析只用 D1-D3; **②法国正午负价本身可预报**: NWP 光照+气温+核电滚动 → 2026 AUC **0.791/0.797/0.795 (D1/D2/D3)**, MAE 1.48-1.51 h; 去掉天气只剩 **0.579**; **③但接到西班牙侧增益≈0**: 全事前可得基线(ES 滞后/滚动, 2026 AUC **0.838**) + NWP 法国通道 → **0.839(+0.001)**; 加气候学 → 0.832(−0.006); 加**同期观测** → **0.877(+0.039)**; 同质窗内到 **D7 仍无增益**(+0.003~+0.006); **2025 第二样本外年复现**(基线 0.892 → 0.886-0.891); **④顺带修正 PS-042 基线**: 其 P 系列(0.751/0.753)含 11 个**月份哑变量**, 在 18 个月样本上过拟合, **日尺度正确基线应取 0.838**(去掉月份FE 后同族模型), 换训练窗口只值 0.010(0.751→0.761); 🔴 A6 在 2025 上 MAE **226.6 h/日** ⇒ **对数链接×无界变量外推爆炸再现**(PS-041 §8-1) | 2026-09-29 |
 
 ## 项目脚本索引
 
@@ -178,6 +182,9 @@
 | `download_nsrdb_uscrn_pixels_july2022.py` | USCRN 站点的 NSRDB 像素辐照提取 | nrel-pds-nsrdb S3 | 无key, 最近像素匹配 |
 | `download_hrrr_temp_2025_2026.py` | HRRR 2m 温度多年份下载 (多坐标批量) | Open-Meteo historical-forecast | 141 站 × 614 天, 20 站/批 |
 | `match_nsrdb_ercot_solar_annual.py` | GEM 按年 ERCOT 光伏清单 + NSRDB 像素匹配 | GEM 2026-08 + 像素索引 | `start-year ≤ 年`, ≥100MW |
+| `prep_france_pv_fleet.py` | GEM 法国光伏→容量加权代表点位(1° 网格, 取前 N 大) | GEM solar 2026-08 | `[年份] [TOPN=20]`; 1951 座 11.48 GW → 20 点 61.7% (PS-043) |
+| `download_france_nwp_prevruns.py` | 法国点位 NWP **历史预报**下载(GHI/气温, D1-D7, 分块缓存) | Open-Meteo previous-runs (ECMWF IFS) | 无key, 2024-07~2026-09; ⚠必须 `models=ecmwf_ifs025`; 5 分块 × 20 点 (PS-043) |
+| `download_france_ghi_archive.py` | 法国点位 **ERA5 实测** GHI/气温(预报核验与训练基准) | Open-Meteo Archive | 无key, 2023-01~2026-09, 20 请求 (PS-043) |
 
 ### 分析脚本 (analysis/)
 
@@ -229,6 +236,9 @@
 | `build_france_noon_panel.py` | 法国正午(Paris 10-16h)日面板: 光伏/负荷/核电/剩余负荷 + 与 ES 跨境面板对齐(含逐日交叉自检) (PS-042) | fr_power_hourly + price_FR + spain_xborder_daily | france_noon_panel.csv |
 | `model_france_noon_neg.py` | 法国负价可预报化: FR 侧设定比较 / 留一年气候学事前化 / 两阶段 ES 模型 / 事前变量库 / 可靠性校准 / 条件结构表 (PS-042) | france_noon_panel.csv | france_neg_{model,coef,frskill,forecast,twostage,oos,preexante,reliability,condtable,season}.csv |
 | `build_france_noon_report.py` | 法国可预报化报告(可靠性曲线/条件结构热力表/设定与样本外) (PS-042) | france_neg_*.csv | output/spain_negprice_frforecast/index.html |
+| `build_france_nwp_panel.py` | 法国 NWP 预报→当地正午日面板(容量加权 GHI/气温, 与 ES 面板对齐) + lead 同质性分段筛查 (PS-043) | fr_nwp_prevruns_*.npz + fr_ghi_archive.npz + france_noon_panel.csv | france_nwp_panel.csv |
+| `model_france_nwp_forecast.py` | 用真实 NWP 预报填法国侧: lead 筛查 / 法国侧可预报性 / 两阶段 ES / 训练窗诊断 / 同质窗到 D7 / 2025 第二样本外年 (PS-043) | france_nwp_panel.csv | france_nwp_{leadcheck,frskill,twostage,trainwin,homog,oos2025}.csv |
+| `build_france_nwp_report.py` | NWP 法国侧报告(lead MAE 柱/逐表/AUC 对比条) (PS-043) | france_nwp_*.csv | output/spain_negprice_nwpfr/index.html |
 | `verify_temp_fix.py` | 温度参数化 vs HRRR 实测温度分窗对比 | 出力 CSV ×2 | 分窗指标表 (stdout) |
 | `ilr_sweep_heatwave.py` | ILR 四窗口扫描 (热浪/非热浪×正午/全月) | 辐照 nc + EIA CSV | 最优 ILR=1.30 |
 | `verify_nsrdb_vs_uscrn_july2022.py` | NSRDB×USCRN 交叉验证 (反演劣化排除) | USCRN CSV + NSRDB 提取 | nsrdb_uscrn_daily.csv |
@@ -270,8 +280,11 @@
 | 联动分析：ASTER地形 × 闪电分布 | 低 | 待定 | 地形高程与GLM闪电空间分布关联 |
 | RTM 事件尾部建模 (稀缺定价 >$1000) | ~~低~~ 已完成 | 2026-09-27 | 已完成 → PS-023: 15min 口径 + 分位数回归 + 尾部概率 + 凸性检验; 高需求放大结论被推翻 |
 | 用物理晴空反事实统一缺口口径 | ~~中~~ 已完成 | 2026-09-27 | 已完成 → PS-024: 2025/2026 物理反事实建成, 弹性对口径不敏感(差 0.34 %/GW), 但**悖论归因被推翻**(非包络虚高, 属天气组合负相关) |
-| 把"FR 正午负价小时"建成可预报量 | 高 | **已完成(部分)** | PS-042 已证**气候学代理不可行**(增量技能 0.808→0.805/0.764); **剩余唯一有增益空间的路径** = 用 **NWP 预报**填法国侧光伏/负荷, 检验 **D-1~D-7** 能否把事前 AUC 0.75 推向 0.82 (PS-042 §7-1) |
-| 把 PS-042 条件结构表接成产品 | 中 | 待定 | 以 `france_neg_condtable.csv` 为查表: 输入 "ES 正午份额预报 + FR 状态预报" → 输出 P(负价日); 需先解决 FR 状态的可预报性 (PS-042 §4.5/§7-2) |
+| 把"FR 正午负价小时"建成可预报量 | 高 | **已完成** | PS-042 证否气候学路径, **PS-043 用真实 NWP(ECMWF IFS previous-runs)证否预报路径**: 法国侧本身可预报(AUC 0.79), 但接到西班牙侧增益 **+0.001~+0.006**(两个样本外年一致), 同期观测上界仍 +0.039 ⇒ **该通道在预报语境下不可用 (PS-043 §5)** |
+| 以**持续性为骨架**重建西班牙负价日预警 | 高 | 待定 | PS-043 证得全事前可得基线(ES 滞后/滚动)2026 AUC **0.838**, 高于同期国内基本面 0.809 ⇒ 预警骨架应为持续性; 需把 PS-042 §4.5 条件结构表改造成"持续性 + 条件表"版本并做概率校准 (PS-043 §7-1) |
+| 补齐 **ES 侧 NWP**(西班牙光伏区辐照 + 温度驱动负荷预报) | 高 | 待定 | 把 `noon_ratio`/`load_GWh` 也换成预报量, 才能得到**完全可运营**的 D-1/D-3 预警 (PS-043 §7-2) |
+| 接入**法国核电日前可用容量** | 中 | 待定 | 现用 7 日滚动代理排产; 真实 day-ahead nuclear availability 可压缩法国侧不确定性 (PS-043 §7-4) |
+| 把 PS-042 条件结构表接成产品 | 中 | 待定 | 以 `france_neg_condtable.csv` 为查表: 输入 "ES 正午份额预报 + FR 状态预报" → P(负价日); 前置依赖"ES 侧 NWP" (PS-042 §4.5/§7-2) |
 | ENTSO-E A11 单边流回填 (ES→FR) | 低 | 待网关恢复 | 当前被限流(HTTP 599); 需单边流以区分"区域过剩"与"输电阻塞"两种机制 (PS-041 §6/§7-4) |
 | 负价强度模型改 NegativeBinomial | 中 | 待定 | 现有泊松强度过散布(PS-041 离散度 4.5–5.9; PS-042 2.3–3.5), NB 可给出更可信区间 (PS-041 §7-3, PS-042 §7-3) |
 | WMO S2S 库注册与回算获取 | 中 | 待定 | 注册 ECMWF/ECDS 账号, 拉取 ECMWF/NCEP 回算, 升级 PS-017 为多窗口统计 (PS-020) |

@@ -1,7 +1,7 @@
 # 技术知识清单（跨项目通用）
 
 > 最后更新: 2026-09-29
-> 总计: 57 条（56 verified + 1 draft）
+> 总计: 59 条（58 verified + 1 draft）
 
 ## 最佳实践 (guidelines/)
 
@@ -29,6 +29,7 @@
 | PF-012 | CMA 气象数据访问陷阱：CMADaaS 需内网、data.cma.cn API 受限、nmc-met-io 不支持 LMI | verified | cma, cmadaas, data.cma.cn, nmc-met-io, fy4, lmi, vpn, intranet, china, api, authentication, python | architect, implement | 2026-09-07 |
 | PF-013 | REE/ESIOS 域名级 WAF 封锁：api.esios.ree.es 全站 403（token 有效也进不去） | verified | esios, ree, spain, imperva, incapsula, waf, anti-scraping, 403, geoblock, china-ip-block, api, token, proxy | architect, implement | 2026-09-29 |
 | PF-014 | ENTSO-E / IEC 62325 报文的两处隐藏结构：curveType=A03 压缩 与 A01/A07 合约混装 | verified | entsoe, transparency-platform, iec62325, xml, curvetype, a03, variable-sized-block, forward-fill, contract-market-agreement, a01, a07, day-ahead, intraday, parsing, silent-data-loss, spain | implement, verify, debug | 2026-09-29 |
+| PF-015 | 历史预报归档（previous-runs）的逐 lead 同质性陷阱 | verified | forecast-archive, previous-runs, hindcast, backtest, lead-time, homogeneity, bias-by-lead, silent-data-loss, openmeteo, ecmwf, era5, verification | architect, implement, verify | 2026-09-29 |
 
 ## 技术流程 (processes/)
 
@@ -74,6 +75,7 @@
 | PS-040 | 西班牙负价 · 正午窗口份额 vs 月度份额（机制定位与外推边界） | verified | spain, negative-price, noon-window, local-time, solar-share, threshold, logistic, bounded-saturation, season-dependence, out-of-sample, extrapolation-limit, energy-charts | implement, verify, analyze | 2026-09-29 |
 | PS-041 | 西班牙负价的跨境结构 · ES–FR 耦合与"区域过剩" | verified | spain, negative-price, cross-border, es-fr-spread, regional-surplus, mibel, day-ahead-price, poisson-intensity, bounded-features, out-of-sample, mechanism, energy-charts | implement, verify, analyze | 2026-09-29 |
 | PS-042 | 法国正午负价的可预报化 · "区域过剩"能预报吗 | verified | france, spain, negative-price, forecastability, ex-ante, leave-one-year-out, climatology, two-stage, persistence, reliability-calibration, zero-inflation, poisson-intensity, out-of-sample, energy-charts | implement, verify, analyze | 2026-09-29 |
+| PS-043 | 用真实 NWP 预报填法国侧 · D-1~D-7 能恢复"区域过剩"通道吗 | verified | france, spain, negative-price, nwp, previous-runs, hindcast, ecmwf, era5, lead-time, homogeneity, two-stage, persistence, month-fe-overfit, out-of-sample, openmeteo, forecastability | implement, verify, analyze | 2026-09-29 |
 
 ## 参数清单
 
@@ -98,7 +100,7 @@
 | 数据源 | 相关条目 |
 |--------|---------|
 | Meteostat | [GL-005](guidelines/GL-005.md), [PF-004](pitfalls/PF-004.md) |
-| Open-Meteo | [GL-004](guidelines/GL-004.md), [PS-017](processes/PS-017.md), [PS-022](processes/PS-022.md) |
+| Open-Meteo | [GL-004](guidelines/GL-004.md), [PS-017](processes/PS-017.md), [PS-022](processes/PS-022.md), **[PS-043](processes/PS-043.md)**（`previous-runs` 历史预报）, **[PF-015](pitfalls/PF-015.md)**（逐 lead 同质性） |
 | NASA POWER | [GL-006](guidelines/GL-006.md) |
 | USCRN | **[PS-022](processes/PS-022.md)** |
 | 怀俄明探空 | [GL-007](guidelines/GL-007.md), [PF-008](pitfalls/PF-008.md), [PF-009](pitfalls/PF-009.md), [PF-010](pitfalls/PF-010.md), [PS-008](processes/PS-008.md) |
@@ -126,10 +128,10 @@
 
 | 阶段 | 相关条目 |
 |------|---------|
-| 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PS-009, PS-010, PS-011, PS-012, PS-013, PS-018, PS-019, PS-020, PS-027, PS-029, PS-034, PS-035, PS-036, PF-005, PF-007, PF-011, PF-012, PF-013, GL-008, GL-009 |
+| 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PS-009, PS-010, PS-011, PS-012, PS-013, PS-018, PS-019, PS-020, PS-027, PS-029, PS-034, PS-035, PS-036, PF-005, PF-007, PF-011, PF-012, PF-013, **PF-015**, GL-008, GL-009 |
 | 实现开发 (implement) | 全部 |
-| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PF-014, PS-007, PS-008, PS-009, PS-010, PS-013, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-029, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042 |
-| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016, PS-017, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042 |
+| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PF-014, **PF-015**, PS-007, PS-008, PS-009, PS-010, PS-013, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-029, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042, PS-043 |
+| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016, PS-017, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042, PS-043 |
 | 调试修复 (debug) | PF-006, PF-014 |
 
 ### 按通用技术
@@ -170,7 +172,9 @@
 | **泊松强度模型 (过散布诊断)** | **PS-038**, **PS-041**, **PS-042** |
 | **跨境耦合/区域过剩 (ES–FR、MIBEL)** | **PS-041** |
 | **符号协定经验裁定 (未文档化字段)** | **PS-041** |
-| **可预报性检验 (事前 vs 同期)** | **PS-042** |
+| **可预报性检验 (事前 vs 同期)** | **PS-042**, **PS-043** |
 | **零膨胀/过散布计数的概率换算** | **PS-042** |
+| **历史预报归档回测 (lead 同质性)** | **PS-043**, **PF-015** |
+| **月度假变量在日尺度过拟合** | **PS-043**（PS-038 月尺度同源） |
 | 缺口成因与工况识别 | PS-028, PS-031, PS-032, PS-033 |
-| 西班牙电力市场链路 | PS-029, PS-030, PS-031, PS-035, PS-036, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042, PF-013 |
+| 西班牙电力市场链路 | PS-029, PS-030, PS-031, PS-035, PS-036, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042, PS-043, PF-013 |
