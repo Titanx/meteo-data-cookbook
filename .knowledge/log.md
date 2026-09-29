@@ -2,6 +2,28 @@
 
 > 本文件只追加，不修改历史记录。
 
+## [2026-09-29] add | [PF-013 REE/ESIOS 域名级 WAF 封锁] | 新增 1 条
+
+### 新增条目
+- 新增 PF-013：REE/ESIOS 域名级 WAF 封锁（verified）
+  - 背景：用户 2026-09-29 拿到 ESIOS 个人 token（REE 邮件：仅限本人使用、公开项目须落自有服务器、禁止冗余请求）
+  - **现象**：`api.esios.ree.es` / `www.esios.ree.es` / `www.ree.es` / `apidatos.ree.es` **全部 403**，
+    返回同一张 **Imperva/Incapsula** 拦截页（`X-Iinfo`、`visid_incap_*`、`_Incapsula_Resource`）
+  - **判定（三条独立证据）**：① 带/不带 token、连根路径都 403 ⇒ 拦在鉴权**之前**，非 token 问题；
+    ② `curl_cffi` 的 Chrome/Safari/Edge **TLS 指纹伪装**全 403 ⇒ 非指纹识别；
+    ③ Playwright **有界面**真实 Chromium 也 403 ⇒ 非 JS 挑战/无头检测，属**域名级（出口 IP）封锁**
+  - **对照**：同机 OMIE / Energy-Charts / PVGIS / Open-Meteo / ENTSO-E 门户 **均 200** ⇒ 只有 `*.ree.es` 被挡
+  - **处置**：换到可访问 ree.es 的网络，或设 `ESIOS_PROXY`（脚本已支持）；
+    在此之前西班牙链路继续用 Energy-Charts + OMIE + Open-Meteo Seasonal
+- 新增脚本：`scripts/data_download/test_esios_api.py`（自检，退出码 3 = 被 WAF 拦截）、
+  `scripts/data_download/download_spain_esios.py`（代理可感知 + 按月续传，`--check`/`--list`/`--start --end`）
+- 更新 `tech/processes/PS-029.md`：新增 §5.1（token 已获但被 WAF 拦截）、更新数据源表与 §7 下一步、§9 文件
+- 更新 `project/catalog.md`：ESIOS 数据源状态（待token → token已获但需换网/代理）+ 2 条脚本索引
+- 更新 `tech/catalog.md`：PF 表 + 数据源索引 + 阶段索引 + 反爬虫标签
+
+> 备注：`tech/catalog.md` 的流程表与 `log.md` 止于 PS-024（2026-09-27），
+> PS-025~PS-035 的条目此前未回填（本次未一并补齐，留待后续整理）。
+
 ## [2026-09-27] add | [项目结论总览：光伏缺口 × 电价冲击链路] | 新增 1 文档
 
 ### 新增

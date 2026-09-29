@@ -44,7 +44,7 @@
 | **HRRR 80m 风速 (2025-26)** | **NWP 轮毂高度风速** | **ERCOT 165 风电点位** | **2025-01-01 ~ 2026-09-06** | **`download_hrrr_wind_2025_2026.py`** | **`data/nsrdb/hrrr_wind80m_2025_2026.npz`** | **已完成** |
 | **OMIE 日前市场文件** | **电价 (ES+PT, 小时/15min)** | **伊比利亚** | **历史至今 (日文件, D-1 13:30发布)** | **`build_spain_market_survey_report.py`** | **无持久数据** | **已验证(免注册)** |
 | **PVGIS 5.3 API** | **逐小时辐照 G(i)+气温+风速** | **欧洲(SAHARA3)/全球(ERA5)** | **2005-2023** | **—** | **无持久数据** | **已验证(免注册)** |
-| **ESIOS API** | **实时分技术发电/需求/PVPC** | **西班牙** | **指标而异** | **—** | **—** | **待个人token(匿名403)** |
+| **ESIOS API** | **实时分技术发电/需求/PVPC** | **西班牙** | **指标而异** | **`download_spain_esios.py`** | **`data/esios/`** | **token已获(09-29); 本机被域名级WAF拦截(见PF-013), 需换网/代理** |
 | **ENTSO-E Transparency** | **泛欧分技术发电/负荷/日前价/风光预测** | **欧洲 bidding zones** | **2015-至今** | **—** | **—** | **待免费token** |
 
 ## 数据量汇总
@@ -139,6 +139,8 @@
 | `download_aster_gdem.py` | ASTER GDEM v3 + ASTWBD 地形/水体 | NASA LP DAAC (Earthdata) | netrc 认证 |
 | `download_seasonal_forecast.py` | Open-Meteo 45天集合预报下载(6站,含50成员) | Open-Meteo seasonal | 无key |
 | `download_spain_seasonal.py` | Open-Meteo 45天集合预报下载(西班牙9光伏区, 50成员×45天) | Open-Meteo seasonal | 无key, 窗口 2026-09-29~11-12 |
+| `test_esios_api.py` | ESIOS API 连通性 + WAF 判定自检(退出码3=被Imperva拦截) | ESIOS API | 需 ESIOS_API_TOKEN, 支持 ESIOS_PROXY |
+| `download_spain_esios.py` | ESIOS 分技术出力/需求/电价下载(代理可感知+按月续传) | ESIOS API | `--check`/`--list`/`--start --end`; 需换网或代理(PF-013) |
 | `verify_seasonal_vs_gfs.py` | 45天预报 vs ERA5/GFS10天 逐lead误差 | Open-Meteo seasonal+archive+historical | 无key |
 | `prep_ercot_wind_fleet.py` | GEM 风电→ERCOT 点位清单(按年, 0.1°去重聚合) | GEM wind 2026-08 | 165 点位 37.9 GW |
 | `prep_spain_pv_fleet.py` | GEM 光伏→西班牙采样点(按年, 网格聚合) | GEM solar 2026-08 | 212 点位 27.66 GW |
