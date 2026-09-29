@@ -36,6 +36,10 @@ def main():
     E = pd.concat([solar.rename("e_solar"), wind.rename("e_wind"), loadh.rename("e_load"),
                    priceh.rename("e_price")], axis=1)
     E.index = E.index.tz_localize(None)
+    # ⚠ 合并表的**跨度由各自下载批次决定**（价格/负荷已回填到 2015，但 A75 分技术发电只有 2023+），
+    #   concat 会取并集 ⇒ 若直接落盘，外层会多出 2015–2022 的"全 NaN 光伏/风电"行，
+    #   下游（PS-037 逐年统计）会混入空年份。本面板语义固定为 **2023-01 起**，显式裁剪。
+    E = E[E.index.year >= 2023]
     print("ENTSO-E 小时面板:", E.shape, E.index.min(), "~", E.index.max())
 
     # ---- 与 Energy-Charts 口径对齐诊断 ----

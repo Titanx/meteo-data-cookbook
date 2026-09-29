@@ -308,8 +308,12 @@ def cmd_download(start, end, keys, reparse=False):
         if frames:
             spec = DOCS[key]
             subset = ["datetime_utc"] if spec["kind"] != "gen" else ["datetime_utc", "psr_type"]
-            all_df = pd.concat(frames, ignore_index=True).drop_duplicates(subset)
-            all_df = all_df.sort_values(subset).reset_index(drop=True)
+            all_df = pd.concat(frames, ignore_index=True)
+            # ⚠ 混源拼接: 复用月来自 read_csv(datetime_utc=str), 重解析/新取月来自
+            #   parse_iec(datetime_utc=Timestamp) ⇒ 直接 sort 会 "Timestamp < str" 报错。
+            #   统一规范化为 UTC 字符串再排序去重。
+            all_df["datetime_utc"] = pd.to_datetime(all_df["datetime_utc"], utc=True).astype(str)
+            all_df = all_df.drop_duplicates(subset).sort_values(subset).reset_index(drop=True)
             dst = OUT_DIR / ("%s.csv" % key)
             all_df.to_csv(dst, index=False)
             extra = ""
