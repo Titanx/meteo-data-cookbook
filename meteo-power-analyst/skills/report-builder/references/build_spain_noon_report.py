@@ -2,7 +2,7 @@
 """PS-040 报告: 正午窗口(10-16h)份额 vs 月度份额 —— 负价机制定位与外推边界
 
 输出: output/spain_negprice_noon/index.html
-用法: python scripts/analysis/build_spain_noon_report.py
+用法: python skills/report-builder/references/build_spain_noon_report.py
 """
 import os
 import numpy as np

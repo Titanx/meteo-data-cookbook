@@ -17,7 +17,7 @@
 输入: data/nsrdb/hrrr_wind80m_2025_2026.npz, data/gem/ercot_wind_plants_2025.csv,
       data/ercot/ercot_hourly_panel_{2025,2026}.csv
 输出: data/ercot/wind_shortfall_2025_2026.csv, wind_power_hourly_2025_2026.csv
-用法: python scripts/analysis/model_wind_power_shortfall.py
+用法: python skills/shortfall-price/references/model_wind_power_shortfall.py
 """
 import os
 

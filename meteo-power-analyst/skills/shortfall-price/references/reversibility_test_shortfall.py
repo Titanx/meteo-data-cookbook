@@ -11,7 +11,7 @@
 输入: data/ercot/{ercot_hourly_panel_{2025,2026},wind_power_hourly_2025_2026,ercot_pv_potential_2025_2026}.csv,
       data/nsrdb/pv_clearsky_hourly_2025_2026.csv, data/spain/spain_regime_hourly_{2024,2025}.csv
 输出: data/ercot/reversibility_matrix.csv + stdout
-用法: python scripts/analysis/reversibility_test_shortfall.py
+用法: python skills/shortfall-price/references/reversibility_test_shortfall.py
 """
 import os
 

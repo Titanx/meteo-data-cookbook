@@ -2,7 +2,7 @@
 """PS-044 报告: 补齐 ES 侧 NWP —— D-1/D-3 西班牙负价日预警能建起来吗?
 
 输出: output/spain_negprice_d1warning/index.html
-用法: python scripts/analysis/build_spain_nwp_report.py
+用法: python skills/report-builder/references/build_spain_nwp_report.py
 """
 import os
 import re

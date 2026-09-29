@@ -5,7 +5,7 @@
       边际负相关(辛普森悖论)。本脚本用同一回归框架对比两种缺口定义。
 对比项: (1) OLS 小时均值弹性  (2) Q50/Q99 分位弹性  (3) 尾部概率 GLM
         (4) 分箱尖峰率 (检验辛普森悖论是否消失)
-用法: python scripts/analysis/compare_shortfall_definitions.py
+用法: python skills/shortfall-price/references/compare_shortfall_definitions.py
 输出: stdout + data/ercot/shortfall_definition_comparison.csv
 """
 import os

@@ -7,7 +7,7 @@
   西班牙 —— 日尺度内生缺口 gap_w 与负价小时**强相关**(corr≈+0.80), 可建成可用的负价转移曲线。
 产出: data/ercot/forecast_bridge_calibration.csv (两市场校准)
       data/ercot/forecast_price_outlook.csv (ERCOT 未来45天白天溢价展望)
-用法: python scripts/analysis/model_forecast_price_bridge.py
+用法: python skills/shortfall-price/references/model_forecast_price_bridge.py
 """
 import os
 

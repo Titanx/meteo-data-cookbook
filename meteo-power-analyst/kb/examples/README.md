@@ -16,6 +16,7 @@
 | 文件 | 说明 | 支撑范围 |
 |------|------|----------|
 | [datasource_matrix.md](datasource_matrix.md) | 数据源速查矩阵：变量 / 获取方式 / 凭证 / 已知限制 | 各 data-fetch-* skill 选源；限制列直接引用 PIT 条目 |
+| [nasa_power_params.md](nasa_power_params.md) | NASA POWER 全部 1660 个参数清单（短名 / 单位） | `skills/data-fetch-nwp`；自旧知识库 tech/ 迁入 |
 | [report_outline_standard.md](report_outline_standard.md) | 标准分析报告骨架：章节顺序 + 每节要素 + 交付校验项 | skills/report-builder |
 
 ## 使用规则

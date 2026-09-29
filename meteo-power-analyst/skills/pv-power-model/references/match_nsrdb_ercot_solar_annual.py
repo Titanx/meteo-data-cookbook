@@ -3,7 +3,7 @@
       供 2025/2026 物理晴空反事实使用
 输入: data/gem/gem_solar_2026-08.csv, data/nsrdb/nsrdb_v322_ercot_pixels.npz
 输出: data/nsrdb/ercot_solar_plants_pixels_{year}.csv
-用法: python scripts/data_download/match_nsrdb_ercot_solar_annual.py 2025 2026
+用法: python skills/pv-power-model/references/match_nsrdb_ercot_solar_annual.py 2025 2026
 """
 import sys
 

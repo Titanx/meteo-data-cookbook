@@ -3,7 +3,7 @@
       pv_drop_events_2022-07.csv / price_elasticity_2025.csv /
       nsrdb_uscrn_daily.csv / ercot_pv_power_2022-07(.paramtemp).csv
 输出: output/pv_event_price_impact_2022-07/pv_event_price_impact_ercot_2022-07.html
-用法: python scripts/analysis/build_pv_event_price_report.py
+用法: python skills/report-builder/references/build_pv_event_price_report.py
 """
 import os
 
@@ -627,11 +627,11 @@ ILR 1.30 同时吸收了卫星辐照水平差与大站-全网效率差，标定�
 <tr><td class="mono">data/ercot/price_elasticity_2025.csv</td><td>2025/2026 弹性标定结果</td></tr>
 <tr><td class="mono">data/nsrdb/pv_counterfactual_hourly_2022-07.csv</td><td>晴空反事实逐时表 (744h)</td></tr>
 <tr><td class="mono">data/nsrdb/pv_event_price_impact_2022-07.csv</td><td>44 事件小时 × 电价冲击</td></tr>
-<tr><td class="mono">scripts/analysis/nsrdb_pvlib_power.py</td><td>底模 (HRRR 温度 + ILR 1.30)</td></tr>
-<tr><td class="mono">scripts/analysis/ilr_sweep_heatwave.py</td><td>ILR 四窗口扫描</td></tr>
-<tr><td class="mono">scripts/analysis/identify_pv_drop_events_2022-07.py</td><td>骤降事件归因</td></tr>
-<tr><td class="mono">scripts/analysis/calibrate_price_elasticity_2025.py</td><td>RTM 弹性面板标定</td></tr>
-<tr><td class="mono">scripts/analysis/pv_event_price_impact_2022-07.py</td><td>缺口×冲击推演主脚本</td></tr>
+<tr><td class="mono">skills/pv-power-model/references/nsrdb_pvlib_power.py</td><td>底模 (HRRR 温度 + ILR 1.30)</td></tr>
+<tr><td class="mono">skills/pv-power-model/references/ilr_sweep_heatwave.py</td><td>ILR 四窗口扫描</td></tr>
+<tr><td class="mono">skills/shortfall-price/references/identify_pv_drop_events_2022-07.py</td><td>骤降事件归因</td></tr>
+<tr><td class="mono">skills/shortfall-price/references/calibrate_price_elasticity_2025.py</td><td>RTM 弹性面板标定</td></tr>
+<tr><td class="mono">skills/shortfall-price/references/pv_event_price_impact_2022-07.py</td><td>缺口×冲击推演主脚本</td></tr>
 </table>
 
 <footer>

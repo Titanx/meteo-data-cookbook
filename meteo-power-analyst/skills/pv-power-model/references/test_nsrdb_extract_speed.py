@@ -1,6 +1,6 @@
 """NSRDB chunk 化散点提取效率小样
 目的: 实测 h5coro 读取 (chunk 2000x500) 内单列/多列的耗时与流量, 决定批量策略
-用法: python scripts/data_download/test_nsrdb_extract_speed.py
+用法: python skills/pv-power-model/references/test_nsrdb_extract_speed.py
 """
 import time
 

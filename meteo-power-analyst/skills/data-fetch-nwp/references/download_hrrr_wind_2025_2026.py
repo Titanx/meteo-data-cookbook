@@ -2,7 +2,7 @@
 用途: 风功率物理链路的资源输入 (80m 为 ERCOT 风机典型轮毂高度)
 API: historical-forecast-api.open-meteo.com, models=ncep_hrrr_conus, 匿名免key
 输出: data/nsrdb/hrrr_wind80m_2025_2026.npz (14736×165, m/s) + t2m + time + names
-用法: python scripts/data_download/download_hrrr_wind_2025_2026.py
+用法: python skills/data-fetch-nwp/references/download_hrrr_wind_2025_2026.py
 """
 import time
 

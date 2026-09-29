@@ -18,7 +18,7 @@
 
 输入:  data/spain/france_nwp_panel.csv
 输出:  data/spain/france_nwp_{leadcheck,frskill,twostage,homog}.csv
-用法:  python scripts/analysis/model_france_nwp_forecast.py
+用法:  python skills/negprice-chain/references/model_france_nwp_forecast.py
 """
 import warnings
 from pathlib import Path

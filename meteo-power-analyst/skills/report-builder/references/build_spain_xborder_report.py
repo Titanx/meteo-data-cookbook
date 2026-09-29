@@ -2,7 +2,7 @@
 """PS-041 报告: 西班牙负价的跨境结构 —— ES–FR 耦合与"区域过剩"
 
 输出: output/spain_negprice_xborder/index.html
-用法: python scripts/analysis/build_spain_xborder_report.py
+用法: python skills/report-builder/references/build_spain_xborder_report.py
 """
 import os
 import re

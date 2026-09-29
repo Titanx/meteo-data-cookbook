@@ -3,7 +3,7 @@
       与 PS-028「缺口=内生弃电(负价标记)」在成熟高可再生市场的表现
 链路: 与 PS-021/030 同法 (NASA POWER 辐照 → pvlib 单轴跟踪 → PVWatts), ILR 逐年标定
 输出: data/spain/spain_regime_summary.csv, spain_regime_hourly_{year}.csv, spain_regime_elasticity.csv
-用法: python scripts/analysis/model_spain_pv_regime.py
+用法: python skills/pv-power-model/references/model_spain_pv_regime.py
 """
 import os
 

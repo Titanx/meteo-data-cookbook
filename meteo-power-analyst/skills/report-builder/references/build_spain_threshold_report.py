@@ -1,7 +1,7 @@
 """西班牙负价"爆发阈值"模型报告 (PS-039)
 输入: data/spain/{spain_long_panel,spain_negprice_threshold,spain_negprice_threshold_fit}.csv
 输出: output/spain_negprice_threshold/index.html
-用法: python scripts/analysis/build_spain_threshold_report.py
+用法: python skills/report-builder/references/build_spain_threshold_report.py
 """
 import os
 

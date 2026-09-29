@@ -2,8 +2,8 @@
 v1 教训: 每 chunk 新开 h5py 句柄 -> 每次 ~20s B-tree 定位, 2 分钟 0 chunk
 v2: 每分量 1 个独立进程, 进程内共享 1 个 h5py 句柄 (B-tree 缓存命中后 1.7s/chunk),
     3 进程并行无 h5py 线程安全问题
-用法: python scripts/data_download/download_nsrdb_ercot_july2022.py            # 全部 3 分量
-      python scripts/data_download/download_nsrdb_ercot_july2022.py ghi       # 单分量
+用法: python skills/pv-power-model/references/download_nsrdb_ercot_july2022.py            # 全部 3 分量
+      python skills/pv-power-model/references/download_nsrdb_ercot_july2022.py ghi       # 单分量
 """
 import json
 import os

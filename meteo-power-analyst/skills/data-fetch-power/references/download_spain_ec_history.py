@@ -14,7 +14,7 @@
     不可用该和反推负荷。本脚本只用 `Solar`; 负荷主口径仍用 ENTSO-E A65, 并要求交叉核验
 
 输出: data/energy_charts/es_public_power_{年}.json (+ 汇总 CSV)
-用法: python scripts/data_download/download_spain_ec_history.py
+用法: python skills/data-fetch-power/references/download_spain_ec_history.py
 """
 import json
 import ssl

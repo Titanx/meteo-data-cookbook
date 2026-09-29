@@ -1,7 +1,7 @@
 """MRMS QPE 下载与 ERCOT 裁剪测试
 数据源: AWS S3 noaa-mrms-pds (匿名, 归档 2020-10-14 ~ 2023-07-10)
         https://mrms.ncep.noaa.gov/2D/ (匿名, 滚动最新 ~10天)
-用法: python scripts/data_download/test_mrms_download.py
+用法: python skills/data-fetch-radar/references/test_mrms_download.py
 依赖: requests, xarray, cfgrib (GRIB2 读取)
 """
 import gzip

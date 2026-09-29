@@ -153,7 +153,7 @@ def main():
         print("方案三：CMACloud-sat API（需申请账号 + 工具包）")
         print("  联系: dataserver@cma.gov.cn")
         print()
-        print("解析脚本: scripts/data_download/parse_fy4_lmi.py")
+        print("解析脚本: skills/data-fetch-satellite/references/parse_fy4_lmi.py")
         print("=" * 60)
 
 if __name__ == "__main__":

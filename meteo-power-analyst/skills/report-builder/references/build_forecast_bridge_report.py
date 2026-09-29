@@ -1,7 +1,7 @@
 """缺口→电价 日尺度转移函数 与 季节预报展望 报告
 输入: data/ercot/forecast_bridge_calibration.csv, data/ercot/forecast_price_outlook.csv
 输出: output/forecast_price_bridge/index.html
-用法: python scripts/analysis/build_forecast_bridge_report.py
+用法: python skills/report-builder/references/build_forecast_bridge_report.py
 """
 import os
 

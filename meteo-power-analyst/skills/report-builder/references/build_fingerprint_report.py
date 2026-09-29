@@ -1,7 +1,7 @@
 """缺口工况指纹报告
 输入: data/ercot/shortfall_fingerprint_summary.csv
 输出: output/shortfall_fingerprint/index.html
-用法: python scripts/analysis/build_fingerprint_report.py
+用法: python skills/report-builder/references/build_fingerprint_report.py
 """
 import os
 

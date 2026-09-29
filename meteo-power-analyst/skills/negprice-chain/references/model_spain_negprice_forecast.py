@@ -6,7 +6,7 @@
       → 历史标定 P(负价日) 与 负价小时/日 → 套到未来45天(逐成员传播)
 验证: 跨年(2024↔2025) AUC，避免自我验证。
 输出: data/spain/spain_negprice_calibration.csv, spain_negprice_outlook.csv
-用法: python scripts/analysis/model_spain_negprice_forecast.py
+用法: python skills/negprice-chain/references/model_spain_negprice_forecast.py
 """
 import glob
 import json

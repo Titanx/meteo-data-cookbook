@@ -17,7 +17,7 @@ PS-017 已验证精度) 的 50 成员逐日短波辐射聚合预报, 给**未来
   5. 诚实声明: seasonal 集合欠扩散(underdispersion), 无多年回算recalibration → 
      概率是"原始集合频率", 非校准后概率; 可信信号在周/月聚合量与相对异常
 
-用法: python scripts/analysis/model_seasonal_shortfall_risk.py
+用法: python skills/shortfall-price/references/model_seasonal_shortfall_risk.py
 输出: data/openmeteo_seasonal/seasonal_shortfall_risk_{运行日}.csv
       data/openmeteo_seasonal/seasonal_streak_risk_{运行日}.csv
 """

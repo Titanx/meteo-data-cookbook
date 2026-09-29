@@ -14,7 +14,7 @@
 
 输出: data/openmeteo_nwp_france/fr_nwp_prevruns_{chunk}.npz (ghi/t2m 形状 [7 lead, N hub, T hour])
       + 汇总 data/openmeteo_nwp_france/fr_nwp_meta.csv
-用法: python scripts/data_download/download_france_nwp_prevruns.py
+用法: python skills/data-fetch-nwp/references/download_france_nwp_prevruns.py
 """
 import json
 import ssl

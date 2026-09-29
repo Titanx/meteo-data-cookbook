@@ -6,7 +6,7 @@
       → data/spain/spain_entsoe_hourly.csv (e_solar, e_wind, e_load, e_price)
       并与 data/spain/spain_regime_hourly_{年}.csv (PS-031 Energy-Charts 口径) 对齐诊断
 
-用法: python scripts/data_download/build_spain_entsoe_panel.py
+用法: python skills/data-fetch-power/references/build_spain_entsoe_panel.py
 """
 import os
 

@@ -4,7 +4,7 @@
 口径: GEM global solar, country-area1 = France, status = operating, start-year <= 目标年
       按 1° 网格聚合, 每格取容量加权质心; 取容量最大的前 N 个点(控制请求数), 并报告容量覆盖率
 输出: data/gem/france_solar_hubs_{year}.csv (name, lat, lon, capacity_mw, n_units, share)
-用法: python scripts/data_download/prep_france_pv_fleet.py 2024
+用法: python skills/data-fetch-power/references/prep_france_pv_fleet.py 2024
 """
 import sys
 

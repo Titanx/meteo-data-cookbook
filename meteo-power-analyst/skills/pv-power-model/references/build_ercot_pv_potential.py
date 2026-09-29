@@ -5,7 +5,7 @@
 注: NASA POWER hourly 辐照有约 4 个月延迟 (本次覆盖到 ~2026-06), 后段自动剔除。
 输入: data/nasa_power/ercot_pv_plants.npz, data/ercot/ercot_hourly_panel_{2025,2026}.csv
 输出: data/ercot/ercot_pv_potential_2025_2026.csv
-用法: python scripts/analysis/build_ercot_pv_potential.py
+用法: python skills/pv-power-model/references/build_ercot_pv_potential.py
 """
 import os
 

@@ -1,7 +1,7 @@
 """NSRDB+pvlib 模型出力 vs EIA 实际出力深入对比 (ERCOT, 2022-07)
 输入: data/nsrdb/ercot_pv_power_2022-07.csv (hourly, pvlib_mw / eia_mw)
 分析: 昼夜平均曲线 / 日能量相关 / 偏差最大事件 / 爬坡率分布
-用法: python scripts/analysis/nsrdb_eia_comparison.py
+用法: python skills/pv-power-model/references/nsrdb_eia_comparison.py
 """
 import numpy as np
 import pandas as pd

@@ -49,6 +49,10 @@ credentials.json
 # 提交前请跑：python meteo-power-analyst/skills/kb-capture/references/secret_scan.py
 raw/
 
+# 已退役结构（内容已全部迁入 meteo-power-analyst/；根系锚定，防误建）
+/.knowledge/
+/scripts/
+
 # 临时文件
 *.tmp
 *.bak

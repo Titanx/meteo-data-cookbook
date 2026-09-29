@@ -8,7 +8,7 @@
 实际/价格/负荷: Energy-Charts (ENTSO-E/OMIE 口径, 免注册)
 缺口: ①天气辐照潜力 − 实际 (≈损失+弃电/清单偏差)  ②pvlib 晴空潜力 − 实际 (≈云致缺口)
 输出: data/spain/spain_pv_hourly_2023.csv, spain_pv_gap_2023.csv, spain_elasticity_2023.csv
-用法: python scripts/analysis/model_spain_pv_power.py
+用法: python skills/pv-power-model/references/model_spain_pv_power.py
 """
 import json
 import os

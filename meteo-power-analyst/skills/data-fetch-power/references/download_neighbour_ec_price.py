@@ -13,7 +13,7 @@
   · 连发请求会 429 ⇒ 逐年请求之间需 sleep + 退避
 
 输出: data/energy_charts/price_{ES,FR,PT}_{年}.json + data/energy_charts/price_{ES,FR,PT}.csv
-用法: python scripts/data_download/download_neighbour_ec_price.py
+用法: python skills/data-fetch-power/references/download_neighbour_ec_price.py
 """
 import json
 import ssl

@@ -7,7 +7,7 @@
   ② 设定对比: 线性趋势(PS-038) vs 折线阈值(hockey-stick, θ 网格搜索) vs 障碍(hurdle) vs 含季节FE
   ③ 样本外: train ≤2023 / ≤2024 / ≤2025 → 预测后续年份的逐月负价小时, 比 MAE
 输出: data/spain/spain_negprice_threshold.csv (面板+拟合), spain_negprice_threshold_fit.csv (设定对比)
-用法: python scripts/analysis/model_spain_negprice_threshold.py
+用法: python skills/negprice-chain/references/model_spain_negprice_threshold.py
 """
 import os
 

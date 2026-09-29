@@ -1,6 +1,6 @@
 """EIA API 补拉 2022 年 7 月 ERCOT 小时级燃料数据 (光伏出力验证基准)
 输出: data/ercot/ercot_fuel_type_data_2022-07.csv (与现有 fuel_type 系列同构)
-用法: python scripts/data_download/download_eia_solar_2022.py
+用法: python skills/pv-power-model/references/download_eia_solar_2022.py
 """
 import os
 import time

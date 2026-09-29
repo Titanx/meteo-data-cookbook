@@ -6,7 +6,7 @@
       pot_cs 2023-2025 用 PS-031 实测值; 2026 用 2025 的 (doy,hour) 形状模板,
       尺度按 PS-031 同法(年能量比)标定 —— pot_cs ∝ 装机 × ILR, 跨年需重新定标否则 τ 会饱和到 1
 输出: data/spain/spain_official_daily.csv, spain_official_quintile.csv, spain_official_yearly.csv
-用法: python scripts/analysis/verify_spain_entsoe_official.py
+用法: python skills/negprice-chain/references/verify_spain_entsoe_official.py
 """
 import os
 

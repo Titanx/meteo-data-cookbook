@@ -9,7 +9,7 @@ FY-4A LMI 闪电数据 FTP 批量下载
 5. 运行本脚本，自动批量下载
 
 Example:
-    python scripts/data_download/download_fy4_lmi_ftp.py \
+    python skills/data-fetch-satellite/references/download_fy4_lmi_ftp.py \
       --ftp ftp.nsmc.org.cn \
       --user your_username \
       --pass your_password \

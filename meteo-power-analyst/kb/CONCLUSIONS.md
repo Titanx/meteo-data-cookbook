@@ -1,5 +1,12 @@
 # 项目结论总览：光伏缺口 × 电价冲击链路
 
+**最后同步**: 2026-09-30（自旧知识库 project/ 目录迁入，路径与链接已换算）
+**性质**: 跨话题的知识综述 —— 把 §2 已确立结论、§3 已修正结论、§4 口径规范串成一条链。
+**读法**: 单条原理/流程的细节在 `kb/methods/`、`kb/recipes/`、`kb/pitfalls/`；本文只做跨话题收敛。
+
+> 溯源（raw/）: 旧知识库 project/conclusions_solar_price.md、project/catalog.md（本地存档于 raw/raw-archive/legacy-knowledge/）
+> 旧 ID（PS-0xx / PF-0xx / GL-0xx）与新条目 ID 的对照见 `kb/MIGRATION.md`。
+
 > 最后更新: 2026-09-29
 > 覆盖条目: PS-021 → PS-022 → PS-023 → PS-024 → **PS-025/PS-026（持续时间维度：小时内+跨日）** → **PS-027（季节预报→缺口概率化）** → **PS-028（风电对照：风光不对称）** → **PS-029/PS-030/PS-031（西班牙外部市场：跨市场标定 + 缺口成因判据升级）** → **PS-032（判据可逆性检验：外生正号不稳健，内生负号稳健）** → **PS-033（工况指纹：内生缺口=供给过剩标记坐实）** → **PS-034（预报桥：ERCOT 不成立，西班牙负价曲线可用）** → **PS-035（西班牙负价概率季节预报链路：跨年 AUC 0.72，45天均值 8%）** → **PS-036/PS-037（ENTSO-E 官方口径复核 + 2026 样本外）** → **PS-038（趋势/logit/强度）** → **PS-039（份额爆发阈值）** → **PS-040（正午窗口份额）** → **PS-041（跨境结构：ES–FR 区域过剩）** → **PS-042（可预报性检验：区域过剩是同期共振，不可事前化）**
 > 一句话结论: ERCOT 光伏缺口对 RTM 电价的条件均值弹性约 **+5.3 %/GW**（区间 +3.5~+5.7），
@@ -163,7 +170,7 @@ GEM 电站数据库 ──→ NSRDB 像素匹配 ──→ 辐照提取 ──�
 
 补上 PS-034 所缺的**西班牙季节预报**（Open-Meteo Seasonal，9 个光伏区 × 50 成员 × 45 天），把"预报辐照 → 缺口 → 负价概率"接成**端到端可用链**：
 
-- **可预报指数** `S = clear_clim(doy) × τ / load_clim(月, 工作日)`——分子是"晴空资源（季节性可算）× 传输率 τ（季节预报给）"，分母是负荷气候（工作日/周末分档）。历史端同式（`act/pot_cs` 作 τ 代理）。
+- **可预报指数** `S = clear_clim(doy) × τ / load_clim(月, 工作日)`——分子是"晴空资源（季节性可算）× 传输率 τ（季节预报给）"，分母是负荷气候（工作日/周末分档）。历史端同式（act/pot_cs 作 τ 代理）。
 - **τ 尺度校正**：预报用 haurwitz 水平面晴空、历史用 POA 链路，尺度略异 ⇒ 重叠 doy 窗口 τ 中位校正 **k = 1.053**。
 - **跨年验证（AUC）**：以 S 打分，2024→2025 **AUC 0.722**、2025→2024 **AUC 0.721**，双向一致 ⇒ S 有**真实排序能力**（非自我验证）。
 - **标定曲线（S 五分位，2024–25 合并）**：负价日占比 **Q1 0% → Q2 6% → Q3 27% → Q4 32% → Q5 26%**（全年基准 18%），线性概率 `P = −0.072 + 0.054×S`；Q5 略回落提示线性外推上限。
@@ -184,7 +191,7 @@ GEM 电站数据库 ──→ NSRDB 像素匹配 ──→ 辐照提取 ──�
 - **修法（两因子）**：`P(负价日) = a + b·S + c·负荷[GW]`，其中负荷由**温度回归**给出（`CDD(>22℃) + HDD(<15℃) + 周末 + trend + 星期`，2023-25 拟合 R² = 0.7385）。运营期（2024–2026.09，n=1001）标定：`P = +1.6487 + 0.0402×S − 0.0588×负荷[GW]`，拟合期 AUC **0.809**；→2026 AUC 回升到 **0.733**（用实际负荷则 **0.811**；`τ+预报负荷` 0.797）⇒ **技能真实存在，只是原设定不足**。
 - **季节偏差仍在（双向可见）**：模型**低估春季（4–5 月 实际/预测 = 70/42、62/47）、高估秋季（10–11 月 8/32、2/21）**，10–11 月（2024–25）偏差 **+21.9pp**。根因是 S 的资源项（晴空气候）在**夏季**达峰，而实际负价高峰在**春季**（低负荷 + 尚可的资源）。
 - **45 天展望（两因子 + 季节校正）**：全窗均值 **6.8%**（原始 25.9%）⇒ 与 PS-035 的 **8.2%** 相差 **1.4pp**，**结论稳健于模型设定，但前提是必须做季节偏差校正**。
-- **口径陷阱（本流程发现）**：`pot_cs ∝ 装机 × ILR`，**跨年必须重新定标**，否则 `τ = solar/pot_cs` 会因分母偏小而**饱和到 1.000**（2026 实测直接饱和 ⇒ 资源通道被人为抹平）。本流程用 2025 的 (doy, hour) 形状模板 + 年能量比定标合成 2026 的 `pot_cs`（自检 r ≈ 1.0000）。
+- **口径陷阱（本流程发现）**：`pot_cs ∝ 装机 × ILR`，**跨年必须重新定标**，否则 τ = solar/pot_cs 会因分母偏小而**饱和到 1.000**（2026 实测直接饱和 ⇒ 资源通道被人为抹平）。本流程用 2025 的 (doy, hour) 形状模板 + 年能量比定标合成 2026 的 `pot_cs`（自检 r ≈ 1.0000）。
 
 > **局限**：2026 的 `pot_cs` 是合成的（非实测）；负荷的温度代理取自 9 个**光伏区**（非人口加权），对冬季采暖代表性弱；季节偏差校正只用 2 个秋季（n=122）且该偏差随市场成熟在缩小；校正后 P10 全部为 0（线性概率 + 截距平移在近零概率区失真，宜改 logit）。
 
@@ -212,7 +219,7 @@ GEM 电站数据库 ──→ NSRDB 像素匹配 ──→ 辐照提取 ──�
 - **秋季 2026 外推与情景收敛**：2025 年 10–11 月份额 19.3% → 按 2026/2025 年 1–9 月的**光伏 +21.1%、负荷 +2.9%** 外推 → **份额 22.7%** → 负价日率 **8.6%（秋季阈值）/ 17.1%（全局阈值、月份FE）**。
 - **区间从 6.8%–62.0%（9 倍）压缩到 8.6%–17.1%（约 2 倍），中心 9%–11%**。⇒ **PS-035 的 8.2% 与 PS-037 的 6.8% 从"离群偏低"变为区间下沿的正常值；PS-038 情景 A 的 62% 应视为过冲上界而非预期。**
 - **扩样本买到的是什么（重要澄清）**：12 年价格里只有 **3 年**有负价（2015–2023 小时恒为 0），所以 **9 年零值把"阈值位置"钉得很死，但"阈值以上的斜率"仍只由 2024–2026 三年确定**。扩样本不能增加后者（补齐 2018 下半年 6 个负荷月后 θ 仍为 16.0%，印证这一点）。
-- **工程陷阱**：Energy-Charts 的 `start/end` 按**当地时间**解释，`start=2016-01-01` 会带回 2015-12-31 23:00 UTC 那一小时 ⇒ 按月聚合必须**累加而非覆盖**（实测 2015-12 由 0.44 TWh 被冲成 2e-05 TWh）；三个源的分辨率都随年份变化，必须**先重采样到小时再聚合**；按月缓存拼接时复用月（`str`）与重解析月（`Timestamp`）的 `datetime_utc` dtype 不一致，需先统一再排序。
+- **工程陷阱**：Energy-Charts 的 start/end 按**当地时间**解释，`start=2016-01-01` 会带回 2015-12-31 23:00 UTC 那一小时 ⇒ 按月聚合必须**累加而非覆盖**（实测 2015-12 由 0.44 TWh 被冲成 2e-05 TWh）；三个源的分辨率都随年份变化，必须**先重采样到小时再聚合**；按月缓存拼接时复用月（`str`）与重解析月（`Timestamp`）的 `datetime_utc` dtype 不一致，需先统一再排序。
 
 > **局限**：阈值以上斜率仅 3 年样本，秋季专用阈值只有 2 个非零点（8.6% 应视为下界）；份额为月度聚合，掩盖正午结构；装机未显式进入模型。（负荷已回填，141/141 个月零缺口。）
 
@@ -231,7 +238,7 @@ GEM 电站数据库 ──→ NSRDB 像素匹配 ──→ 辐照提取 ──�
 
 ### 2.15 西班牙负价是"法–伊区域过剩"，物理净出口量本身无信息（PS-041）
 
-补上 PS-040 显式点名的缺口（未引入邻国通道）。用 Energy-Charts `/price?bzn=ES|FR|PT` 建 **2023-01 ~ 2026-09 共 1368 天**的跨境日面板（EC 价与官方 ENTSO-E A44 **r = 0.999984、MAE 0.006 €/MWh**，可互换）：
+补上 PS-040 显式点名的缺口（未引入邻国通道）。用 Energy-Charts /price?bzn=ES|FR|PT 建 **2023-01 ~ 2026-09 共 1368 天**的跨境日面板（EC 价与官方 ENTSO-E A44 **r = 0.999984、MAE 0.006 €/MWh**，可互换）：
 
 | 预测量（同窗口） | corr(ES 负价小时) | 控国内份额后残差相关 | 泊松强度模型 AUC | 2026 样本外 AUC |
 |---|---|---|---|---|
@@ -398,7 +405,7 @@ PS-043 §7-2 的下一步是"取西班牙光伏区的 NWP 预报，把 `noon_rat
 
 ### 3.7 Energy-Charts `public_power` 并非"没有负荷字段"（PS-040 更正 PS-039）
 
-- PS-039 §8-3 曾记载"`public_power` **无独立负荷字段**（`/load` 404）"，并据此要求"负荷一律用 ENTSO-E A65"
+- PS-039 §8-3 曾记载"`public_power` **无独立负荷字段**（/load 404）"，并据此要求"负荷一律用 ENTSO-E A65"
 - **该判断不成立**：响应中 19 条 `production_types` 里**含 `Load`**，且与 ENTSO-E A65 **逐时 r = 0.999587、能量比 0.999981、MAE 16.8 MW**（2015/2020/2025 年能量分别 247.7/237.9/237.7 TWh，逐年完全一致）
 - 错误来源：把"**`Σproduction_types` ≠ 负荷**"（该和含**带符号**的跨境交易与抽蓄耗电，2015 求和 686.9 TWh ≫ 年需求 ~250 TWh）**过度推广**成了"没有负荷字段"
 - ⇒ **正确做法**：单条 `Load` 可直接使用（本链路已用于 PS-040 的正午份额）；`Σproduction_types` 不可当负荷；关键结论仍应与 A65 交叉核验
@@ -464,7 +471,7 @@ PS-043 §7-2 的下一步是"取西班牙光伏区的 NWP 预报，把 `noon_rat
 | 站点口径 | ≥100MW 阈值是 PS-021 历史口径（2022: 56 座 10.66 GW；2025-26: 141 座 30.89 GW） |
 | 电站清单 | GEM 2026-08 版 `start-year` 最晚到 2025，**2026 年装机不完整**（EIA 峰值 34,982 > 清单 30,884 MW），不宜用于绝对发电量估计 |
 | 西班牙数据源 | Energy-Charts（Fraunhofer ISE）与 **ENTSO-E 官方 TSO 口径逐位相同**（PS-037）⇒ 两者可互换；ENTSO-E 解析须处理 A03 压缩 + A01/A07 合约过滤（PF-014） |
-| **跨年比较 `pot_cs`** | `pot_cs ∝ 装机 × ILR`，**跨年必须重新定标**（PS-037）⇒ 否则 `τ = solar/pot_cs` 会因分母偏小而**饱和到 1**，把资源通道人为抹平。无实测年份可用"形状模板 + 年能量比定标"合成 |
+| **跨年比较 `pot_cs`** | `pot_cs ∝ 装机 × ILR`，**跨年必须重新定标**（PS-037）⇒ 否则 τ = solar/pot_cs 会因分母偏小而**饱和到 1**，把资源通道人为抹平。无实测年份可用"形状模板 + 年能量比定标"合成 |
 | 技能检验 | 标定窗口附近的"跨年 AUC"具有**欺骗性**；须用**从未参与标定的年份**做样本外检验（PS-037：2026 暴露了 PS-035 单因子 S 的失效） |
 | 概率模型评估 | 概率类模型必须同时报 **AUC（排序）+ Brier + 校准（预测均 vs 实际）+ 可靠性分箱**；只看 AUC 会漏掉系统性水位偏差（PS-038：趋势项 Brier 0.305→0.206 但 AUC 略降）；线性概率 + `clip` 会使 P10 退化且不可评估，**应用 logit** |
 | 模型自由度预算 | 样本只有 2~3 年时，**不要引入自由季节项**（PS-038：训练年 AUC 0.916/0.953，2026 掉到 0.762）；宁可只平移截距。更灵活的设定必须先过样本外检验 |
@@ -473,12 +480,12 @@ PS-043 §7-2 的下一步是"取西班牙光伏区的 NWP 预报，把 `noon_rat
 | **负价样本长度（重要）** | 西班牙日前价可回溯到 **2015-01-01**（ENTSO-E 官方，12 年 / 10.3 万小时，逐年 8760/8784 完整），但**负价小时 2015–2023 连续 9 年恒为 0**（最低 0.01~4.00 €/MWh；零价仅 2022 的 4 h、2023 的 108 h），**首次负价 = 2024-04-01 12:00 (−0.01 €/MWh)**。⇒ **12 年里只有 3 年有负价**。**扩样本能改善"爆发点/趋势"的识别，但不能增加负价季节形状的样本**（秋季永远只有 2~3 个）。⚠ 引用"扩到 8–10 年"时必须说明这一点 |
 | 负价小时口径 | 价格 2025-10 起为 **15 分钟**粒度 ⇒ 统计"负价小时"必须**先聚合到小时**，否则按行计数虚增约 4 倍（PS-038 附录：2015-2026 小时口径 = 0/0/0/0/0/0/0/0/0/247/556/747） |
 | **负价的驱动变量** | 用**光伏发电 ÷ 需求（光伏份额）**，不要用时间趋势（PS-039：MAE 11.0 vs 17.5 h/月）。份额阈值 **θ = 16.0%**（月度，全样本） |
-| **正午窗口口径** | 负价的**现场是当地 10–16h**：**72% 的负价小时落在该窗口**（窗口仅占全月小时的 25%；2024/25/26 = 71/72/72%）。窗口比"正午份额"（正午光伏 ÷ 正午负荷）是更贴机制的驱动（PS-040）。⚠ **窗口必须按 `Europe/Madrid` 当地时筛**（`tz_convert` 之后才筛 `hour`），按 UTC 筛在夏令时会整体偏移 1–2 h |
+| **正午窗口口径** | 负价的**现场是当地 10–16h**：**72% 的负价小时落在该窗口**（窗口仅占全月小时的 25%；2024/25/26 = 71/72/72%）。窗口比"正午份额"（正午光伏 ÷ 正午负荷）是更贴机制的驱动（PS-040）。⚠ **窗口必须按 Europe/Madrid 当地时筛**（`tz_convert` 之后才筛 `hour`），按 UTC 筛在夏令时会整体偏移 1–2 h |
 | **驱动量升级的边界** | 更贴机制的驱动量**改善偏差、不一定改善误差**，且**不能替代季节结构**（PS-040：MAE 55.6→55.7 但偏差 −29.2→−24.5；秋季 2026 区间从 2 倍**扩到约 4 倍**）。**同份额跨季节可比性差**（2025-05 占比 86.6% vs 2024-05 的 14.0%）⇒ 必须显式建季节项并如实报告设定分歧 |
 | **外推不得越过"线性区"** | 线性 `max(0, share−θ)` 只在份额接近阈值时可外推；**外推到 2 倍阈值即失效**（PS-040：正午份额外推 61.7% 是全局阈值 31% 的 2 倍，给出 31.6% 的明显过冲）。远离阈值时应用**有界/饱和设定**（logistic / 占比 ∈ [0,1] / 泊松强度） |
 | **阈值的季节性** | 阈值随季节变：**春季（4–5月）约 25–26%，秋季（10–11月）约 10.5%**（PS-039）⇒ 秋季展望必须用秋季阈值，否则系统性高估 |
-| Energy-Charts 取数 | `public_power?country=es` **同时返回 `Solar` 与 `Load` 两条序列**（🔴 PS-039 曾误记"无负荷字段"，已由 PS-040 更正：`Load` 与 ENTSO-E A65 逐时 **r=0.999587**、能量比 0.999981、MAE 16.8 MW）。⚠ 但 **`Σproduction_types ≠ 负荷`**（含带符号的跨境交易与抽蓄耗电，2015 求和 686.9 TWh ≫ 年需求 ~250 TWh），**不可用该和反推负荷**。⚠ `start/end` 按**当地时间**解释，跨年请求会带回上一年最后 1 小时 ⇒ 按月聚合**必须累加而非覆盖**（实测 2015-12 由 0.44 TWh 被冲成 2e-05 TWh） |
-| **邻国电价取数** | 用 Energy-Charts **`/price?bzn=ES\|FR\|PT`**（免注册、可按年整块请求）而非 ENTSO-E A44 ⇒ 规避网关限流；EC 与官方 A44 **r=0.999984、MAE 0.006**，可互换。⚠ ENTSO-E 的 **PT 全部 EIC 候选返回 0 行**、**A11 单边流易被限流**（HTTP 599/90s 超时） |
+| Energy-Charts 取数 | `public_power?country=es` **同时返回 `Solar` 与 `Load` 两条序列**（🔴 PS-039 曾误记"无负荷字段"，已由 PS-040 更正：`Load` 与 ENTSO-E A65 逐时 **r=0.999587**、能量比 0.999981、MAE 16.8 MW）。⚠ 但 **`Σproduction_types ≠ 负荷`**（含带符号的跨境交易与抽蓄耗电，2015 求和 686.9 TWh ≫ 年需求 ~250 TWh），**不可用该和反推负荷**。⚠ start/end 按**当地时间**解释，跨年请求会带回上一年最后 1 小时 ⇒ 按月聚合**必须累加而非覆盖**（实测 2015-12 由 0.44 TWh 被冲成 2e-05 TWh） |
+| **邻国电价取数** | 用 Energy-Charts **/price?bzn=ES\|FR\|PT**（免注册、可按年整块请求）而非 ENTSO-E A44 ⇒ 规避网关限流；EC 与官方 A44 **r=0.999984、MAE 0.006**，可互换。⚠ ENTSO-E 的 **PT 全部 EIC 候选返回 0 行**、**A11 单边流易被限流**（HTTP 599/90s 超时） |
 | **`log-link` 禁用无界水平量做外推** | 泊松/`exp()` 链接下，**无界水平变量（如邻国电价 €/MWh）会在样本外指数放大**（PS-041：S7 在 2026 **MAE 160.42 h/日**）。改用**有界特征**（占比 ∈ [0,1]、计数 ∈ [0,6]）。这是 PS-040"外推不得越过线性区"的**链接函数版本** |
 | **跨境/区域耦合口径** | 西班牙负价的有效外部通道**只有 ES–FR**（**MIBEL 单一价**：\\|ES−PT\\| 中位 **0.00 €/MWh**，葡萄牙不是独立耦合）；且**物理净出口量无信息**（corr +0.020，p=0.46）⇒ 用**邻国价格信号（负价小时数）**而非**流向/净出口**。国内份额类驱动只是**区域过剩的国内代理**（PS-041） |
 | **未文档化字段的符号协定** | 遇到（如 EC `Cross border electricity trading`）**不可凭字段名猜正负**；须用**可观测的物理关系经验裁定**（PS-041：负价小时均值 −3031 vs 其余 −1075 MW ⇒ 正号 = 净进口），并把裁定过程写进流程文档 |
@@ -511,31 +518,54 @@ PS-043 §7-2 的下一步是"取西班牙光伏区的 NWP 预报，把 `noon_rat
 | 需求侧响应/储能的影响 | 低 | 2025-26 ERCOT 储能快速扩张，可能削弱缺口→价格传导（弹性两年已现 +5.08→+5.43 上升，方向待厘清）；PS-025 发现日际连阴最长 25~26 天，直指储能充足性问题 |
 | RTM 节点级 vs Hub 级 | 低 | 2026-10 额度重置后可下载 89 个光伏节点电价，做电站级冲击验证 |
 
-## 6. 脚本与产物索引
+## 7. 待办事项（合并自旧 project/catalog.md，含完成状态）
+
+| 事项 | 优先级 | 计划时间 | 说明 |
+|------|--------|---------|------|
+| 下载剩余风电节点RTM (YCAT_WND_RN, YNG_WND_ALL) | 中 | 2026-10-01 | 10月额度重置后, 当前已达500K行限额 |
+| 下载89个光伏节点RTM | 中 | 2026-10-01 | 10月额度重置后, 本月已耗尽 |
+| 更新探空数据范围 | 低 | 滚动 | 按需下载新日期数据 |
+| 联动分析：探空DCAPE × ERCOT电价 | 中 | 待定 | 探空DCAPE作为雷暴潜势指标，与电价波动关联 |
+| 联动分析：ASTER地形 × 闪电分布 | 低 | 待定 | 地形高程与GLM闪电空间分布关联 |
+| RTM 事件尾部建模 (稀缺定价 >$1000) | ~~低~~ 已完成 | 2026-09-27 | 已完成 → PS-023: 15min 口径 + 分位数回归 + 尾部概率 + 凸性检验; 高需求放大结论被推翻 |
+| 用物理晴空反事实统一缺口口径 | ~~中~~ 已完成 | 2026-09-27 | 已完成 → PS-024: 2025/2026 物理反事实建成, 弹性对口径不敏感(差 0.34 %/GW), 但**悖论归因被推翻**(非包络虚高, 属天气组合负相关) |
+| 把"FR 正午负价小时"建成可预报量 | 高 | **已完成** | PS-042 证否气候学路径, **PS-043 用真实 NWP(ECMWF IFS previous-runs)证否预报路径**: 法国侧本身可预报(AUC 0.79), 但接到西班牙侧增益 **+0.001~+0.006**(两个样本外年一致), 同期观测上界仍 +0.039 ⇒ **该通道在预报语境下不可用 (PS-043 §5)** |
+| 以**持续性为骨架**重建西班牙负价日预警 | 高 | **已完成** | PS-044 建成: 骨架 = ES 滞后/滚动(2026 AUC **0.838**) + ES 侧 D1 份额/负荷预报(+0.003, 不稳定) + 经验可靠性校准; 2026 概率前 30 日命中率 **93.3%**(基准 42.3%); **残余开放**: 校准只迁移形状不迁移水位, 见下条 (PS-044 §4.4/§5) |
+| 补齐 **ES 侧 NWP**(西班牙光伏区辐照 + 温度驱动负荷预报) | 高 | **已完成** | PS-044 建成: 24 点位 D1-D7 历史预报; 西班牙侧**可预报**(份额 R² 0.756 / 负荷 MAE 22.7 vs 47.2 GWh / 正午负价日 AUC 0.880 vs 仅滞后 0.774), 但对"负价日"增量仅 +0.003(2026)/+0.027(2025) 且**上界只 +0.016** (PS-044 §4.2) |
+| **跨年概率水位校正** | 高 | 待定 | PS-044 §4.4: 经验可靠性曲线只迁移**形状**, 水位会因装机/份额跃升而漂移(2026 校准后 0.285 vs 实际 0.423) ⇒ 需把 PS-037 的季节/水位校正并进校准层, 预警档位才能作为绝对概率发布 |
+| 用**物理出力链路**替换约简式份额预报 | 中 | 待定 | PS-044 §4.1 的 `noon_ratio ~ NWP` 是约简式回归; 改用 PS-030/031 的 PVGIS + pvlib 链路(显式 ILR / 温度系数 / 限电)后再预报, 检验能否提高 D-1 增量 (PS-044 §7-5) |
+| 接入**法国核电日前可用容量** | 中 | 待定 | 现用 7 日滚动代理排产; 真实 day-ahead nuclear availability 可压缩法国侧不确定性 (PS-043 §7-4, PS-044 §7-3) |
+| 把 PS-042 条件结构表接成产品 | 中 | 待定 | 以 `france_neg_condtable.csv` 为查表: 输入 "ES 正午份额预报 + FR 状态预报" → P(负价日); PS-044 已把 ES 侧预报量建好, 可与之合流 (PS-042 §4.5) |
+| ENTSO-E A11 单边流回填 (ES→FR) | 低 | 待网关恢复 | 当前被限流(HTTP 599); 需单边流以区分"区域过剩"与"输电阻塞"两种机制 (PS-041 §6/§7-4) |
+| 负价强度模型改 NegativeBinomial | 中 | 待定 | 现有泊松强度过散布(PS-041 离散度 4.5–5.9; PS-042 2.3–3.5; PS-044 沿用) ⇒ NB 可给出更可信区间 (PS-041 §7-3, PS-044 §7-2) |
+| WMO S2S 库注册与回算获取 | 中 | 待定 | 注册 ECMWF/ECDS 账号, 拉取 ECMWF/NCEP 回算, 升级 PS-017 为多窗口统计 (PS-020) |
+| 延伸期预报精度多窗口重采样 | 低 | 待定 | 由单窗口扩为多窗口、多初始化 hindcast，附集合离散度置信带 (PS-017/PS-020) |
+
+## 8. 脚本与产物索引
 
 | 类别 | 位置 |
 |---|---|
-| 出力建模 | `scripts/analysis/nsrdb_pvlib_power.py`、`nsrdb_eia_comparison.py` |
+| 出力建模 | skills/pv-power-model/references/nsrdb_pvlib_power.py、`nsrdb_eia_comparison.py` |
 | 温度/验证 | `download_hrrr_temp_{july2022,2025_2026}.py`、`verify_temp_fix.py`、`verify_nsrdb_vs_uscrn_july2022.py` |
 | 反事实/缺口 | `clearsky_counterfactual_2025_2026.py`、`build_physical_shortfall_2025_2026.py`、`pv_event_price_impact_2022-07.py` |
 | 弹性标定 | `calibrate_price_elasticity_2025.py`、`calibrate_price_elasticity_tail.py`、`compare_shortfall_definitions.py` |
-| 报告 | `output/nsrdb_pvlib_2022-07/`、`output/pv_event_price_impact_2022-07/`、`output/price_tail_elasticity/`、`output/shortfall_unification/` |
-| 缺口持续时间 (PS-025/PS-026) | `model_shortfall_duration_2025_2026.py`、`model_shortfall_duration_crossday.py` → `output/shortfall_duration/`、`output/shortfall_duration_crossday/` |
-| 季节预报精度与缺口风险 (PS-017/PS-027) | `verify_seasonal_vs_gfs.py`、`model_seasonal_shortfall_risk.py`、`build_seasonal_risk_report.py`、`rebuild_full_chart_arrays.py` → `output/seasonal_forecast_accuracy/`、`output/seasonal_shortfall_risk/` |
-| 风电缺口 × 电价 (PS-028) | `prep_ercot_wind_fleet.py`、`download_hrrr_wind_2025_2026.py`、`model_wind_power_shortfall.py`、`build_wind_shortfall_report.py` → `output/wind_shortfall_elasticity/` |
-| GEM 电站 × 电价 (PS-016) | `gem_ercot_lz_analysis.py`、`gem_ercot_deep_dive.py`、`gem_storm_cross.py` → `output/gem_ercot_price_analysis/` |
-| 西班牙市场数据源调研 (PS-029) | `build_spain_market_survey_report.py` → `output/espana_esios_survey/` |
-| 西班牙跨市场 | `prep_spain_pv_fleet{,_multi}.py`、`download_spain_data{,_multi}.py`、`model_spain_pv_{power,regime}.py`、`build_spain_{minchain,regime}_report.py` → `output/spain_minchain/`、`output/spain_regime/` |
-| 判据可逆性 | `download_nasa_power_ercot_pv.py`、`build_ercot_pv_potential.py`、`reversibility_test_shortfall.py`、`build_reversibility_report.py` → `output/reversibility_shortfall/` |
-| 工况指纹 | `model_shortfall_fingerprint.py`、`build_fingerprint_report.py` → `output/shortfall_fingerprint/` |
-| 预报桥 | `model_forecast_price_bridge.py`、`build_forecast_bridge_report.py` → `output/forecast_price_bridge/` |
-| 西班牙负价预报 | `download_spain_seasonal.py`、`model_spain_negprice_forecast.py`、`build_spain_negprice_report.py` → `output/spain_negprice_forecast/` |
-| ENTSO-E 官方复核 | `download_spain_entsoe.py`、`build_spain_entsoe_panel.py`、`download_spain_temperature.py`、`verify_spain_entsoe_official.py`、`model_spain_negprice_v2.py`、`build_spain_entsoe_verification_report.py` → `output/spain_entsoe_verification/` |
-| 负价模型 v3 | `model_spain_negprice_v3.py`、`build_spain_negprice_v3_report.py` → `output/spain_negprice_v3/` |
-| 负价阈值模型 (12年) | `download_spain_ec_history.py`、`build_spain_long_panel.py`、`model_spain_negprice_threshold.py`、`build_spain_threshold_report.py` → `output/spain_negprice_threshold/` |
-| 正午窗口份额 (PS-040) | `build_spain_noon_panel.py`、`model_spain_noon_threshold.py`、`build_spain_noon_report.py` → `output/spain_negprice_noon/` |
-| 跨境结构 ES–FR (PS-041) | `download_neighbour_ec_price.py`、`build_spain_xborder_daily.py`、`model_spain_negprice_xborder.py`、`build_spain_xborder_report.py` → `output/spain_negprice_xborder/` |
-| 法国侧可预报化 (PS-042) | `download_france_ec_power.py`、`build_france_noon_panel.py`、`model_france_noon_neg.py`、`build_france_noon_report.py` → `output/spain_negprice_frforecast/` |
-| 法国侧 NWP 短期预报 (PS-043) | `prep_france_pv_fleet.py`、`download_france_nwp_prevruns.py`、`download_france_ghi_archive.py`、`build_france_nwp_panel.py`、`model_france_nwp_forecast.py`、`build_france_nwp_report.py` → `output/spain_negprice_nwpfr/` |
-| **ES 侧 NWP + D-1 预警 (PS-044)** | `prep_spain_nwp_hubs.py`、`download_spain_nwp_prevruns.py`、`download_spain_ghi_archive.py`、`build_spain_nwp_panel.py`、`model_spain_nwp_warning.py`、`build_spain_nwp_report.py` → `output/spain_negprice_d1warning/` |
-| 流程文档 | [PS-021](../tech/processes/PS-021.md)、[PS-022](../tech/processes/PS-022.md)、[PS-023](../tech/processes/PS-023.md)、[PS-024](../tech/processes/PS-024.md)、[PS-028](../tech/processes/PS-028.md)、[PS-030](../tech/processes/PS-030.md)、[PS-031](../tech/processes/PS-031.md)、[PS-032](../tech/processes/PS-032.md)、[PS-033](../tech/processes/PS-033.md)、[PS-034](../tech/processes/PS-034.md)、[PS-035](../tech/processes/PS-035.md)、[PS-036](../tech/processes/PS-036.md)、[PS-037](../tech/processes/PS-037.md)、[PS-038](../tech/processes/PS-038.md)、[PS-039](../tech/processes/PS-039.md)、[PS-040](../tech/processes/PS-040.md)、[PS-041](../tech/processes/PS-041.md)、[PS-042](../tech/processes/PS-042.md)、[PS-043](../tech/processes/PS-043.md)、[PS-044](../tech/processes/PS-044.md) |
+| 报告 | output/nsrdb_pvlib_2022-07/、output/pv_event_price_impact_2022-07/、output/price_tail_elasticity/、output/shortfall_unification/ |
+| 缺口持续时间 (PS-025/PS-026) | `model_shortfall_duration_2025_2026.py`、`model_shortfall_duration_crossday.py` → output/shortfall_duration/、output/shortfall_duration_crossday/ |
+| 季节预报精度与缺口风险 (PS-017/PS-027) | `verify_seasonal_vs_gfs.py`、`model_seasonal_shortfall_risk.py`、`build_seasonal_risk_report.py`、`rebuild_full_chart_arrays.py` → output/seasonal_forecast_accuracy/、output/seasonal_shortfall_risk/ |
+| 风电缺口 × 电价 (PS-028) | `prep_ercot_wind_fleet.py`、`download_hrrr_wind_2025_2026.py`、`model_wind_power_shortfall.py`、`build_wind_shortfall_report.py` → output/wind_shortfall_elasticity/ |
+| GEM 电站 × 电价 (PS-016) | `gem_ercot_lz_analysis.py`、`gem_ercot_deep_dive.py`、`gem_storm_cross.py` → output/gem_ercot_price_analysis/ |
+| 西班牙市场数据源调研 (PS-029) | `build_spain_market_survey_report.py` → output/espana_esios_survey/ |
+| 西班牙跨市场 | `prep_spain_pv_fleet{,_multi}.py`、`download_spain_data{,_multi}.py`、`model_spain_pv_{power,regime}.py`、`build_spain_{minchain,regime}_report.py` → output/spain_minchain/、output/spain_regime/ |
+| 判据可逆性 | `download_nasa_power_ercot_pv.py`、`build_ercot_pv_potential.py`、`reversibility_test_shortfall.py`、`build_reversibility_report.py` → output/reversibility_shortfall/ |
+| 工况指纹 | `model_shortfall_fingerprint.py`、`build_fingerprint_report.py` → output/shortfall_fingerprint/ |
+| 预报桥 | `model_forecast_price_bridge.py`、`build_forecast_bridge_report.py` → output/forecast_price_bridge/ |
+| 西班牙负价预报 | `download_spain_seasonal.py`、`model_spain_negprice_forecast.py`、`build_spain_negprice_report.py` → output/spain_negprice_forecast/ |
+| ENTSO-E 官方复核 | `download_spain_entsoe.py`、`build_spain_entsoe_panel.py`、`download_spain_temperature.py`、`verify_spain_entsoe_official.py`、`model_spain_negprice_v2.py`、`build_spain_entsoe_verification_report.py` → output/spain_entsoe_verification/ |
+| 负价模型 v3 | `model_spain_negprice_v3.py`、`build_spain_negprice_v3_report.py` → output/spain_negprice_v3/ |
+| 负价阈值模型 (12年) | `download_spain_ec_history.py`、`build_spain_long_panel.py`、`model_spain_negprice_threshold.py`、`build_spain_threshold_report.py` → output/spain_negprice_threshold/ |
+| 正午窗口份额 (PS-040) | `build_spain_noon_panel.py`、`model_spain_noon_threshold.py`、`build_spain_noon_report.py` → output/spain_negprice_noon/ |
+| 跨境结构 ES–FR (PS-041) | `download_neighbour_ec_price.py`、`build_spain_xborder_daily.py`、`model_spain_negprice_xborder.py`、`build_spain_xborder_report.py` → output/spain_negprice_xborder/ |
+| 法国侧可预报化 (PS-042) | `download_france_ec_power.py`、`build_france_noon_panel.py`、`model_france_noon_neg.py`、`build_france_noon_report.py` → output/spain_negprice_frforecast/ |
+| 法国侧 NWP 短期预报 (PS-043) | `prep_france_pv_fleet.py`、`download_france_nwp_prevruns.py`、`download_france_ghi_archive.py`、`build_france_nwp_panel.py`、`model_france_nwp_forecast.py`、`build_france_nwp_report.py` → output/spain_negprice_nwpfr/ |
+| **ES 侧 NWP + D-1 预警 (PS-044)** | `prep_spain_nwp_hubs.py`、`download_spain_nwp_prevruns.py`、`download_spain_ghi_archive.py`、`build_spain_nwp_panel.py`、`model_spain_nwp_warning.py`、`build_spain_nwp_report.py` → output/spain_negprice_d1warning/ |
+| 流程文档 | PS-021、PS-022、PS-023、PS-024、PS-028、PS-030、PS-031、PS-032、PS-033、PS-034、PS-035、PS-036、PS-037、PS-038、PS-039、PS-040、PS-041、PS-042、PS-043、PS-044 |

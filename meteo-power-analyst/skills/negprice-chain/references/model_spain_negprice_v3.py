@@ -17,7 +17,7 @@
       data/spain/spain_negprice_v3_skill_train23.csv
       data/spain/spain_negprice_v3_reliability.csv
       data/spain/spain_negprice_v3_outlook.csv
-用法: python scripts/analysis/model_spain_negprice_v3.py
+用法: python skills/negprice-chain/references/model_spain_negprice_v3.py
 """
 import glob
 import json

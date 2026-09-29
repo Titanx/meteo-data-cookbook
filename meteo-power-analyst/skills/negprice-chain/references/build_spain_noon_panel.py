@@ -17,7 +17,7 @@
   · 分辨率随年份变(2015-2022 小时 / 2023 起 15 分钟) ⇒ 一律先重采样到小时
   · 窗口按 **Europe/Madrid 当地时** 取, 因此必须先 tz_convert 再筛小时(夏令时自动处理)
   · Energy-Charts 的 start/end 按当地时间解释, 跨年请求会带回上一年最后 1 小时 ⇒ 拼接后按索引去重
-用法: python scripts/analysis/build_spain_noon_panel.py
+用法: python skills/negprice-chain/references/build_spain_noon_panel.py
 """
 import glob
 import json

@@ -1,7 +1,7 @@
 """缺口成因判据 · 可逆性检验报告
 输入: data/ercot/reversibility_matrix.csv
 输出: output/reversibility_shortfall/index.html
-用法: python scripts/analysis/build_reversibility_report.py
+用法: python skills/report-builder/references/build_reversibility_report.py
 """
 import os
 

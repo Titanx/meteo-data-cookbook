@@ -5,7 +5,7 @@
   - h5coro 不支持 compound meta; h5py+fsspec 可读但大块请求跨境超时
   - 最优路径: h5py 拿 meta 磁盘偏移 (连续存储, offset=2636192, 346.8MB) ->
     requests Range 流式下载字节段 -> numpy frombuffer 本地解析
-用法: python scripts/data_download/test_nsrdb_meta.py
+用法: python skills/pv-power-model/references/test_nsrdb_meta.py
 依赖: h5py, fsspec, aiohttp, requests
 """
 import os

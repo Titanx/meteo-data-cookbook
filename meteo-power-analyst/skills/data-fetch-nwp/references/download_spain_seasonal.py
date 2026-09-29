@@ -1,6 +1,6 @@
 """Open-Meteo Seasonal 45天集合预报下载 (西班牙光伏区)
 输出: data/openmeteo_seasonal_spain/{站点}_seasonal_45d.json + 汇总 CSV
-用法: python scripts/data_download/download_spain_seasonal.py
+用法: python skills/data-fetch-nwp/references/download_spain_seasonal.py
 """
 import json
 from pathlib import Path

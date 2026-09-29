@@ -9,7 +9,7 @@
   data/spain/spain_long_panel.csv  (逐月: 负价h/零价h/最低价/均价/光伏TWh/负荷TWh/光伏占比)
 
 ⚠ 三源分辨率都随年份变化, 一律先重采样到小时再聚合, 否则 2023+ 能量虚增 4 倍。
-用法: python scripts/analysis/build_spain_long_panel.py
+用法: python skills/negprice-chain/references/build_spain_long_panel.py
 """
 import glob
 import json

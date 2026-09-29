@@ -6,7 +6,7 @@
 输出: data/nasa_power/spain_pv_hubs_2023.npz
       data/pvgis/spain_sarah3_top12_2023.json
       data/energy_charts/es_2023.csv, es_price_2023.csv
-用法: python scripts/data_download/download_spain_data.py [nhub]
+用法: python skills/data-fetch-power/references/download_spain_data.py [nhub]
 """
 import json
 import os

@@ -13,7 +13,7 @@
 机制: 高正午份额子样本内, 负价日率 按 价差/净出口 分位;
       negh ~ noon_ratio 的**残差** 对 价差/净出口 的回归(是否补充信息)
 
-用法: python scripts/analysis/model_spain_negprice_xborder.py
+用法: python skills/negprice-chain/references/model_spain_negprice_xborder.py
 """
 import numpy as np
 import pandas as pd

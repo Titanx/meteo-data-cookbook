@@ -17,7 +17,7 @@
   · A11 的 in_Domain/out_Domain 表示**方向**; 每方向一次请求
 
 输出: data/entsoe/fr_price_da.csv, flow_es_fr.csv, flow_fr_es.csv (+ raw/ 月缓存)
-用法: python scripts/data_download/download_neighbour_entsoe.py [--start 2023-01] [--end 2026-09]
+用法: python skills/data-fetch-power/references/download_neighbour_entsoe.py [--start 2023-01] [--end 2026-09]
 """
 import argparse
 import glob

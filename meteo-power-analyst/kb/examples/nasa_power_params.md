@@ -1,4 +1,11 @@
-# NASA POWER 全部参数清单
+# NASA POWER 参数清单（1660 个）
+
+**最后同步**: 2026-09-30（自旧知识库 tech/ 目录迁入）
+**用途**: 选参数时查这里的短名与单位；取数流程见 `skills/data-fetch-nwp/SKILL.md`。
+
+> 溯源（raw/）: 旧知识库 tech/nasa_power_params.md（本地存档于 raw/raw-archive/legacy-knowledge/）
+
+---
 
 > 通过官方 API 端点 `https://power.larc.nasa.gov/api/system/manager/parameters` 查询
 > 查询时间: 2026-07-21

@@ -7,7 +7,7 @@
         且把请求数从 (212×5=1060) 压到 (24×5=120)。
 
 输出: data/gem/spain_solar_hubs_nwp.csv (hub_id, name, lat, lon, capacity_mw, n_units, share)
-用法: python scripts/data_download/prep_spain_nwp_hubs.py 2024 24
+用法: python skills/data-fetch-power/references/prep_spain_nwp_hubs.py 2024 24
 """
 import sys
 

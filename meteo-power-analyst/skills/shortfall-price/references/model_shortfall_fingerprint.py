@@ -5,7 +5,7 @@
 样本: ERCOT 2025/2026 (光伏取白天 solar>50; 风电取全时段);
       西班牙 2023/2024/2025 (光伏取白天 act>50, 含"无负价→负价常态化"的时间截面)。
 输出: data/ercot/shortfall_fingerprint.csv (分位明细) + ..._summary.csv (首末档对比)
-用法: python scripts/analysis/model_shortfall_fingerprint.py
+用法: python skills/shortfall-price/references/model_shortfall_fingerprint.py
 """
 import os
 

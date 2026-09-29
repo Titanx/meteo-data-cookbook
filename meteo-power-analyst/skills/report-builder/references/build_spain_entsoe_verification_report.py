@@ -2,7 +2,7 @@
 输入: data/spain/{spain_entsoe_hourly,spain_official_daily,spain_official_quintile,
       spain_negprice_v2_skill,spain_negprice_v2_outlook}.csv + spain_regime_hourly_*.csv
 输出: output/spain_entsoe_verification/index.html
-用法: python scripts/analysis/build_spain_entsoe_verification_report.py
+用法: python skills/report-builder/references/build_spain_entsoe_verification_report.py
 """
 import os
 

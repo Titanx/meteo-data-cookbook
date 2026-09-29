@@ -2,7 +2,7 @@
 """PS-042 报告: 法国正午负价的可预报化 —— "区域过剩"能预报吗?
 
 输出: output/spain_negprice_frforecast/index.html
-用法: python scripts/analysis/build_france_noon_report.py
+用法: python skills/report-builder/references/build_france_noon_report.py
 """
 import os
 import re

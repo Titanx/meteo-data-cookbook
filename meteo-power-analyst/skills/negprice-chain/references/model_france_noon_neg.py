@@ -17,7 +17,7 @@
 
 输入:  data/spain/france_noon_panel.csv
 输出:  data/spain/france_neg_{model,coef,forecast,frskill,twostage,oos,season}.csv
-用法:  python scripts/analysis/model_france_noon_neg.py
+用法:  python skills/negprice-chain/references/model_france_noon_neg.py
 """
 import warnings
 from pathlib import Path

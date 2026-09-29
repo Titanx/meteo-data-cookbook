@@ -2,7 +2,7 @@
 输入: shortfall_physical_2025_2026.csv / shortfall_definition_comparison.csv /
       pv_event_price_impact_physical_2022-07.csv
 输出: output/shortfall_unification/ercot_shortfall_unification.html
-用法: python scripts/analysis/build_shortfall_unification_report.py
+用法: python skills/report-builder/references/build_shortfall_unification_report.py
 """
 import os
 
@@ -453,7 +453,7 @@ P99 中位 +{imp.loc[hw,'up_phys_p99'].median():.1f}%。</div>
 产物: <span class="mono">data/ercot/shortfall_physical_2025_2026.csv</span> ·
 <span class="mono">data/ercot/shortfall_definition_comparison.csv</span> ·
 <span class="mono">data/nsrdb/pv_clearsky_hourly_2025_2026.csv</span><br>
-流程文档: <span class="mono">.knowledge/tech/processes/PS-024.md</span> · 承接 PS-022 / PS-023
+流程文档: <span class="mono">kb/recipes/RCP-20260927-007.md</span> · 承接 PS-022 / PS-023
 </footer>
 </div>
 </body>

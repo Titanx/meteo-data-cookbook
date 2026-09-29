@@ -4,7 +4,7 @@
 口径: 与 PS-021 光伏一致 —— bbox (lat 26~34, lon -107~-94) + status=operating
       + 排除墨西哥州; 风机容量不设下限 (风电单体可 <100MW)
 输出: data/gem/ercot_wind_plants_{year}.csv (name, lat, lon, capacity_mw, n_units)
-用法: python scripts/data_download/prep_ercot_wind_fleet.py 2025 2026
+用法: python skills/data-fetch-power/references/prep_ercot_wind_fleet.py 2025 2026
 """
 import sys
 

@@ -5,7 +5,7 @@
 链路: simplified_solis 晴空 GHI/DNI/DHI -> 单轴跟踪 POA(backtrack gcr=0.35) ->
       HRRR 2m 实测气温(Faiman 简化电池温度) -> PVWatts DC/AC (ILR 1.30, 损耗 14%)
 步长: 5min (与 2022 一致), 逐站计算后全网聚合, 再取小时均值
-用法: python scripts/analysis/clearsky_counterfactual_2025_2026.py
+用法: python skills/pv-power-model/references/clearsky_counterfactual_2025_2026.py
 输出: data/nsrdb/pv_clearsky_hourly_2025_2026.csv  (小时, MW)
 """
 import numpy as np

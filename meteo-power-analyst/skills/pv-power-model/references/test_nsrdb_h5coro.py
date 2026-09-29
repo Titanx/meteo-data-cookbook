@@ -4,7 +4,7 @@
   - nrel-pds-nsrdb.s3.amazonaws.com 匿名可列可读 (registry.opendata.aws/nrel-pds-nsrdb)
   - 全域 h5 单文件 1.5~2.4 TB, 只能部分读取; h5coro + HTTPDriver + 128KB 缓存行实测可用
   - h5coro 不支持复合 meta 与属性, 像素->坐标映射待解 (见报告)
-用法: python scripts/data_download/test_nsrdb_h5coro.py
+用法: python skills/pv-power-model/references/test_nsrdb_h5coro.py
 依赖: pip install h5coro
 """
 import numpy as np

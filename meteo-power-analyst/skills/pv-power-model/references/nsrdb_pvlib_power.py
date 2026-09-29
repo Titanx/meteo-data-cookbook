@@ -4,7 +4,7 @@
         装机加权聚合 -> 小时均值 -> 与 EIA ERCO SUN 实际出力对比
 温度源: NSRDB S3 v3.2.2 无地表温度 (仅有 ancillary 大气光学量), 用
         Open-Meteo historical-api HRRR ncep_hrrr_conus 2m 气温 (3km 分析场)
-用法: python scripts/analysis/nsrdb_pvlib_power.py
+用法: python skills/pv-power-model/references/nsrdb_pvlib_power.py
 依赖: pvlib (0.15.2), xarray, pandas
 输出: data/nsrdb/ercot_pv_power_2022-07.csv + stdout 对比统计
 """

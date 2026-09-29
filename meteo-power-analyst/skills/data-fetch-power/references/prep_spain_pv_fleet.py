@@ -2,7 +2,7 @@
 口径: GEM global solar, country=Spain, status=operating, start-year <= 目标年
       按网格聚合去重, 每格取容量加权质心, 作为 PVGIS 采样点
 输出: data/gem/spain_solar_hubs_{year}.csv (name, lat, lon, capacity_mw, n_units)
-用法: python scripts/data_download/prep_spain_pv_fleet.py 2023
+用法: python skills/data-fetch-power/references/prep_spain_pv_fleet.py 2023
 """
 import sys
 

@@ -5,7 +5,7 @@
       相同的物理晴空反事实替代包络, 统一两个场景的缺口径, 并对比两种口径。
 校准: 与 PS-022 一致 —— 逐小时偏移 = 该小时 (反事实 - 实际) 的 5% 分位
       (最晴 5% 小时视为无云, 其差值即系统性偏差, 自动吸收装机清单不完整)
-用法: python scripts/analysis/build_physical_shortfall_2025_2026.py
+用法: python skills/pv-power-model/references/build_physical_shortfall_2025_2026.py
 输出: data/ercot/shortfall_physical_2025_2026.csv
 """
 import numpy as np

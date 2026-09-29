@@ -15,7 +15,7 @@
 输入:  data/energy_charts/fr_power_hourly.csv, data/energy_charts/price_FR.csv,
        data/spain/spain_xborder_daily.csv
 输出:  data/spain/france_noon_panel.csv
-用法:  python scripts/analysis/build_france_noon_panel.py
+用法:  python skills/negprice-chain/references/build_france_noon_panel.py
 """
 from pathlib import Path
 

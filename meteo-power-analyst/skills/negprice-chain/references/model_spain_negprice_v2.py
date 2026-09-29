@@ -6,7 +6,7 @@
       ②负价日 logit/线性概率 = f(S, 负荷)
       ③季节预报 50 成员(短波 τ + Tmax) → 逐成员 S 与负荷 → 逐成员 P(负价日)
 输出: data/spain/spain_negprice_v2_skill.csv, spain_negprice_v2_outlook.csv
-用法: python scripts/analysis/model_spain_negprice_v2.py
+用法: python skills/negprice-chain/references/model_spain_negprice_v2.py
 """
 import glob
 import json

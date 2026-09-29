@@ -2,7 +2,7 @@
 """PS-043 报告: 用真实 NWP 预报填法国侧 —— 短期(D-1~D-7)能恢复区域通道吗?
 
 输出: output/spain_negprice_nwpfr/index.html
-用法: python scripts/analysis/build_france_nwp_report.py
+用法: python skills/report-builder/references/build_france_nwp_report.py
 """
 import os
 import re

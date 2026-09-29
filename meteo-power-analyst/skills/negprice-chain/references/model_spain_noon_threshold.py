@@ -12,7 +12,7 @@
   · 季节专用阈值  仅用 4-5 月 / 10-11 月子样本拟合
 评估: 全样本 MAE / R²; 逐年扩展窗口样本外 MAE(训练 ≤2023 / ≤2024 / ≤2025)
 
-用法: python scripts/analysis/model_spain_noon_threshold.py
+用法: python skills/negprice-chain/references/model_spain_noon_threshold.py
 """
 import numpy as np
 import pandas as pd

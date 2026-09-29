@@ -15,7 +15,7 @@
     **泛边界合计净额**(FR+PT+MA+AD), 不是单一 FR 边界; 单一边界需 ENTSO-E A11,
     实测该网关当日持续限流/超时(见 PS-041 局限), 故未纳入
 
-用法: python scripts/analysis/build_spain_xborder_daily.py
+用法: python skills/negprice-chain/references/build_spain_xborder_daily.py
 """
 import glob
 import json

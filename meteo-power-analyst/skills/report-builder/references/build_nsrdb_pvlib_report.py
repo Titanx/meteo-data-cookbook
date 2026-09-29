@@ -1,7 +1,7 @@
 """生成 NSRDB+pvlib vs EIA 对比分析 HTML 报告 (自包含, 内嵌 SVG)
 输入: data/nsrdb/ercot_pv_power_2022-07.csv + ercot_solar_irradiance_2022-07.nc
 输出: output/nsrdb_pvlib_2022-07/nsrdb_pvlib_ercot_2022-07.html
-用法: python scripts/analysis/build_nsrdb_pvlib_report.py
+用法: python skills/report-builder/references/build_nsrdb_pvlib_report.py
 """
 import os
 
@@ -303,11 +303,11 @@ def main():
 <td>小时级模型出力 vs EIA 实际 (744 h)</td></tr>
 <tr><td class="mono">data/nsrdb/ercot_solar_plants_pixels.csv</td>
 <td>GEM 光伏电站 → NSRDB 像素映射 (100 座, 中位距离 0.9 km)</td></tr>
-<tr><td class="mono">scripts/data_download/download_nsrdb_ercot_july2022.py</td>
+<tr><td class="mono">skills/pv-power-model/references/download_nsrdb_ercot_july2022.py</td>
 <td>分块提取脚本 (自愈重试, 断点续传)</td></tr>
-<tr><td class="mono">scripts/analysis/nsrdb_pvlib_power.py</td>
+<tr><td class="mono">skills/pv-power-model/references/nsrdb_pvlib_power.py</td>
 <td>pvlib 出力建模 + EIA 对比</td></tr>
-<tr><td class="mono">scripts/analysis/nsrdb_eia_comparison.py</td>
+<tr><td class="mono">skills/pv-power-model/references/nsrdb_eia_comparison.py</td>
 <td>深入对比 (昼夜/日能量/爬坡/事件日)</td></tr>
 </table>
 

@@ -1,7 +1,7 @@
 """西班牙负价概率预报报告
 输入: data/spain/spain_negprice_calibration.csv, spain_negprice_outlook.csv
 输出: output/spain_negprice_forecast/index.html
-用法: python scripts/analysis/build_spain_negprice_report.py
+用法: python skills/report-builder/references/build_spain_negprice_report.py
 """
 import os
 

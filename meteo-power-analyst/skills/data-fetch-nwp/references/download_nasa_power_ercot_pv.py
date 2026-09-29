@@ -4,7 +4,7 @@
 源:   NASA POWER hourly point (MERRA-2, 免注册, 无硬限流)
 输入: data/nsrdb/ercot_solar_plants_pixels_2025.csv (name, lat, lon, capacity_mw)
 输出: data/nasa_power/ercot_pv_plants.npz
-用法: python scripts/data_download/download_nasa_power_ercot_pv.py
+用法: python skills/data-fetch-nwp/references/download_nasa_power_ercot_pv.py
 """
 import os
 import time

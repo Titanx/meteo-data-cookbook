@@ -8,7 +8,7 @@
   A65  实际负荷
 
 认证：.env 中的 ENTSOE_API_TOKEN（securityToken 查询参数）。
-      申请流程见 test_entsoe_api.py 的提示，或 .knowledge/tech/processes/PS-036.md。
+      申请流程见 test_entsoe_api.py 的提示，或 kb/recipes/RCP-20260929-005.md。
 网络：本机对 web-api.tp.entsoe.eu 可达；如走代理，在 .env 加 ESIOS_PROXY=...
 
 用法

@@ -14,7 +14,7 @@
   · ⚠ `Cross border electricity trading` 是**泛边界合计**且符号未文档化, 本流程不使用
 
 输出: data/energy_charts/fr_public_power_{年}.json (缓存) + fr_power_hourly.csv (小时化)
-用法: python scripts/data_download/download_france_ec_power.py
+用法: python skills/data-fetch-power/references/download_france_ec_power.py
 """
 import json
 import ssl

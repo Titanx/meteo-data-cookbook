@@ -23,7 +23,7 @@
 
 输入:  data/spain/spain_nwp_panel.csv
 输出:  data/spain/spain_nwp_{stage1,warning,oos2025,reliability,warn2026}.csv
-用法:  python scripts/analysis/model_spain_nwp_warning.py
+用法:  python skills/negprice-chain/references/model_spain_nwp_warning.py
 """
 import warnings
 from pathlib import Path

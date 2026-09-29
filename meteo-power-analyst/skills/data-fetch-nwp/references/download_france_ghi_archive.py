@@ -5,7 +5,7 @@
       口径与 NWP 点位完全一致(同一批 GEM 容量加权点、同一 时区/窗口 处理)。
 
 输出: data/openmeteo_nwp_france/fr_ghi_archive.npz (ghi [N hub, T hour], time)
-用法: python scripts/data_download/download_france_ghi_archive.py
+用法: python skills/data-fetch-nwp/references/download_france_ghi_archive.py
 """
 import json
 import ssl

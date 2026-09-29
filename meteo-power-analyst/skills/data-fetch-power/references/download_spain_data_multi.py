@@ -3,7 +3,7 @@
 2) Energy-Charts 西班牙实际发电分技术 + 日前电价 (2024, 2025; 2023 已有)
 输出: data/nasa_power/spain_pv_hubs_{year}.npz
       data/energy_charts/es_{year}.csv, es_price_{year}.csv
-用法: python scripts/data_download/download_spain_data_multi.py [years 2023,2024,2025]
+用法: python skills/data-fetch-power/references/download_spain_data_multi.py [years 2023,2024,2025]
 """
 import os
 import sys

@@ -2,7 +2,7 @@
 输入: data/spain/{spain_official_daily,spain_negprice_v3_skill,spain_negprice_v3_skill_train23,
       spain_negprice_v3_reliability,spain_negprice_v3_outlook,spain_negprice_v3_scenarios}.csv
 输出: output/spain_negprice_v3/index.html
-用法: python scripts/analysis/build_spain_negprice_v3_report.py
+用法: python skills/report-builder/references/build_spain_negprice_v3_report.py
 """
 import os
 

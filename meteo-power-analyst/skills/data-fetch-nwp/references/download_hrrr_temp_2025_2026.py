@@ -3,7 +3,7 @@
 API: historical-forecast-api.open-meteo.com, models=ncep_hrrr_conus, 匿名免key
      支持逗号分隔多坐标批量请求 (顺序与输入一致)
 输出: data/nsrdb/hrrr_t2m_2025_2026.npz (14736×N, °C) + 时间轴 + 站名
-用法: python scripts/data_download/download_hrrr_temp_2025_2026.py [year]
+用法: python skills/data-fetch-nwp/references/download_hrrr_temp_2025_2026.py [year]
 """
 import sys
 import time

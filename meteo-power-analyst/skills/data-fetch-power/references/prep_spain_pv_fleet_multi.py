@@ -3,7 +3,7 @@
      输出同一组点位在 2023/2024/2025 三个年份的装机容量 (start-year <= 年)
      便于"同一位置跨年对比", 避免各年点位不同导致的口径漂移
 输出: data/gem/spain_solar_hubs_multi.csv
-用法: python scripts/data_download/prep_spain_pv_fleet.py [nhub]
+用法: python skills/data-fetch-power/references/prep_spain_pv_fleet.py [nhub]
 """
 import sys
 

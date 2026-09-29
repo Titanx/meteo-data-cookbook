@@ -13,7 +13,7 @@
 输入:  data/openmeteo_nwp_spain/es_nwp_prevruns_*.npz, es_ghi_archive.npz,
        data/gem/spain_solar_hubs_nwp.csv, data/spain/france_nwp_panel.csv
 输出:  data/spain/spain_nwp_panel.csv
-用法:  python scripts/analysis/build_spain_nwp_panel.py
+用法:  python skills/negprice-chain/references/build_spain_nwp_panel.py
 """
 from pathlib import Path
 

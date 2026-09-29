@@ -2,7 +2,7 @@
 输入: price_elasticity_tail.csv / ercot_hourly_panel_{2025,2026}.csv /
       ercot_rtm_HB_HOUSTON_*.csv / pv_event_price_impact_tail_2022-07.csv
 输出: output/price_tail_elasticity/ercot_rtm_tail_elasticity.html
-用法: python scripts/analysis/build_price_tail_report.py
+用法: python skills/report-builder/references/build_price_tail_report.py
 """
 import os
 
@@ -566,7 +566,7 @@ EIA-930 小时光伏/风电/需求 · PS-022 晴空反事实 (NSRDB v3.2.2 + HRR
 方法: 分位数回归 (statsmodels QuantReg) · HAC 稳健标准误 · Logistic GLM · 小时/月份固定效应<br>
 产物: <span class="mono">data/ercot/price_elasticity_tail.csv</span> ·
 <span class="mono">data/nsrdb/pv_event_price_impact_tail_2022-07.csv</span><br>
-流程文档: <span class="mono">.knowledge/tech/processes/PS-023.md</span> · 承接 PS-022
+流程文档: <span class="mono">kb/recipes/RCP-20260927-006.md</span> · 承接 PS-022
 </footer>
 </div>
 </body>
