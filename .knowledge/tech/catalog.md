@@ -1,7 +1,7 @@
 # 技术知识清单（跨项目通用）
 
 > 最后更新: 2026-09-29
-> 总计: 59 条（58 verified + 1 draft）
+> 总计: 61 条（60 verified + 1 draft）
 
 ## 最佳实践 (guidelines/)
 
@@ -76,6 +76,7 @@
 | PS-041 | 西班牙负价的跨境结构 · ES–FR 耦合与"区域过剩" | verified | spain, negative-price, cross-border, es-fr-spread, regional-surplus, mibel, day-ahead-price, poisson-intensity, bounded-features, out-of-sample, mechanism, energy-charts | implement, verify, analyze | 2026-09-29 |
 | PS-042 | 法国正午负价的可预报化 · "区域过剩"能预报吗 | verified | france, spain, negative-price, forecastability, ex-ante, leave-one-year-out, climatology, two-stage, persistence, reliability-calibration, zero-inflation, poisson-intensity, out-of-sample, energy-charts | implement, verify, analyze | 2026-09-29 |
 | PS-043 | 用真实 NWP 预报填法国侧 · D-1~D-7 能恢复"区域过剩"通道吗 | verified | france, spain, negative-price, nwp, previous-runs, hindcast, ecmwf, era5, lead-time, homogeneity, two-stage, persistence, month-fe-overfit, out-of-sample, openmeteo, forecastability | implement, verify, analyze | 2026-09-29 |
+| PS-044 | 补齐 ES 侧 NWP · D-1/D-3 西班牙负价日预警（持续性骨架 vs 预报量 vs 同期上界） | verified | spain, negative-price, nwp, previous-runs, d-1-warning, load-forecast, noon-share, two-stage, persistence, contemporaneous-upper-bound, calibration-drift, warning-calendar, hit-rate, out-of-sample, openmeteo | implement, verify, analyze | 2026-09-29 |
 
 ## 参数清单
 
@@ -100,7 +101,7 @@
 | 数据源 | 相关条目 |
 |--------|---------|
 | Meteostat | [GL-005](guidelines/GL-005.md), [PF-004](pitfalls/PF-004.md) |
-| Open-Meteo | [GL-004](guidelines/GL-004.md), [PS-017](processes/PS-017.md), [PS-022](processes/PS-022.md), **[PS-043](processes/PS-043.md)**（`previous-runs` 历史预报）, **[PF-015](pitfalls/PF-015.md)**（逐 lead 同质性） |
+| Open-Meteo | [GL-004](guidelines/GL-004.md), [PS-017](processes/PS-017.md), [PS-022](processes/PS-022.md), **[PS-043](processes/PS-043.md)**（`previous-runs` 历史预报·法国）, **[PS-044](processes/PS-044.md)**（`previous-runs` 历史预报·西班牙 + D-1 预警）, **[PF-015](pitfalls/PF-015.md)**（逐 lead 同质性） |
 | NASA POWER | [GL-006](guidelines/GL-006.md) |
 | USCRN | **[PS-022](processes/PS-022.md)** |
 | 怀俄明探空 | [GL-007](guidelines/GL-007.md), [PF-008](pitfalls/PF-008.md), [PF-009](pitfalls/PF-009.md), [PF-010](pitfalls/PF-010.md), [PS-008](processes/PS-008.md) |
@@ -130,8 +131,8 @@
 |------|---------|
 | 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PS-009, PS-010, PS-011, PS-012, PS-013, PS-018, PS-019, PS-020, PS-027, PS-029, PS-034, PS-035, PS-036, PF-005, PF-007, PF-011, PF-012, PF-013, **PF-015**, GL-008, GL-009 |
 | 实现开发 (implement) | 全部 |
-| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PF-014, **PF-015**, PS-007, PS-008, PS-009, PS-010, PS-013, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-029, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042, PS-043 |
-| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016, PS-017, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042, PS-043 |
+| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PF-014, **PF-015**, PS-007, PS-008, PS-009, PS-010, PS-013, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-029, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042, PS-043, **PS-044** |
+| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016, PS-017, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042, PS-043, **PS-044** |
 | 调试修复 (debug) | PF-006, PF-014 |
 
 ### 按通用技术
@@ -163,8 +164,8 @@
 | CMA 数据访问 | PF-012, PS-012 |
 | IEC 62325 / 变长块解析 | PF-014, PS-036 |
 | 季节/延伸期预报概率化 | PS-017, PS-027, PS-034, PS-035, PS-037, PS-038, PS-039, PS-040 |
-| 样本外检验 / AUC 排序评估 | PS-035, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042 |
-| 概率校准评估 (Brier/可靠性) | PS-038, **PS-042** |
+| 样本外检验 / AUC 排序评估 | PS-035, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042, **PS-044** |
+| 概率校准评估 (Brier/可靠性) | PS-038, **PS-042**, **PS-044** |
 | **阈值/结构断点建模** | **PS-039**, **PS-040** |
 | **长历史面板构建 (12 年)** | **PS-039**, **PS-040** |
 | **当地时窗口/日内时段口径** | **PS-040** |
@@ -172,9 +173,12 @@
 | **泊松强度模型 (过散布诊断)** | **PS-038**, **PS-041**, **PS-042** |
 | **跨境耦合/区域过剩 (ES–FR、MIBEL)** | **PS-041** |
 | **符号协定经验裁定 (未文档化字段)** | **PS-041** |
-| **可预报性检验 (事前 vs 同期)** | **PS-042**, **PS-043** |
-| **零膨胀/过散布计数的概率换算** | **PS-042** |
-| **历史预报归档回测 (lead 同质性)** | **PS-043**, **PF-015** |
+| **可预报性检验 (事前 vs 同期)** | **PS-042**, **PS-043**, **PS-044** |
+| **零膨胀/过散布计数的概率换算** | **PS-042**, **PS-044** |
+| **历史预报归档回测 (lead 同质性)** | **PS-043**, **PS-044**, **PF-015** |
 | **月度假变量在日尺度过拟合** | **PS-043**（PS-038 月尺度同源） |
+| **D-1/D-3 可运营预警 (持续性骨架)** | **PS-044** |
+| **原始气象 vs 机制变换特征** | **PS-044**（NWP 须经"份额/负荷"变换） |
+| **跨年概率水位漂移 (校准只迁移形状)** | **PS-044**（PS-037 同源） |
 | 缺口成因与工况识别 | PS-028, PS-031, PS-032, PS-033 |
-| 西班牙电力市场链路 | PS-029, PS-030, PS-031, PS-035, PS-036, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042, PS-043, PF-013 |
+| 西班牙电力市场链路 | PS-029, PS-030, PS-031, PS-035, PS-036, PS-037, PS-038, PS-039, PS-040, PS-041, PS-042, PS-043, **PS-044**, PF-013 |
