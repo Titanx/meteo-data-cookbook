@@ -2,6 +2,25 @@
 
 > 本文件只追加，不修改历史记录。
 
+## [2026-09-29] add | [PS-036 西班牙 ENTSO-E Transparency 数据链路] | 新增 1 条
+
+### 新增条目
+- 新增 PS-036：西班牙 ENTSO-E Transparency 数据链路（**draft**，token 待申请）
+  - 动因：ESIOS 被 REE **域名级 WAF 封锁**（[PF-013]），改用 ENTSO-E 拿西班牙分技术实际发电/负荷/日前价
+  - **实测（2026-09-29）**：`web-api.tp.entsoe.eu/api` **可达**；无 token 返回 **HTTP 401 + `text/xml`**
+    标准 `Acknowledgement_MarketDocument`（`Authentication failed.`），**不是** WAF 拦截页 ⇒ 与 ESIOS 处境本质不同
+  - 门户 `transparency.entsoe.eu` 200；Keycloak realm 200；西班牙 EIC = **`10YES-REE------0`**
+  - 参数结构被接受（401 而非 400）：`A44` 日前价 / `A75` 分技术实际发电（`processType=A16`, `in_Domain`）/ `A65` 实际负荷（`outBiddingZone_Domain`）
+  - **token 申请（官方步骤）**：注册 transparency.entsoe.eu → 验证邮箱 → 发邮件 `transparency@entsoe.eu`
+    （**主题 `RESTful API access`**，正文写注册邮箱）→ 等 ≤3 工作日 → My Account 生成 security token
+  - 鉴权：`securityToken` **查询参数** 或 `Authorization: Bearer`（与 ESIOS 的 header 写法不同）
+  - 另一条路：File Library 走 **Keycloak**（`keycloak.tp.entsoe.eu/realms/tp/...`），适合批量文件级下载
+  - 局限：token 未取得（端到端未跑通）；粒度取决于 TSO 报送；**无 ESIOS 的"技术受限/弃电"指标**；不适合实时预警
+- 新增脚本：`scripts/data_download/test_entsoe_api.py`（自检，退出码 4 = 缺 token，与 403 拦截区分）、
+  `scripts/data_download/download_spain_entsoe.py`（IEC 62325 XML 解析 + 按月缓存续传 + 代理可感知；`--check`/`--docs`）
+- 更新 `project/catalog.md`：ENTSO-E 数据源状态（待token → 端点实测可达/token 待申请）+ 2 条脚本索引
+- 更新 `tech/catalog.md`：流程表 + 数据源索引 + 架构阶段索引
+
 ## [2026-09-29] add | [PF-013 REE/ESIOS 域名级 WAF 封锁] | 新增 1 条
 
 ### 新增条目

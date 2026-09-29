@@ -1,7 +1,7 @@
 # 技术知识清单（跨项目通用）
 
 > 最后更新: 2026-09-29
-> 总计: 37 条（36 verified + 1 draft）
+> 总计: 38 条（36 verified + 2 draft）
 
 ## 最佳实践 (guidelines/)
 
@@ -55,6 +55,7 @@
 | PS-022 | 光伏缺口 × 电价冲击推演流程（晴空反事实 + RTM 弹性标定） | verified | pv, solar, clearsky, counterfactual, shortfall, elasticity, rtm, price, panel-regression, hrrr, temperature, uscrn, ilr, eia-930, ercot, solis, event-attribution | implement, verify, analyze | 2026-09-27 |
 | PS-023 | RTM 尾部尖峰弹性标定与极端场景外推（分位数回归 + 凸性检验） | verified | rtm, price, tail, spike, quantile-regression, elasticity, shortfall, pv, extreme-scenario, extrapolation, convexity, logistic, simpson-paradox, hac, ercot, gridstatus, eia-930 | implement, verify, analyze | 2026-09-27 |
 | PS-024 | 光伏缺口口径统一：物理晴空反事实 vs P95 数据驱动包络 | verified | pv, solar, shortfall, counterfactual, clearsky, solis, pvlib, envelope, elasticity, rtm, price, simpson-paradox, hrrr, gem, nsrdb, eia-930, ercot, definition-consistency | implement, verify, analyze | 2026-09-27 |
+| PS-036 | 西班牙 ENTSO-E Transparency 数据链路（替代 ESIOS） | draft | entsoe, transparency-platform, spain, generation-by-type, load, day-ahead-price, eic, iec62325, xml, api, token, proxy, alternative | architect, implement | 2026-09-29 |
 
 ## 参数清单
 
@@ -91,6 +92,7 @@
 | **ASTER GDEM/WBD** | **[PS-013](processes/PS-013.md)** |
 | **CMA 数据** | **[PF-012](pitfalls/PF-012.md)** |
 | **ESIOS / REE（西班牙电力）** | **[PF-013](pitfalls/PF-013.md)** |
+| **ENTSO-E Transparency** | **[PS-036](processes/PS-036.md)**（西班牙链路，免注册但需免费 token） |
 | SURFRAD | [PS-005](processes/PS-005.md) |
 | **MRMS QPE** | **[PS-018](processes/PS-018.md)** |
 | **NSRDB** | **[PS-019](processes/PS-019.md), [PS-022](processes/PS-022.md), [PS-023](processes/PS-023.md), [PS-024](processes/PS-024.md)** |
@@ -105,7 +107,7 @@
 
 | 阶段 | 相关条目 |
 |------|---------|
-| 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PS-009, PS-010, PS-011, PS-012, PS-013, PS-018, PS-019, PS-020, PF-005, PF-007, PF-011, PF-012, PF-013, GL-008, GL-009 |
+| 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PS-009, PS-010, PS-011, PS-012, PS-013, PS-018, PS-019, PS-020, PS-036, PF-005, PF-007, PF-011, PF-012, PF-013, GL-008, GL-009 |
 | 实现开发 (implement) | 全部 |
 | 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PS-007, PS-008, PS-009, PS-010, PS-013, PS-018, PS-019, PS-022, PS-023, PS-024 |
 | 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016, PS-017, PS-018, PS-019, PS-022, PS-023, PS-024 |
