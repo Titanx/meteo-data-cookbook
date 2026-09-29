@@ -1,7 +1,7 @@
 # 技术知识清单（跨项目通用）
 
 > 最后更新: 2026-09-29
-> 总计: 53 条（52 verified + 1 draft）
+> 总计: 54 条（53 verified + 1 draft）
 
 ## 最佳实践 (guidelines/)
 
@@ -70,6 +70,7 @@
 | PS-036 | 西班牙 ENTSO-E Transparency 数据链路（替代 ESIOS） | verified | entsoe, transparency-platform, spain, generation-by-type, load, day-ahead-price, eic, iec62325, xml, api, token, proxy, alternative | architect, implement | 2026-09-29 |
 | PS-037 | 西班牙链路 · ENTSO-E 官方口径复核 + 2026 样本外检验 | verified | spain, entsoe, official-tsd, cross-validation, out-of-sample, 2026, auc, two-factor, temperature-driven-load, season-bias, negative-price, pot-cs | implement, verify, analyze | 2026-09-29 |
 | PS-038 | 西班牙负价模型 v3 · 趋势 / logit / 强度 | verified | spain, negative-price, logit, poisson, intensity, trend, seasonality, brier, reliability, calibration, out-of-sample, scenario-forecast | implement, verify, analyze | 2026-09-29 |
+| PS-039 | 西班牙负价"爆发阈值"模型（12 年历史） | verified | spain, negative-price, threshold, hockey-stick, regime-shift, solar-share, penetration, long-panel, seasonal-threshold, scenario-convergence, out-of-sample, energy-charts | implement, verify, analyze | 2026-09-29 |
 
 ## 参数清单
 
@@ -123,8 +124,8 @@
 |------|---------|
 | 架构设计 (architect) | PS-003, PS-004, PS-005, PS-006, PS-007, PS-008, PS-009, PS-010, PS-011, PS-012, PS-013, PS-018, PS-019, PS-020, PS-027, PS-029, PS-034, PS-035, PS-036, PF-005, PF-007, PF-011, PF-012, PF-013, GL-008, GL-009 |
 | 实现开发 (implement) | 全部 |
-| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PF-014, PS-007, PS-008, PS-009, PS-010, PS-013, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-029, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038 |
-| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016, PS-017, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038 |
+| 验证测试 (verify) | GL-004, GL-005, GL-006, GL-007, GL-008, GL-009, PF-004, PF-008, PF-009, PF-010, PF-011, PF-012, PF-014, PS-007, PS-008, PS-009, PS-010, PS-013, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-029, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038, PS-039 |
+| 数据分析 (analyze) | GL-007, PF-009, PS-007, PS-016, PS-017, PS-018, PS-019, PS-022, PS-023, PS-024, PS-025, PS-026, PS-027, PS-028, PS-030, PS-031, PS-032, PS-033, PS-034, PS-035, PS-037, PS-038, PS-039 |
 | 调试修复 (debug) | PF-006, PF-014 |
 
 ### 按通用技术
@@ -155,8 +156,10 @@
 | 口径一致性检验 | PS-024 |
 | CMA 数据访问 | PF-012, PS-012 |
 | IEC 62325 / 变长块解析 | PF-014, PS-036 |
-| 季节/延伸期预报概率化 | PS-017, PS-027, PS-034, PS-035, PS-037, PS-038 |
-| 样本外检验 / AUC 排序评估 | PS-035, PS-037, PS-038 |
+| 季节/延伸期预报概率化 | PS-017, PS-027, PS-034, PS-035, PS-037, PS-038, PS-039 |
+| 样本外检验 / AUC 排序评估 | PS-035, PS-037, PS-038, PS-039 |
 | 概率校准评估 (Brier/可靠性) | PS-038 |
+| **阈值/结构断点建模** | **PS-039** |
+| **长历史面板构建 (12 年)** | **PS-039** |
 | 缺口成因与工况识别 | PS-028, PS-031, PS-032, PS-033 |
-| 西班牙电力市场链路 | PS-029, PS-030, PS-031, PS-035, PS-036, PS-037, PS-038, PF-013 |
+| 西班牙电力市场链路 | PS-029, PS-030, PS-031, PS-035, PS-036, PS-037, PS-038, PS-039, PF-013 |

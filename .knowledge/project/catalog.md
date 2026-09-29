@@ -24,7 +24,7 @@
 | SURFRAD | 地表辐射 | 美国7站 | 2025-2026 | `surfrad_pipeline.py` | `data/surfrad/` | 已验证 |
 | Open-Meteo ERA5 | 再分析 | 北京测试 | 2025-06 | `test_openmeteo.py` | `data/openmeteo/` | 已验证 |
 | NASA POWER | 卫星同化/再分析 | 全球 | 逐小时 2001~至今 | `download_spain_data.py` | `data/nasa_power/` | 活跃 |
-| **Energy-Charts (Fraunhofer ISE)** | **实际发电分技术/负荷/电价** | **欧洲各国(含西班牙)** | **2015~至今 (15min)** | **`download_spain_data.py`** | **`data/energy_charts/`** | **已验证(免注册)** |
+| **Energy-Charts (Fraunhofer ISE)** | **实际发电分技术/负荷/电价** | **欧洲各国(含西班牙)** | **2015~至今 (2015-2022 小时; 2023 起 15min)** | **`download_spain_data.py`, `download_spain_ec_history.py`(12年分技术发电)** | **`data/energy_charts/`** | **已验证(免注册); ⚠`start/end` 按当地时间, 跨年请求会带回上一年最后 1h(按月聚合须累加)** |
 | EIA API v2 | 电力负荷/发电 | ERCOT | 2025-01 ~ 2026-09 | `download_ercot_prices.py` | `data/ercot/` | 活跃 |
 | GridStatus.io | 电价 | ERCOT 4枢纽+4负荷区+120资源节点 | 2025-01 ~ 2026-09 | `download_ercot_spp.py` | `data/ercot/` | 活跃 |
 | **GEM 电站数据库** | **电站坐标/装机** | **全球 (ERCOT 474 座)** | **2026-08 快照** | **`gem_ercot_*.py`** | **`data/gem/`** | **已验证** |
@@ -107,6 +107,7 @@
 | 西班牙负价概率季节预报链路 (PS-035) | `output/spain_negprice_forecast/index.html` | **补上PS-034缺的西班牙季节预报并建成完整链路**: Open-Meteo Seasonal(9光伏区×50成员×45天, 2026-09-29~11-12) 逐日短波→fleet τ(31.3GW, k=1.053尺度校正)→**可预报指数 S = 晴空气候(doy)×τ/负荷气候(月,工作日)** →标定 P(负价日); **跨年 AUC 0.722/0.721 双向一致**(2024↔2025) ⇒ S有真实排序能力; S五分位负价日占比 **0/6/27/32/26%**(Q1–Q5, 高档32% vs 全年基准18%); **季节偏差校正为必需一步** — 原始曲线用于当前秋季窗口高估近一倍(14.9% vs 实测7.8%) ⇒ 截距 −0.072→−0.143; 未来45天负价日概率均值**8.2%**(W1 10.5%→W7 2.0%随入秋走低); 对照PS-034: 同一"预报桥"思路在西班牙成立而在ERCOT失效 ⇒ **可预报性取决于驱动是否外生且可算** | 2026-09-29 |
 | ENTSO-E 官方口径复核 + 2026 样本外 (PS-037) | `output/spain_entsoe_verification/index.html` | **换官方源不改变结论, 但暴露模型设定不足**: Energy-Charts ≡ ENTSO-E **逐位相同**(4变量×3年 r=1.000000/MAE=0/能量比1.000000, 2025光伏 r=0.999995) ⇒ PS-030~035 本就站在官方 TSO 口径上; **PS-035 单因子 S 在全新 2026 失效 (AUC 0.491≈无技能)**, 因 2026 起负荷通道主导(逐年 corr(负荷,负价日) −0.41→−0.51→**−0.59**, 资源通道 +0.18→−0.11), 而 S 只用月度负荷气候代理负荷; 改两因子(τ + **温度驱动负荷预报**, 2024–2026.09 标定 n=1001: P=+1.6487+0.0402×S−0.0588×负荷GW, 拟合AUC 0.809) 后 **2026 AUC 回 0.733**(含实际负荷 0.811); 官方口径逐年负价日率 **0%→12.6%→24.2%→42.3%**; 季节偏差仍为 **低估春(4–5月 70/42, 62/47)高估秋(10–11月 8/32, 2/21, 偏差+21.9pp)**, 校正后未来45天负价日概率 **6.8%**(原始25.9%, 校正后P10全为0) ⇒ **与PS-035的8.2%差1.4pp, 结论稳健于模型设定但前提是必须做季节校正**; ⚠跨年比较 pot_cs 须重新定标否则 τ 饱和到1 (2026用2025形状模板+年能量比合成) | 2026-09-29 |
 | 西班牙负价模型 v3 · 趋势/logit/强度 (PS-038) | `output/spain_negprice_v3/index.html` | **修 PS-037 三个遗留问题**: ①**趋势项修好水位** — 负价日率 0→12.6→24.2→**42.4%**, 不加趋势时 2026 预测均仅 0.103, 加趋势回到 **0.459**(Brier **0.305→0.206**), 代价是 AUC 略降(0.819→0.785/0.814→0.762, 排序 vs 校准权衡); ②**logit 修好 P10 退化** — 不再 clip, 可做 Brier/可靠性, P10 不再为 0; ③**"负价小时强度"信息量最大** — 泊松对数链接 2026 AUC **0.900**(train23-25)/0.885(train24-25), 为全部设定最高, 但水平需重标定(0.52 vs 实际 2.76 h/日)且过度离散(≈2.7); ⚠**自由季节谐波过拟合** — 训练年 AUC 0.916/0.953 但 2026 掉到 0.762 且预测均 0.576 vs 实际 0.424(中高档严重过度自信), 证实"2 年秋季不足以学出季节形状", 由此解释 PS-035"只平移截距"反而更稳; **关键诊断: 2026 季节形状与往年完全不同**(峰值在 2–5月 78.6/61.3/70.0/61.3%, 而 9月仅 13.8% ⇒ 2026 的"高"集中在冬春而非秋季); **45天三情景**: A趋势口径 62.0%(上界) / B秋季残差口径 21.4% / C同年比例口径 11.3%(10-11月÷全年 0.261/0.271 × 42.4%) ⇒ **PS-035 的 8.2% 与 PS-037 的 6.8% 都落在 C 之下**(隐含"秋季继续异常偏弱"); 真正不确定性来自**口径选择(相差5倍)而非集合离散度**(成员 P10–P90 仅几 pp) | 2026-09-29 |
+| 西班牙负价"爆发阈值"模型 (PS-039) | `output/spain_negprice_threshold/index.html` | **负价是阈值过程, 不是线性时间过程**: 用 2015-2026 **135 个月**长面板, 以**光伏发电÷需求(光伏份额)**为驱动; **阈值 θ=16.0%**(月度), 超阈值斜率 **379 h/单位份额**, → **MAE 11.5 vs 线性趋势 18.2 h/月**(R² 0.336 vs 0.210) ⇒ PS-038 的线性趋势应被份额阈值取代; **阈值随季节变**: 春季(4-5月)约 **25-26%**(2023 份额24.8%→0h, 2024 27.4%→71h/月), 秋季(10-11月)仅 **10.5%**(专用拟合 R²=0.875; 2024 份额13.8%→2.5h, 2025 19.3%→10.5h) ⇒ 用全年单一阈值判秋季会高估; **秋季2026外推**: 2025年10-11月光伏7.4/负荷38.5 TWh(份额19.3%) × 2026/2025的1-9月光伏+21.1%÷负荷+2.9% ⇒ **份额22.7%** ⇒ 负价日率 **8.7%(秋季阈值)~17.1%(全局阈值/月份FE)**; **情景从 6.8%–62.0%(9倍) 收敛到 8.7%–17.1%(约2倍), 中心9%–11%** ⇒ PS-035的8.2%与PS-037的6.8%从"离群偏低"变为区间下沿正常值, **PS-038情景A的62%被否掉**; ⚠12年价格里只有3年有负价(2015-2023恒为0), 扩样本买到的是**阈值位置**而非阈值以上斜率 | 2026-09-29 |
 
 ## 项目脚本索引
 
@@ -208,6 +209,9 @@
 | `build_spain_entsoe_verification_report.py` | 官方口径复核 + 2026 样本外 HTML 报告(比对/模型设定/五分位/展望) | spain_official_* + v2_* | output/spain_entsoe_verification/index.html |
 | `model_spain_negprice_v3.py` | 负价 v3: 趋势项 + logit + 泊松强度 + 季节谐波; AUC/Brier/可靠性评估 + 三情景45天 | spain_official_daily + temp json + seasonal_spain + hubs | spain_negprice_v3_{skill,skill_train23,reliability,outlook,scenarios}.csv |
 | `build_spain_negprice_v3_report.py` | 负价 v3 HTML 报告(逐月矩阵/设定比较/可靠性/三情景展望) | spain_negprice_v3_* | output/spain_negprice_v3/index.html |
+| `build_spain_long_panel.py` | 西班牙 2015-2026 逐月长面板(价格/负荷/光伏 → 负价h/份额) | entsoe raw 月缓存 + energy_charts 年 JSON | spain_long_panel.csv |
+| `model_spain_negprice_threshold.py` | 负价"爆发阈值"模型(折线阈值 θ 网格搜索/月份FE/样本外/秋季外推) | spain_long_panel.csv | spain_negprice_threshold{,_fit}.csv |
+| `build_spain_threshold_report.py` | 阈值模型 HTML 报告(散点/季节阈值/情景收敛) | spain_negprice_threshold_* | output/spain_negprice_threshold/index.html |
 | `verify_temp_fix.py` | 温度参数化 vs HRRR 实测温度分窗对比 | 出力 CSV ×2 | 分窗指标表 (stdout) |
 | `ilr_sweep_heatwave.py` | ILR 四窗口扫描 (热浪/非热浪×正午/全月) | 辐照 nc + EIA CSV | 最优 ILR=1.30 |
 | `verify_nsrdb_vs_uscrn_july2022.py` | NSRDB×USCRN 交叉验证 (反演劣化排除) | USCRN CSV + NSRDB 提取 | nsrdb_uscrn_daily.csv |
