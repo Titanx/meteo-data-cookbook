@@ -100,6 +100,7 @@
 | 西班牙光伏多年市场区间对比 (PS-031) | `output/spain_regime/index.html` | 同链路跑 2023/2024/2025: 装机26.6→31.3GW, **负价小时 0→247→544**(2024与公开统计完全一致), 标定ILR 0.85→0.95→1.05(仍远低于ERCOT 1.30); **核心: 高缺口小时负价频率 0%→27.6%→55.5%**(低缺口仅0~0.2%)+高缺口组负荷更低 ⇒ 缺口=内生过剩标记(与PS-028 ERCOT风电同构); **同一市场晴空缺口弹性恒正(+1.6~+2.8) vs 天气缺口恒负(−6.4~−0.1)** ⇒ 升级PS-028判据: 决定缺口符号的是**成因(外生供给损失 vs 内生供给过剩)而非电源类型**; 光伏水平弹性 −3.42→−4.86€/MWh per GW 随渗透率增强 | 2026-09-28 |
 | 缺口成因判据可逆性检验 (PS-032) | `output/reversibility_shortfall/index.html` | 把PS-031判据放进**6个「市场×技术×成因」格子**做双向检验: **缺口单独时外生全正(+1.8~+8.1%/GW)、内生全负(−4.3~−27.7%/GW)** ⇒ 符号随成因变不随电源变(同市场内光伏/风电各两号, 同技术光伏跨市场两号); **补齐ERCOT光伏内生缺口**(新增 NASA POWER全天候辐照+pvlib重建潜力, 136点/30.89GW, 标定ILR 1.30与PS-021一致, r=0.976/0.980); **可逆性边界**: 控制出力水平后外生6估计中5个转负(正号只是"出力↓→电价↑"镜像, 风电低风异常corr−0.70), **仅"内生缺口→负"设定稳健**且与水平近正交(ERCOT光伏corr≈0); ⚠NASA POWER hourly默认LST需显式`time-standard=UTC`(否则r从0.98塌到0.31) | 2026-09-28 |
 | 缺口工况指纹 (PS-033) | `output/shortfall_fingerprint/index.html` | 把PS-032符号落到可观测工况(缺口十分位分组→低价/负价频率+需求+时段): **内生缺口=供给过剩标记坐实** — ERCOT光伏最高两档负价频率 **0.0%→16.0%**(需求同向 60.5→51.7GW)、风电0.7%→5.5%、西班牙光伏2025达**33.4%**; **外生缺口不含过剩信号** — ERCOT风电低风异常高的小时负价**6.4%→0.1%**+价格中位21.2→34.3(corr+0.25, 真稀缺), ERCOT光伏晴空缺口两年不稳定(corr−0.06/+0.02); **时间截面**: 西班牙内生高缺口档负价频率 **0%(2023零负价)→15.7%(2024)→33.4%(2025)** 与负价小时0→247→544同步 ⇒ 标记随市场成熟增强 | 2026-09-29 |
+| 缺口→电价 日尺度转移函数与45天展望 (PS-034) | `output/forecast_price_bridge/index.html` | 把PS-027季节预报接PS-032/033判据: **ERCOT"预报桥"不成立** — 季节预报的云量缺口在日尺度对电价近乎无信息(**R²=0.016**, corr+0.13)且**不标记负价**(+0.06), 因缺口与需求强负相关(五分位需求63.8→55.6GW, 云来天凉→PS-024天气负相关在日尺度重演); 白天溢价=−0.40+9.15×缺口分数; **唯一可用负价曲线在西班牙** — gap_w最高档**P(负价日) 52%(2024)/77%(2025)**(R²0.49/0.42, 2023年0%), 但缺西班牙季节预报; ERCOT 45天展望: 溢价中位+1.18$/MWh(P10−0.37~P90+3.54), 第1周热日叠加多云最高+2.0; 判定: 要建可用预警需①小时级②需求/温度预报③选负价常态市场 | 2026-09-29 |
 
 ## 项目脚本索引
 
@@ -186,6 +187,8 @@
 | `build_reversibility_report.py` | 可逆性检验 HTML 报告(矩阵/双斜率/边界) | reversibility_matrix.csv | output/reversibility_shortfall/index.html |
 | `model_shortfall_fingerprint.py` | 缺口工况指纹: 分位分组→低价/负价频率/需求/时段(6指纹) | panels + pv_potential + spain_regime_hourly | shortfall_fingerprint{,_summary}.csv |
 | `build_fingerprint_report.py` | 缺口工况指纹 HTML 报告(高档vs低档/时间截面) | shortfall_fingerprint_summary.csv | output/shortfall_fingerprint/index.html |
+| `model_forecast_price_bridge.py` | 缺口→电价日尺度转移函数(ERCOT白天溢价 / 西班牙负价日) + 季节预报45天展望 | shortfall_physical + panels + seasonal_shortfall_risk | forecast_bridge_calibration.csv + forecast_price_outlook.csv |
+| `build_forecast_bridge_report.py` | 转移函数与45天展望 HTML 报告 | forecast_bridge_calibration + outlook | output/forecast_price_bridge/index.html |
 | `verify_temp_fix.py` | 温度参数化 vs HRRR 实测温度分窗对比 | 出力 CSV ×2 | 分窗指标表 (stdout) |
 | `ilr_sweep_heatwave.py` | ILR 四窗口扫描 (热浪/非热浪×正午/全月) | 辐照 nc + EIA CSV | 最优 ILR=1.30 |
 | `verify_nsrdb_vs_uscrn_july2022.py` | NSRDB×USCRN 交叉验证 (反演劣化排除) | USCRN CSV + NSRDB 提取 | nsrdb_uscrn_daily.csv |
