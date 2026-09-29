@@ -1,10 +1,22 @@
+"""测试 data.cma.cn 公开 API 连接
+
+凭据一律走环境变量，禁止硬编码：
+
+    $env:CMA_USER = "<注册邮箱>"
+    $env:CMA_PWD  = "<密码>"
+    python test_cma_api.py
+
+背景：CMA 网站账号与 API 账号是两套独立系统，且账号须先订阅接口服务才能用 CIMISS API。
 """
-测试 data.cma.cn 公开 API 连接
-"""
+import os
+
 import requests
 
-USER = "xhlcn@163.com"
-PWD = "iyDm!1Y6x"
+USER = os.getenv("CMA_USER", "")
+PWD = os.getenv("CMA_PWD", "")
+
+if not USER or not PWD:
+    raise SystemExit("缺少凭据：请先设置环境变量 CMA_USER / CMA_PWD（不要写进脚本）")
 
 url = "http://api.data.cma.cn:8090/api"
 params = {
