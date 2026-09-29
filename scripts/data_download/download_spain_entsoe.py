@@ -136,7 +136,7 @@ def parse_iec(raw):
     for ts in root:
         if strip_ns(ts.tag) != "TimeSeries":
             continue
-        psr, curve = None, None
+        psr, curve, contract = None, None, None
         for ch in ts:
             n = strip_ns(ch.tag)
             if n == "MktPSRType":
@@ -145,6 +145,8 @@ def parse_iec(raw):
                         psr = (g.text or "").strip()
             elif n == "curveType":
                 curve = (ch.text or "").strip()
+            elif n == "contract_MarketAgreement.type":
+                contract = (ch.text or "").strip()
 
         for per in ts:
             if strip_ns(per.tag) != "Period":
@@ -195,11 +197,13 @@ def parse_iec(raw):
                     if last is None:
                         continue
                     rows.append({"datetime_utc": t0 + step * (p - 1),
-                                 "psr_type": psr, "value": last[0], "value_tag": last[1]})
+                                 "psr_type": psr, "contract": contract,
+                                 "value": last[0], "value_tag": last[1]})
             else:
                 for p in sorted(pts):
                     rows.append({"datetime_utc": t0 + step * (p - 1),
-                                 "psr_type": psr, "value": pts[p][0], "value_tag": pts[p][1]})
+                                 "psr_type": psr, "contract": contract,
+                                 "value": pts[p][0], "value_tag": pts[p][1]})
     return pd.DataFrame(rows)
 
 
@@ -210,22 +214,34 @@ def ym_bounds(ym):
     return "%s010000" % ym.replace("-", ""), "%s010000" % str(nxt).replace("-", "")
 
 
+def shape_month(key, raw):
+    """按文档类型裁剪 parse_iec 的原始输出"""
+    spec = DOCS[key]
+    df = parse_iec(raw)
+    if df.empty:
+        return df
+    if spec["kind"] == "price":
+        # ⚠ A44 会同时返回 A01（日前）与 A07（日内，2025-09 起才出现）两套价格，
+        #   两者对同一时刻给出不同值 ⇒ 必须只取日前 A01
+        if "contract" in df.columns and df["contract"].notna().any():
+            df = df[df["contract"] == "A01"]
+        df = (df.drop_duplicates("datetime_utc", keep="first")
+                .rename(columns={"value": "price_eur_mwh"})[["datetime_utc", "price_eur_mwh"]])
+    elif spec["kind"] == "load":
+        df = df[df["value_tag"] == "quantity"]
+        df = df.rename(columns={"value": "load_mw"})[["datetime_utc", "load_mw"]]
+    else:
+        df = df[df["value_tag"] == "quantity"][["datetime_utc", "psr_type", "value"]]
+        df = df.rename(columns={"value": "gen_mw"})
+    return df.drop_duplicates().sort_values("datetime_utc").reset_index(drop=True)
+
+
 def fetch_month(key, ym):
     spec = DOCS[key]
     st, en = ym_bounds(ym)
     params = dict(documentType=spec["doc"], periodStart=st, periodEnd=en, **spec["extra"])
     raw = api_get(params)
-    df = parse_iec(raw)
-    if df.empty:
-        return df, raw
-    if spec["kind"] == "price":
-        df = df.rename(columns={"value": "price_eur_mwh"})[["datetime_utc", "price_eur_mwh"]]
-    elif spec["kind"] == "load":
-        df = df.rename(columns={"value": "load_mw"})[["datetime_utc", "load_mw"]]
-    else:
-        df = df[(df["value_tag"] == "quantity")][["datetime_utc", "psr_type", "value"]]
-        df = df.rename(columns={"value": "gen_mw"})
-    return df.sort_values("datetime_utc").reset_index(drop=True), raw
+    return shape_month(key, raw), raw
 
 
 def cmd_check():
@@ -247,7 +263,7 @@ def cmd_check():
     print("✅ token 有效，API 可用")
 
 
-def cmd_download(start, end, keys):
+def cmd_download(start, end, keys, reparse=False):
     if not TOKEN:
         print("!! .env 未配置 ENTSOE_API_TOKEN（申请流程见 --check 提示）")
         sys.exit(4)
@@ -258,13 +274,23 @@ def cmd_download(start, end, keys):
         if key not in DOCS:
             print("跳过未知文档: %s（可选 %s）" % (key, list(DOCS)))
             continue
-        frames, got, skipped = [], 0, 0
+        frames, got, reparsed, reused = [], 0, 0, 0
         for ym in months:
             cache = RAW_DIR / ("%s_%s.xml" % (key, ym))
             pars = RAW_DIR / ("%s_%s.csv" % (key, ym))
-            if pars.exists():
+            if pars.exists() and not reparse:
                 frames.append(pd.read_csv(pars))
-                skipped += 1
+                reused += 1
+                continue
+            if cache.exists():
+                # 已下载过原始 XML ⇒ 只重解析，不再请求网络（符合平台 responsible-use）
+                df = shape_month(key, cache.read_bytes())
+                if not df.empty:
+                    df.to_csv(pars, index=False)
+                    frames.append(df)
+                reparsed += 1
+                print("  [%s] %s -> %s (由缓存 XML 重解析)" %
+                      (key, ym, "空" if df.empty else "%d 行" % len(df)))
                 continue
             try:
                 df, raw = fetch_month(key, ym)
@@ -291,8 +317,8 @@ def cmd_download(start, end, keys):
                 techs = sorted(all_df["psr_type"].dropna().unique())
                 extra = " | 技术(%d): %s" % (
                     len(techs), ", ".join("%s=%s" % (t, PSR.get(t, "?")) for t in techs))
-            print("  => %s : %d 行 (新取 %d 月, 复用 %d 月)%s" %
-                  (dst.name, len(all_df), got, skipped, extra))
+            print("  => %s : %d 行 (新取 %d 月, 重解析 %d 月, 复用 %d 月)%s" %
+                  (dst.name, len(all_df), got, reparsed, reused, extra))
 
 
 def main():
@@ -301,12 +327,14 @@ def main():
     ap.add_argument("--start", default="2024-01")
     ap.add_argument("--end", default="2026-09")
     ap.add_argument("--docs", default="all", help="逗号分隔: price_da,gen_by_type,load 或 all")
+    ap.add_argument("--reparse", action="store_true",
+                    help="忽略已解析的月度 CSV，从缓存的原始 XML 重新解析（不访问网络）")
     a = ap.parse_args()
     if a.check:
         cmd_check()
         return
     keys = list(DOCS) if a.docs == "all" else [s.strip() for s in a.docs.split(",")]
-    cmd_download(a.start, a.end, keys)
+    cmd_download(a.start, a.end, keys, reparse=a.reparse)
 
 
 if __name__ == "__main__":

@@ -28,7 +28,7 @@
 | PF-011 | NEXRAD 官方 S3 桶匿名访问限制与替代方案 | verified | nexrad, radar, s3, aws, anonymous, access-denied, forbidden, unidata, gcp, alternative | architect, implement | 2026-08-12 |
 | PF-012 | CMA 气象数据访问陷阱：CMADaaS 需内网、data.cma.cn API 受限、nmc-met-io 不支持 LMI | verified | cma, cmadaas, data.cma.cn, nmc-met-io, fy4, lmi, vpn, intranet, china, api, authentication, python | architect, implement | 2026-09-07 |
 | PF-013 | REE/ESIOS 域名级 WAF 封锁：api.esios.ree.es 全站 403（token 有效也进不去） | verified | esios, ree, spain, imperva, incapsula, waf, anti-scraping, 403, geoblock, china-ip-block, api, token, proxy | architect, implement | 2026-09-29 |
-| PF-014 | ENTSO-E / IEC 62325 的 curveType=A03 压缩陷阱：缺失的 position 不是缺数据 | verified | entsoe, transparency-platform, iec62325, xml, curvetype, a03, variable-sized-block, forward-fill, parsing, silent-data-loss, spain | implement, verify, debug | 2026-09-29 |
+| PF-014 | ENTSO-E / IEC 62325 报文的两处隐藏结构：curveType=A03 压缩 与 A01/A07 合约混装 | verified | entsoe, transparency-platform, iec62325, xml, curvetype, a03, variable-sized-block, forward-fill, contract-market-agreement, a01, a07, day-ahead, intraday, parsing, silent-data-loss, spain | implement, verify, debug | 2026-09-29 |
 
 ## 技术流程 (processes/)
 
