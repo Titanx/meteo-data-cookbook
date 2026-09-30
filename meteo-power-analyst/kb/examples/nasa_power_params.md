@@ -67,8 +67,8 @@
 
 | 参数名 | 单位 | 说明 |
 |--------|------|------|
-| PRECTOT | mm/hour | 总降水（小时速率） |
-| PRECTOTCORR | mm/day | 校正降水 |
+| PRECTOT | mm/hour（hourly）/ mm/day（daily） | 总降水（HYDROSCS） |
+| PRECTOTCORR | mm/hour（hourly）/ mm/day（daily） | 校正降水（MERRA-2 偏差校正）；**两种分辨率都可用**，且与 `PRECTOT` 不能同请求（会被判重复参数） |
 | PRECSNO | mm/day | 雪态降水 |
 | PRECSNOLAND | mm/day | 陆面雪态降水 |
 | EVLAND | mm/day | 陆面蒸发 |

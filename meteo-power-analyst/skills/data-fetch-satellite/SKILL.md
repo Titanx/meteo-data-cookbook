@@ -16,7 +16,7 @@
 | 亚太静止卫星多通道 | `references/himawari9_segment_pipeline.py`、`references/test_himawari.py`、`references/test_himawari_s3.py` | 无 | ✅ |
 | 美国静止卫星（ABI 辐射） | `references/goes19_pipeline.py` | 无 | ✅ |
 | 美国闪电（GLM L2） | `references/download_glm_l2.py`、`references/parse_glm.py` | 无 | ✅ |
-| 韩日静止卫星（GK2A AMI） | `references/download_gk2a.py` | 需 key | ✅ |
+| 韩日静止卫星（GK2A AMI） | `references/download_gk2a.py` | 无（NOAA 公开桶匿名） | ✅ |
 | 中国闪电（FY-4A LMI） | `references/download_fy4_lmi.py`、`references/download_fy4_lmi_ftp.py`、`references/parse_fy4_lmi.py` | 需注册 | 🟡 入口受限 |
 | 降水（GPM IMERG） | `references/test_imerg_download.py`、`references/debug_imerg_search.py` | 需 Earthdata 登录 | 🟡 检索接口有坑 |
 | 地形与水体系 | `references/download_aster_gdem.py` | 需 Earthdata 登录 | ✅ |
@@ -49,12 +49,15 @@ python skills/data-fetch-satellite/references/download_aster_gdem.py
 
 | 数据 | 状态 | 已知限制 |
 |------|------|----------|
-| Himawari-8/9 | ✅ | 目录按通道+日期分片，命名规则必须按流程拼，错一位就 404 |
-| GOES-16/18/19 | ✅ | 公开桶可匿名读，目录层级深 |
-| GK2A | ✅ | 需 key；有限流 |
+| Himawari-8/9 | ✅ | 目录按通道+日期分片，命名规则必须按流程拼，错一位就 404；标称→落桶中位 11.9 分 |
+| GOES-16/18/19 | ✅ | 公开桶可匿名读，目录层级深；标称→落桶中位 10.2 分（扣 10 分钟扫描后 ≈12 秒） |
+| GK2A | ✅ | NOAA 公开桶 `noaa-gk2a-pds` **匿名可读**（无需 key）；标称→落桶中位 **23 分**、`:50` 时次可到 42 分 |
 | FY-4A LMI | 🟡 | 部分入口不可达（内网要求 / API 受限 / 镜像不支持该产品） |
 | GPM IMERG | 🟡 | 检索接口参数隐晦，需先探活再批量 |
 | ASTER GDEM / WBD | ✅ | 分幅下载后需拼接，注意图幅编号 |
+
+> **延迟与体积都要带口径**：S3 `LastModified` 一次列举即可反推"标称时刻→落桶"，
+> 不必守着轮询；文件体积随昼夜/天气变化 1.6~26 倍，必须写明测量时次。见 `[PIT-20260930-006]`。
 
 ## 失败处理
 
@@ -65,6 +68,7 @@ python skills/data-fetch-satellite/references/download_aster_gdem.py
 > 引用知识（kb/）:
 > - `[MTD-20260812-001]` 气象雷达数据匿名获取综合指南
 > - `[PIT-20260907-001]` CMA 气象数据访问陷阱（内网 / API 受限 / 不支持该产品）
+> - `[PIT-20260930-006]` 静止卫星的"延迟"与"体积"都有多个口径（落桶延迟反推 + 昼夜/天气体积变化）
 > - `[RCP-20260718-001]` 葵花8/9 卫星数据下载流程
 > - `[RCP-20260720-001]` GOES-16/18/19 卫星数据下载流程
 > - `[RCP-20260911-001]` GK2A (GEO-KOMPSAT-2A) AMI 卫星数据下载流程
