@@ -33,11 +33,11 @@
 | methods (MTD) | 7 | draft 0 / verified 7 / proven 0 |
 | recipes (RCP) | 42 | draft 1 / verified 41 / proven 0 |
 | decisions (DEC) | 3 | draft 0 / verified 3 / proven 0 |
-| pitfalls (PIT) | 18 | draft 0 / verified 18 / proven 0 |
+| pitfalls (PIT) | 19 | draft 0 / verified 19 / proven 0 |
 | experiments (EXP) | 0 | — |
 | examples | 3 | — |
 
-合计 70 条知识条目 + 3 个样例。其中 60 条由旧仓库知识库的 tech/ 子目录机械迁移而来（对照表见 [MIGRATION.md](MIGRATION.md)），10 条为迁移后新写：3 条决策（DEC-20260930-001~003）、6 条坑（PIT-20260930-001 凭据硬编码与 raw 层外泄；PIT-20260930-002~004 NASA POWER 来源归因/换版/时间标准；PIT-20260930-005 S3 分页静默截断；PIT-20260930-006 静止卫星延迟与体积的多口径）、1 条约定（MTD-20260930-001）。
+合计 71 条知识条目 + 3 个样例。其中 60 条由旧仓库知识库的 tech/ 子目录机械迁移而来（对照表见 [MIGRATION.md](MIGRATION.md)），11 条为迁移后新写：3 条决策（DEC-20260930-001~003）、7 条坑（PIT-20260930-001 凭据硬编码与 raw 层外泄；PIT-20260930-002~004 NASA POWER 来源归因/换版/时间标准；PIT-20260930-005 S3 分页静默截断；PIT-20260930-006 静止卫星延迟与体积的多口径；PIT-20260930-007 聚合层的观测/预报混淆与列内单位切换）、1 条约定（MTD-20260930-001）。
 
 ## 分类入口
 
