@@ -17,3 +17,6 @@
 | [PIT-20260929-002](PIT-20260929-002.md) | ENTSO-E / IEC 62325 报文的两处隐藏结构：curveType=A03 压缩 与 A01/A07 合约混装 | verified | active（原 PF-014） |
 | [PIT-20260929-003](PIT-20260929-003.md) | 历史预报归档（previous-runs）的逐 lead 同质性陷阱 | verified | active（原 PF-015） |
 | [PIT-20260930-001](PIT-20260930-001.md) | 凭据硬编码与原始材料层外泄：`.gitignore` 挡不住脚本里的明文口令 | verified | active（迁移后新增） |
+| [PIT-20260930-002](PIT-20260930-002.md) | NASA POWER 辐照来源被当成 MERRA-2 再分析（三处"查来源"的入口全失效） | verified | active（迁移后新增） |
+| [PIT-20260930-003](PIT-20260930-003.md) | 同一段 NASA POWER 辐照会换版本（FLASHFlux 先发布、SYN1deg 后覆盖；hourly 不填） | verified | active（迁移后新增） |
+| [PIT-20260930-004](PIT-20260930-004.md) | NASA POWER hourly/daily 默认 LST（当地太阳时），漏传参数会整段错位 | verified | active（迁移后新增） |

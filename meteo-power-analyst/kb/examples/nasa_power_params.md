@@ -224,11 +224,19 @@ MONTHLY（1388 个）和 CLIMATOLOGY（1634 个）参数数量庞大，主要因
 
 | 参数类型 | 主要数据源 |
 |---------|-----------|
-| 辐射（ALLSKY/CLRSKY） | CERES SYN1deg（卫星反演，延迟 3-4 月） |
-| 气象（温/湿/压/风） | MERRA-2 / GEOS-IT（再分析，延迟 2 天） |
+| 辐射（ALLSKY/CLRSKY） | **CERES**：SYN1deg（正式，延迟 3-4 月）/ FLASHFlux（近实时，5-7 天，**只填 daily**） |
+| 气象（温/湿/压/风） | **MERRA-2**（历史）/ **GEOS-IT**（2026 年新时段，延迟 2 天） |
 | 降水 | GPM IMERG（卫星反演） |
 | 气溶胶 | MERRA-2 + MISR |
 | 土壤/地表 | MERRA-2 |
+
+> ⚠ **本表的"数据源"是按参数族给出的常态归属，不能用来判断某一次请求的真实来源。**
+> 已确认两点（2026-09-30）：
+> ① **下面的参数元数据接口查不到真实来源**——单参数端点没有 `source` 字段；批量端点在 RE/HOURLY 的 105 个参数里
+> **83 个返回字面占位值 `"SOURCE"`**、22 个返回 `"POWER"`，从不返回 `SYN1DEG`/`MERRA2`/`FLASHFLUX`/`GEOSIT`；
+> ② **CSV 响应头的参数描述是静态编目文本**，在 FLASHFlux 时段仍写 `CERES SYN1deg`。
+> **唯一可靠途径是数据响应的 JSON `header.sources`**（本次请求所有参数来源的并集，顺序不稳定）。
+> 详见 `pitfalls/PIT-20260930-002` 与 `methods/MTD-20260720-001` §2.3。
 
 ## 常用查询示例
 

@@ -30,7 +30,13 @@ def nasa_year_point(lat, lon, year, retries=4):
                 "parameters": ",".join(VARS), "community": "RE",
                 "longitude": f"{lon:.4f}", "latitude": f"{lat:.4f}",
                 "start": f"{year}0101", "end": f"{year}1231",
-                "format": "JSON"}, headers=H, timeout=180)
+                "format": "JSON",
+                # 2026-09-30 修正: 此处原缺省不传 -> NASA POWER 默认 LST(当地太阳时)。
+                # 西班牙大陆 hub 的 LST 与 UTC 标签重合(实测差 0h), 但加那利 hub 差 1h,
+                # 且该默认值不可依赖。见 kb/pitfalls/PIT-20260930-004。
+                # 注意: data/nasa_power/spain_pv_hubs_multi_{年}.npz 是修正前生成的(LST 标签),
+                # 对大陆 hub 等价, 加那利 2 点相差 1h。
+                "time-standard": "UTC"}, headers=H, timeout=180)
             if r.status_code == 200:
                 return r.json()["properties"]["parameter"]
             print(f"    HTTP {r.status_code}", flush=True)

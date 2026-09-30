@@ -160,7 +160,7 @@ td:first-child,th:first-child{{text-align:left}}
 <div class="scroll"><table>
 <tr><th>环节</th><th>数据源</th><th>粒度/覆盖</th><th>本轮取数</th></tr>
 <tr><td>电站清单</td><td>GEM 全球光伏追踪</td><td>厂站坐标/容量, 西班牙 operating ≤2023</td><td>2,080 座 / 27.66 GW → 120 采样点</td></tr>
-<tr><td>辐照+气温</td><td>NASA POWER (MERRA-2)</td><td>逐小时 GHI/DNI/DHI/T2m, 全球, 2001–</td><td>120 点 × 8,760 h</td></tr>
+<tr><td>辐照+气温</td><td>NASA POWER（辐照 = CERES 卫星反演）</td><td>逐小时 GHI/DNI/DHI/T2m, 全球, 2001–</td><td>120 点 × 8,760 h</td></tr>
 <tr><td>辐照交叉校验</td><td>PVGIS-SARAH3 (EUMETSAT)</td><td>逐小时 POA, 欧洲, 2005–2023</td><td>前 12 大站点</td></tr>
 <tr><td>实际光伏/风电/负荷</td><td>Energy-Charts (Fraunhofer ISE)</td><td>15 min, 西班牙, ENTSO-E 口径</td><td>35,040 点 (Solar 峰值 17,668 MW)</td></tr>
 <tr><td>日前电价</td><td>Energy-Charts / OMIE</td><td>逐小时 (2023), €/MWh</td><td>8,760 点, 均价 87.10 €/MWh</td></tr>
@@ -207,7 +207,7 @@ td:first-child,th:first-child{{text-align:left}}
 <ul class="note">
 <li><b>可行性已证实</b>：西班牙光伏链路可完全用免注册数据源（GEM + NASA POWER + Energy-Charts/OMIE）建成，验证精度 r={r:.4f}、能量比 {ratio:.3f}，与 ERCOT 链路同量级。</li>
 <li><b>参数不可移植</b>是本轮最有价值的方法论结论：ILR 从 1.30 降到 0.85 才能匹配，跨市场复刻必须重标定。</li>
-<li><b>局限</b>：①NASA POWER(MERRA-2) 是再分析、非卫星，冬季辐照略高估，月比值 0.88–1.20；②GEM 清单为 2026-08 快照按 start-year 回推，与 2023 真实在建/投产清单存在偏差；③实际发电取 ENTSO-E/Energy-Charts 口径，与 REE 官网口径可能略有差异；④2023 年无负电价且受"伊比利亚例外"机制影响，弹性只作方向参考；⑤论文/结论层面未做节点级或 15 分钟级对齐。</li>
+<li><b>局限</b>：①NASA POWER 的辐照来自 <b>CERES 卫星反演</b>（气象要素才是 MERRA-2 再分析），冬季辐照略高估，月比值 0.88–1.20；②GEM 清单为 2026-08 快照按 start-year 回推，与 2023 真实在建/投产清单存在偏差；③实际发电取 ENTSO-E/Energy-Charts 口径，与 REE 官网口径可能略有差异；④2023 年无负电价且受"伊比利亚例外"机制影响，弹性只作方向参考；⑤论文/结论层面未做节点级或 15 分钟级对齐。</li>
 <li><b>下一步</b>：把年份换到 <b>2024–2025</b>（NASA POWER 与 Energy-Charts 均覆盖），进入负电价与高弃电区间，再检验 PS-028 的"缺口=弃风"与 PS-024 的"缺口→电价"是否在西班牙重现或反转；申请 ESIOS token 以取得实时分技术出力做交叉校验。</li>
 </ul></div>
 </div></body></html>"""

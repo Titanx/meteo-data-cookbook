@@ -1,7 +1,9 @@
 """ERCOT 光伏电站 NASA POWER 逐小时辐照/气温下载 (2025-01 ~ 2026-09)
 目的: 为 ERCOT 光伏构造**全天候潜力** (all-sky potential), 以得到"潜力−实际"内生缺口,
       补齐可逆性检验矩阵中缺失的一格 (ERCOT 光伏 内生缺口)。
-源:   NASA POWER hourly point (MERRA-2, 免注册, 无硬限流)
+源:   NASA POWER hourly point (辐照=CERES 卫星反演; 气象=MERRA-2/GEOS-IT 再分析;
+      免注册, 无硬限流)。**必须显式 time-standard=UTC**: 缺省为 LST(当地太阳时),
+      德州点会整段错位约 7h (逐时相关 0.98 -> 0.31)。见 kb/pitfalls/PIT-20260930-004
 输入: data/nsrdb/ercot_solar_plants_pixels_2025.csv (name, lat, lon, capacity_mw)
 输出: data/nasa_power/ercot_pv_plants.npz
 用法: python skills/data-fetch-nwp/references/download_nasa_power_ercot_pv.py

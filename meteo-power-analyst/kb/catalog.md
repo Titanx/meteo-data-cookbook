@@ -33,11 +33,11 @@
 | methods (MTD) | 7 | draft 0 / verified 7 / proven 0 |
 | recipes (RCP) | 42 | draft 1 / verified 41 / proven 0 |
 | decisions (DEC) | 3 | draft 0 / verified 3 / proven 0 |
-| pitfalls (PIT) | 13 | draft 0 / verified 13 / proven 0 |
+| pitfalls (PIT) | 16 | draft 0 / verified 16 / proven 0 |
 | experiments (EXP) | 0 | — |
 | examples | 3 | — |
 
-合计 65 条知识条目 + 3 个样例。其中 60 条由旧仓库知识库的 tech/ 子目录机械迁移而来（对照表见 [MIGRATION.md](MIGRATION.md)），5 条为迁移后新写：3 条决策（DEC-20260930-001~003）、1 条坑（PIT-20260930-001，凭据硬编码与 raw 层外泄）、1 条约定（MTD-20260930-001）。
+合计 68 条知识条目 + 3 个样例。其中 60 条由旧仓库知识库的 tech/ 子目录机械迁移而来（对照表见 [MIGRATION.md](MIGRATION.md)），8 条为迁移后新写：3 条决策（DEC-20260930-001~003）、4 条坑（PIT-20260930-001 凭据硬编码与 raw 层外泄；PIT-20260930-002~004 NASA POWER 来源归因/换版/时间标准）、1 条约定（MTD-20260930-001）。
 
 ## 分类入口
 
@@ -60,7 +60,7 @@
 |--------|---------|
 | Meteostat | [MTD-20260718-002](methods/MTD-20260718-002.md), [PIT-20260719-001](pitfalls/PIT-20260719-001.md) |
 | Open-Meteo | [MTD-20260718-001](methods/MTD-20260718-001.md), [RCP-20260916-001](recipes/RCP-20260916-001.md), [RCP-20260927-005](recipes/RCP-20260927-005.md), **[RCP-20260929-012](recipes/RCP-20260929-012.md)**（`previous-runs` 历史预报·法国）, **[RCP-20260929-013](recipes/RCP-20260929-013.md)**（`previous-runs` 历史预报·西班牙 + D-1 预警）, **[PIT-20260929-003](pitfalls/PIT-20260929-003.md)**（逐 lead 同质性） |
-| NASA POWER | [MTD-20260720-001](methods/MTD-20260720-001.md) |
+| NASA POWER | [MTD-20260720-001](methods/MTD-20260720-001.md), **[PIT-20260930-002](pitfalls/PIT-20260930-002.md)**（辐照来源被误归因）, **[PIT-20260930-003](pitfalls/PIT-20260930-003.md)**（同段换版）, **[PIT-20260930-004](pitfalls/PIT-20260930-004.md)**（默认 LST） |
 | USCRN | **[RCP-20260927-005](recipes/RCP-20260927-005.md)** |
 | 怀俄明探空 | [MTD-20260811-001](methods/MTD-20260811-001.md), [PIT-20260811-001](pitfalls/PIT-20260811-001.md), [PIT-20260811-002](pitfalls/PIT-20260811-002.md), [PIT-20260811-003](pitfalls/PIT-20260811-003.md), [RCP-20260811-001](recipes/RCP-20260811-001.md) |
 | Himawari | [RCP-20260718-001](recipes/RCP-20260718-001.md) |
@@ -92,6 +92,8 @@
 | 正则表达式 | `MTD-20260811-001`, `PIT-20260811-003` |
 | CSS 去除 | `PIT-20260811-003` |
 | 时区处理 | `PIT-20260724-001` |
+| **太阳时 / 时间标准 (LST vs UTC)** | **`PIT-20260930-004`**, `PIT-20260724-001` |
+| **数据来源与版本判定 (provenance)** | **`PIT-20260930-002`**, **`PIT-20260930-003`**, `MTD-20260720-001` |
 | 插值 | `PIT-20260811-002` |
 | 统计检验 | `RCP-20260724-001` |
 | 反爬虫绕过 | `PIT-20260723-001`, `PIT-20260929-001` |

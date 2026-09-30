@@ -146,8 +146,8 @@ td:first-child,th:first-child,td:nth-child(2),th:nth-child(2){{text-align:left}}
 <li><b>本轮新增</b>：NASA POWER（含云全天候）辐照 + pvlib 单轴跟踪重建 ERCOT 光伏潜力，标定 ILR=1.30（与 PS-021 一致），
 与 EIA 实际逐时 r=0.976/0.980、能量比 1.01/0.995 ⇒ 内生缺口可得（此前仅西班牙可算）。</li>
 <li><b>局限</b>：①ERCOT 无 2022 小时电价，"同技术跨年份（无弃光→有弃光）"的时间向可逆性无法做；
-②NASA POWER 辐照有约 4 个月延迟，2026 仅覆盖 1–6 月；③NASA POWER 为 MERRA-2 再分析（0.5°），精度低于 NSRDB；
-④西班牙无风电潜力，"西班牙风电"两格缺席；⑤西班牙 NASA POWER 时间轴存在约 1h 偏移（lag0 r=0.971，lag−1 0.934），影响有限但非零。</li>
+②NASA POWER 辐照有约 4 个月延迟，2026 仅覆盖 1–6 月；③NASA POWER 辐照来自 CERES 卫星反演（1°，气象要素为 MERRA-2/GEOS-IT 再分析 0.5°），精度低于 NSRDB；
+④西班牙无风电潜力，"西班牙风电"两格缺席；⑤西班牙 NASA POWER 时间轴<b>无整点偏移</b>——实测三年面板 lag0 相关均为最高（2023 0.982 / 2024 0.977 / 2025 0.968）。</li>
 <li><b>下一步</b>：①申请 ESIOS token 后以西班牙<b>日内连续/实时价</b>替换日前价，重跑矩阵；②补 ERCOT 2022 小时电价，完成时间向可逆性检验。</li>
 </ul></div>
 </div></body></html>"""

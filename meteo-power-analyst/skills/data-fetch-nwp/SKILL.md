@@ -53,7 +53,7 @@ python skills/data-fetch-nwp/references/download_spain_seasonal.py
 | Open-Meteo Archive / Forecast | ✅ 跑通 | 再分析网格，**不能当站点实测**；多模式并存，必须显式指定 model |
 | Open-Meteo Previous Runs（D1~D7） | ✅ 跑通 | **逐 lead 同质性有陷阱**，见下方引用知识 |
 | Open-Meteo Seasonal | ✅ 跑通 | 季节尺度，不可当日尺度用 |
-| NASA POWER | ✅ 跑通 | 卫星同化，点位代表性有限 |
+| NASA POWER | ✅ 跑通 | 卫星同化，点位代表性有限；**辐照来自 CERES（不是 MERRA-2，MERRA-2/GEOS-IT 只供气象要素）**；**必须显式传 `time-standard=UTC`**（缺省是 LST 当地太阳时，跨经度会整段错位）；近几个月 daily 会被 FLASHFlux 占位、hourly 仍为空 |
 
 ## 失败处理
 
@@ -64,6 +64,9 @@ python skills/data-fetch-nwp/references/download_spain_seasonal.py
 > 引用知识（kb/）:
 > - `[MTD-20260718-001]` Open-Meteo API 使用指南（含 HRRR/GFS 等 NWP 预报）
 > - `[MTD-20260720-001]` NASA POWER 卫星同化数据使用指南
+> - `[PIT-20260930-002]` 辐照来源被当成 MERRA-2 再分析（来源只能读 JSON `header.sources`）
+> - `[PIT-20260930-003]` 同一段辐照会换版本（FLASHFlux 先发布、SYN1deg 后覆盖）
+> - `[PIT-20260930-004]` 默认 LST（当地太阳时），漏传 `time-standard` 会整段错位
 > - `[PIT-20260929-003]` 历史预报归档（previous-runs）的逐 lead 同质性陷阱
 > - `[MTD-20260907-001]` 气象数据 API 凭证安全管理实践
 > - `[RCP-20260916-001]` S2S 季节尺度预报获取与精度核验流程

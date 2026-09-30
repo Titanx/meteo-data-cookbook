@@ -13,7 +13,7 @@
 | Open-Meteo Historical Forecast | 过去某段的"当时预报" | REST JSON | 无 | 归档口径随模式升级而变，跨年比较需先做同质性检查 |
 | Open-Meteo Previous Runs | 同一预报的 D1~D7 归档 | REST JSON | 无 | **逐 lead 同质性有陷阱** → `[PIT-20260929-003]` |
 | Open-Meteo Seasonal | 45 天，多成员 | REST JSON | 无 | 季节尺度，不可当日尺度用 → `[RCP-20260916-001]` |
-| NASA POWER | 温度 / 辐照 / 风速，日或小时 | REST JSON / CSV | 无 | 卫星同化，点位代表性有限 → `[MTD-20260720-001]` |
+| NASA POWER | 温度 / 辐照 / 风速，日或小时 | REST JSON / CSV | 无 | **辐照=CERES（SYN1deg/FLASHFlux）、气象=MERRA-2/GEOS-IT**；点位代表性有限；缺省 LST，须传 `time-standard=UTC` → `[MTD-20260720-001]` |
 | Meteostat | 地面站小时观测 | Python 包 / 批量 CSV | 无 | 区域批量下载有陷阱 → `[PIT-20260719-001]`、`[MTD-20260718-002]` |
 | SURFRAD | 地表辐射实测，分钟级 | HTTP 目录 | 无 | 站点少（美国境内），只覆盖有限年份 → `[RCP-20260720-002]` |
 | 怀俄明大学探空 | 廓线热力指数（CAPE/DCAPE） | WSGI / HTML | 无 | 接口迁移 + SSL + 部分站点无 CAPE → `[PIT-20260811-001]`、`[PIT-20260811-003]` |
