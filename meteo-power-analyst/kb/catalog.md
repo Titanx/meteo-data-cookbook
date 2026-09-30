@@ -31,13 +31,13 @@
 | 分类 | 条目数 | 成熟度分布 |
 |------|--------|-----------|
 | methods (MTD) | 7 | draft 0 / verified 7 / proven 0 |
-| recipes (RCP) | 42 | draft 1 / verified 41 / proven 0 |
+| recipes (RCP) | 43 | draft 1 / verified 42 / proven 0 |
 | decisions (DEC) | 3 | draft 0 / verified 3 / proven 0 |
 | pitfalls (PIT) | 19 | draft 0 / verified 19 / proven 0 |
 | experiments (EXP) | 0 | — |
 | examples | 3 | — |
 
-合计 71 条知识条目 + 3 个样例。其中 60 条由旧仓库知识库的 tech/ 子目录机械迁移而来（对照表见 [MIGRATION.md](MIGRATION.md)），11 条为迁移后新写：3 条决策（DEC-20260930-001~003）、7 条坑（PIT-20260930-001 凭据硬编码与 raw 层外泄；PIT-20260930-002~004 NASA POWER 来源归因/换版/时间标准；PIT-20260930-005 S3 分页静默截断；PIT-20260930-006 静止卫星延迟与体积的多口径；PIT-20260930-007 聚合层的观测/预报混淆与列内单位切换）、1 条约定（MTD-20260930-001）。
+合计 72 条知识条目 + 3 个样例。其中 60 条由旧仓库知识库的 tech/ 子目录机械迁移而来（对照表见 [MIGRATION.md](MIGRATION.md)），12 条为迁移后新写：1 条流程（RCP-20260930-001 BSRN 基准实测取数，并推翻旧条目"PANGAEA 需注册"的结论）、3 条决策（DEC-20260930-001~003）、7 条坑（PIT-20260930-001 凭据硬编码与 raw 层外泄；PIT-20260930-002~004 NASA POWER 来源归因/换版/时间标准；PIT-20260930-005 S3 分页静默截断；PIT-20260930-006 静止卫星延迟与体积的多口径；PIT-20260930-007 聚合层的观测/预报混淆与列内单位切换）、1 条约定（MTD-20260930-001）。
 
 ## 分类入口
 
@@ -74,6 +74,7 @@
 | **ENTSO-E Transparency** | **[RCP-20260929-005](recipes/RCP-20260929-005.md)**（西班牙链路，免注册但需免费 token）, **[RCP-20260929-006](recipes/RCP-20260929-006.md)**（官方口径复核 + 2026 样本外）, **[PIT-20260929-002](pitfalls/PIT-20260929-002.md)** |
 | **Energy-Charts (Fraunhofer ISE)** | **[RCP-20260928-005](recipes/RCP-20260928-005.md)**（光伏链路）, **[RCP-20260929-008](recipes/RCP-20260929-008.md)**（12 年长面板）, **[RCP-20260929-009](recipes/RCP-20260929-009.md)**（Load/Solar 序列）, **[RCP-20260929-010](recipes/RCP-20260929-010.md)**（`/price?bzn=` 邻国电价，ENTSO-E 限流替代）, **[RCP-20260929-011](recipes/RCP-20260929-011.md)**（`country=fr` 法国光伏/核电/负荷） |
 | SURFRAD | [RCP-20260720-002](recipes/RCP-20260720-002.md) |
+| **BSRN / PANGAEA** | **[RCP-20260930-001](recipes/RCP-20260930-001.md)**（全球基准级地表辐照实测；PANGAEA 匿名 `?format=textfile`，仅 ftp 需账号；列结构逐站不同） |
 | **MRMS QPE** | **[RCP-20260927-001](recipes/RCP-20260927-001.md)**, **[PIT-20260930-005](pitfalls/PIT-20260930-005.md)**（归档覆盖期的分页截断） |
 | **NSRDB** | **[RCP-20260927-002](recipes/RCP-20260927-002.md), [RCP-20260927-005](recipes/RCP-20260927-005.md), [RCP-20260927-006](recipes/RCP-20260927-006.md), [RCP-20260927-007](recipes/RCP-20260927-007.md)** |
 | **WMO S2S 库** | **[RCP-20260927-003](recipes/RCP-20260927-003.md), `RCP-20260916-001`** |
