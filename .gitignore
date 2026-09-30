@@ -4,6 +4,13 @@ data/
 # 输出文件（图片、GIF 等生成产物）
 output/
 
+# 分析产物（HTML 报告、CSV 中间结果等）——与 output/ 同类，仅本地保留
+analysis/
+
+# 外部素材与临时探针（论文 PDF、抓取脚本等）——结论已沉淀进
+# meteo-power-analyst/kb 与 raw/surveys，仅本地保留
+news/
+
 # Python
 __pycache__/
 *.py[cod]
