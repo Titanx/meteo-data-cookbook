@@ -19,6 +19,7 @@
 | 失败站点重试 | `references/retry_failed_airports.py` | 只重试，不重拉全部 |
 | 地表辐射实测（美国） | `references/surfrad_pipeline.py`、`references/surfrad_assessment.py` | 分钟级辐射，站点少 |
 | 地表辐射实测（全球基准） | `references/bsrn_pangaea_pipeline.py` | BSRN via PANGAEA，**匿名**；列结构逐站不同，按文件头解析 |
+| 地表辐射实测（典型站完整年，批量） | `references/download_bsrn_typical_years.py` | 16 个典型国家/地区各下 1 个完整年（12 月齐备且完整度最高），192 文件 / 0.67 GB，产出本地清单 |
 | 探空廓线 / 热力指数 | `references/download_sounding.py`、`references/download_sounding_parallel.py` | WSGI 口径；并行版用于批量 |
 | 完整性核验 | `references/check_data_integrity.py`、`references/check_asia_integrity.py`、`references/check_noaa_isd_frequency.py` | **每次取数后必跑** |
 | 实时性探活 | `references/check_meteostat_realtime.py`、`references/check_meteostat_realtime_americas.py`、`references/test_meteostat.py` | 判断站点是否有当期数据 |
@@ -42,6 +43,10 @@ python skills/data-fetch-ground/references/retry_failed_airports.py
 python skills/data-fetch-ground/references/bsrn_pangaea_pipeline.py --coverage
 python skills/data-fetch-ground/references/bsrn_pangaea_pipeline.py --list TAT 2026
 python skills/data-fetch-ground/references/bsrn_pangaea_pipeline.py --get TAT 2026-08
+
+# BSRN 典型站完整年（批量，16 站 × 12 月）
+python skills/data-fetch-ground/references/download_bsrn_typical_years.py --plan
+python skills/data-fetch-ground/references/download_bsrn_typical_years.py
 ```
 
 ## 产出
@@ -50,7 +55,8 @@ python skills/data-fetch-ground/references/bsrn_pangaea_pipeline.py --get TAT 20
 |----------------------|------|
 | meteostat/<区域>/<年份>/hourly_<ICAO>.csv | 逐站小时观测 |
 | surfrad/<station>/*.dat | 分钟级辐射实测 |
-| bsrn/<DOI>.txt | BSRN 月度数据集（PANGAEA textfile 原文；**列随站变**，按文件头解析） |
+| bsrn/<站码>/<年>/<站码>_<YYYY-MM>.txt | BSRN 月度文件（分钟级，UTC；**列随站变**，按文件头解析） |
+| bsrn/bsrn_catalog.csv | BSRN 本地清单：站/年/月 → DOI、字节、行数、列数（可复现校验） |
 | sounding/*.csv | 探空廓线与热力指数（CAPE / DCAPE 等） |
 
 ## 数据源与已知局限
