@@ -38,9 +38,11 @@
 | 资源 | 链接 | 状态 |
 |------|------|------|
 | 数据集（OEDI, CC-BY 4.0） | https://data.openei.org/submissions/8729 | 已验证可达 |
-| 年度 NetCDF 直链（5 文件共 25.33 GB） | `https://data.openei.org/files/8729/wind_bench_conus_v1.0.0_{2021..2025}.nc` | 2021: 4.65 GB, 2022: 4.89 GB, 2023: 5.17 GB, 2024: 5.3 GB, 2025: 5.32 GB |
+| 年度 NetCDF 直链（5 文件共 25.33 GiB） | `https://data.openei.org/files/8729/wind_bench_conus_v1.0.0_{2021..2025}.nc` | 2021: 4.65 GiB, 2022: 4.89 GiB, 2023: 5.17 GiB, 2024: 5.30 GiB, 2025: 5.32 GiB |
 | 官方代码（下载/处理/QC 流水线） | https://github.com/NatLabRockies/madis | 网络受限未能 clone，待后续验证 |
 | 原始数据归档 | https://madis-data.ncep.noaa.gov/madisPublic1/data/archive | MADIS 公开归档 |
+
+> **单位说明**（2026-09-30 第三方实测更正）：上表数值单位是 **GiB**（1024 进制），原写"GB"会把体积低估约 7%。实测 `Content-Length`：2021 = 4,998,110,374 B = 4.65 GiB（5.00 GB）、2025 = 5,709,140,150 B = 5.32 GiB（5.71 GB）。做磁盘/带宽规划时按 5 GiB/年 ≈ 26 GiB 总量估算。
 
 ## 数据格式
 

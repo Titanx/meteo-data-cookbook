@@ -1,8 +1,13 @@
 """MRMS QPE 下载与 ERCOT 裁剪测试
-数据源: AWS S3 noaa-mrms-pds (匿名, 归档 2020-10-14 ~ 2023-07-10)
+数据源: AWS S3 noaa-mrms-pds (匿名, 归档 2020-10-14 ~ 至今, 实测 2,178 天)
         https://mrms.ncep.noaa.gov/2D/ (匿名, 滚动最新 ~10天)
 用法: python skills/data-fetch-radar/references/test_mrms_download.py
 依赖: requests, xarray, cfgrib (GRIB2 读取)
+
+2026-09-30 修: list_archive_dates() 此前用字符串拼接 URL, 未对 continuation-token
+做 URL 编码 -> 第 2 页返回 HTTP 400(InvalidArgument), 而函数不检查状态码, 把"没有
+下一页 token"当成"取完了", 于是静默截断在 1000 天(2020-10-14~2023-07-10), 并被误
+读成"归档已终止、每产品恰好 1000 天"。现改用 params= 交给 requests 编码 + 校验状态码。
 """
 import gzip
 import os
@@ -20,18 +25,32 @@ ERCOT_LON = (253.3, 266.6)  # 0-360 约定; -106.7~-93.4
 
 
 def list_archive_dates():
-    """S3 归档日期全量分页 (每个产品恰好 1000 天: 2020-10-14 ~ 2023-07-10)"""
-    token, dates, truncated = "", [], True
-    while truncated:
-        url = f"{S3}/?list-type=2&prefix={PROD}&delimiter=/"
+    """S3 归档日期全量分页。
+
+    实测 2178 天 (2020-10-14 ~ 至今, 仍在写入), 分 3 页 [1000, 1000, 178]。
+    注意: continuation-token 含 '/' 等字符, 必须 URL 编码 —— 用 params= 交给 requests,
+    不要手工拼接; 并且必须校验 status_code, 否则 400 错误体会被当成"已取完"。
+    """
+    dates, token, pages = [], None, 0
+    while True:
+        q = {"list-type": "2", "prefix": PROD, "delimiter": "/", "max-keys": "1000"}
         if token:
-            url += f"&continuation-token={token}"
-        r = requests.get(url, timeout=30)
+            q["continuation-token"] = token
+        r = requests.get(f"{S3}/", params=q, timeout=60)
+        if r.status_code != 200:
+            raise RuntimeError(f"S3 列举失败 HTTP {r.status_code}: {r.text[:200]}")
         dates += [d for d in re.findall(r"<Prefix>(.*?)</Prefix>", r.text)
                   if re.search(r"/(\d{8})/$", d)]
+        pages += 1
         tk = re.search(r"<NextContinuationToken>(.*?)</NextContinuationToken>", r.text)
-        truncated = bool(tk and re.search(r"<IsTruncated>true</IsTruncated>", r.text))
-        token = tk.group(1) if tk else ""
+        trunc = re.search(r"<IsTruncated>(.*?)</IsTruncated>", r.text)
+        if trunc is None:
+            raise RuntimeError("响应里没有 IsTruncated, 无法确认是否取完")
+        if trunc.group(1) != "true" or tk is None:
+            break
+        token = tk.group(1)
+    print(f"[S3] {pages} 页, 共 {len(dates)} 个日期: "
+          f"{min(dates)[-9:-1]} ~ {max(dates)[-9:-1]}")
     return dates
 
 

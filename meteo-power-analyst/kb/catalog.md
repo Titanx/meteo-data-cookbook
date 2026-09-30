@@ -33,11 +33,11 @@
 | methods (MTD) | 7 | draft 0 / verified 7 / proven 0 |
 | recipes (RCP) | 42 | draft 1 / verified 41 / proven 0 |
 | decisions (DEC) | 3 | draft 0 / verified 3 / proven 0 |
-| pitfalls (PIT) | 16 | draft 0 / verified 16 / proven 0 |
+| pitfalls (PIT) | 17 | draft 0 / verified 17 / proven 0 |
 | experiments (EXP) | 0 | — |
 | examples | 3 | — |
 
-合计 68 条知识条目 + 3 个样例。其中 60 条由旧仓库知识库的 tech/ 子目录机械迁移而来（对照表见 [MIGRATION.md](MIGRATION.md)），8 条为迁移后新写：3 条决策（DEC-20260930-001~003）、4 条坑（PIT-20260930-001 凭据硬编码与 raw 层外泄；PIT-20260930-002~004 NASA POWER 来源归因/换版/时间标准）、1 条约定（MTD-20260930-001）。
+合计 69 条知识条目 + 3 个样例。其中 60 条由旧仓库知识库的 tech/ 子目录机械迁移而来（对照表见 [MIGRATION.md](MIGRATION.md)），9 条为迁移后新写：3 条决策（DEC-20260930-001~003）、5 条坑（PIT-20260930-001 凭据硬编码与 raw 层外泄；PIT-20260930-002~004 NASA POWER 来源归因/换版/时间标准；PIT-20260930-005 S3 分页静默截断）、1 条约定（MTD-20260930-001）。
 
 ## 分类入口
 
@@ -74,7 +74,7 @@
 | **ENTSO-E Transparency** | **[RCP-20260929-005](recipes/RCP-20260929-005.md)**（西班牙链路，免注册但需免费 token）, **[RCP-20260929-006](recipes/RCP-20260929-006.md)**（官方口径复核 + 2026 样本外）, **[PIT-20260929-002](pitfalls/PIT-20260929-002.md)** |
 | **Energy-Charts (Fraunhofer ISE)** | **[RCP-20260928-005](recipes/RCP-20260928-005.md)**（光伏链路）, **[RCP-20260929-008](recipes/RCP-20260929-008.md)**（12 年长面板）, **[RCP-20260929-009](recipes/RCP-20260929-009.md)**（Load/Solar 序列）, **[RCP-20260929-010](recipes/RCP-20260929-010.md)**（`/price?bzn=` 邻国电价，ENTSO-E 限流替代）, **[RCP-20260929-011](recipes/RCP-20260929-011.md)**（`country=fr` 法国光伏/核电/负荷） |
 | SURFRAD | [RCP-20260720-002](recipes/RCP-20260720-002.md) |
-| **MRMS QPE** | **[RCP-20260927-001](recipes/RCP-20260927-001.md)** |
+| **MRMS QPE** | **[RCP-20260927-001](recipes/RCP-20260927-001.md)**, **[PIT-20260930-005](pitfalls/PIT-20260930-005.md)**（归档覆盖期的分页截断） |
 | **NSRDB** | **[RCP-20260927-002](recipes/RCP-20260927-002.md), [RCP-20260927-005](recipes/RCP-20260927-005.md), [RCP-20260927-006](recipes/RCP-20260927-006.md), [RCP-20260927-007](recipes/RCP-20260927-007.md)** |
 | **WMO S2S 库** | **[RCP-20260927-003](recipes/RCP-20260927-003.md), `RCP-20260916-001`** |
 | **GridStatus RTM** | **[RCP-20260927-006](recipes/RCP-20260927-006.md), [RCP-20260927-007](recipes/RCP-20260927-007.md)** |
@@ -99,6 +99,8 @@
 | 反爬虫绕过 | `PIT-20260723-001`, `PIT-20260929-001` |
 | SSL 证书 | `PIT-20260811-001` |
 | 匿名 AWS S3 | `RCP-20260718-001`, `RCP-20260720-001`, `RCP-20260812-001`, `RCP-20260927-001`, `RCP-20260927-002`, `PIT-20260812-001` |
+| **S3 列举/分页（1000 条上限）与否定性结论取证** | **`PIT-20260930-005`** |
+| **历史预报归档接口细节（available lead / 归档起点）** | **`PIT-20260929-003`**, `RCP-20260929-012`, `RCP-20260929-013` |
 | GCP 公开数据集 | `MTD-20260812-001` |
 | HTTP API | `MTD-20260812-001`, `MTD-20260718-001`, `MTD-20260718-002` |
 | 雷达数据处理 | `MTD-20260812-001`, `RCP-20260812-001`, `PIT-20260812-001` |

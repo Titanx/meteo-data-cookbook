@@ -119,7 +119,7 @@ RMSE = sqrt(mean((F_i − O_i)²))
 
 | 论文要素 | 本项目应用 |
 |----------|-----------|
-| OEDI 直链 25.33 GB NetCDF | 可匿名下载；ERCOT 裁剪前建议先按 South/Southwest 气候区站表子集化（或用 xarray 服务端/流式读单个年份） |
+| OEDI 直链 25.33 GiB NetCDF | 可匿名下载；ERCOT 裁剪前建议先按 South/Southwest 气候区站表子集化（或用 xarray 服务端/流式读单个年份）。单位是 **GiB**（实测 2025 年文件 5,709,140,150 B = 5.32 GiB） |
 | MADIS 公开归档 | 新增候选数据源：CONUS 密度远超 Meteostat 机场站（PS-017 核验可加"真观测"对照） |
 | HRRR f02 类再分析用法 | 与 Open-Meteo HRRR（GL-004）同源模式——其 CONUS 分区 RMSE（South 区 METAR 1.53 m/s）可作为我们德州风速预报误差的先验量级 |
 | HRRR 系统性高估 10 m 风速 | 风电出力换算时需注意：Open-Meteo HRRR 10m/80m 风速可能偏高，宜用 WIND-Bench 做偏差订正基线 |

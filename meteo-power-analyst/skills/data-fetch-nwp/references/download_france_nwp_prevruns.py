@@ -6,9 +6,11 @@
 
 关键点:
   · 端点 `previous-runs-api.open-meteo.com/v1/forecast`, 变量后缀 `_previous_dayN` (N=1..7)
-  · 🔴 **必须显式指定 `models=`**: 不指定(或 best_match)时 previous-runs 全为 null;
-    实测 `ecmwf_ifs025` 的 D1~D7 完整, `icon_seamless`/`meteofrance_seamless` 只有 D1、`gfs_seamless` 部分
-  · 🔴 **归档起点 ≈ 2024-07-01**: 2024-01 及以前全部为 null(实测逐模式); D1~D7 覆盖 2024-07~至今
+  · `models=` 不写也有值(2026-09-30 实测); 但**仍建议显式写** —— 不写时无法知道实际落到哪个模式。
+    各模式 lead 覆盖差异大(2026-09-30 实测): `ecmwf_ifs025` 与 `ncep_gfs_seamless` 为 D1~D7 完整,
+    `icon_seamless` 到 D6, `meteofrance_seamless` 只到 D3, `ukmo_seamless` 仅 D1
+  · **归档起点 = 起报日约 2024-03-05**(原注释写"≈2024-07-01", 已更正): 2024-03-05 及更早全空,
+    2024-03-06 起才有值, 且因归档从同一批起报开始, **lead 逐日递增, 到 2024-03-13 才凑齐 D1~D7**
   · `start_date/end_date` 与 `past_days/forecast_days` **不可混用**(混用返回 HTTP 400)
   · 一次请求可取 14 个变量 × 180 天; 分块缓存(断点续传)
 
@@ -115,7 +117,8 @@ def main():
     meta = pd.DataFrame(rows)
     meta.to_csv(OUT / "fr_nwp_meta.csv", index=False)
     print("\n" + meta.to_string(index=False))
-    print("\n注意: 覆盖率 <1 的部分是 previous-runs 归档起点(≈2024-07-01)之前的空档")
+    print("\n注意: 覆盖率 <1 的部分是 previous-runs 归档起点(起报日≈2024-03-05, "
+          "有效日 2024-03-06 起, lead 到 2024-03-13 才齐)之前的空档")
     print("→ %s" % OUT)
 
 

@@ -20,3 +20,4 @@
 | [PIT-20260930-002](PIT-20260930-002.md) | NASA POWER 辐照来源被当成 MERRA-2 再分析（三处"查来源"的入口全失效） | verified | active（迁移后新增） |
 | [PIT-20260930-003](PIT-20260930-003.md) | 同一段 NASA POWER 辐照会换版本（FLASHFlux 先发布、SYN1deg 后覆盖；hourly 不填） | verified | active（迁移后新增） |
 | [PIT-20260930-004](PIT-20260930-004.md) | NASA POWER hourly/daily 默认 LST（当地太阳时），漏传参数会整段错位 | verified | active（迁移后新增） |
+| [PIT-20260930-005](PIT-20260930-005.md) | S3 分页静默截断：把"单次列举 1000 条上限"误当成"归档止于某日" | verified | active（迁移后新增） |

@@ -9,8 +9,11 @@
 
 关键点(与 PS-043 完全一致, 已由 PF-015 记录):
   · 端点 `previous-runs-api.open-meteo.com/v1/forecast`, 变量后缀 `_previous_dayN` (N=1..7)
-  · 🔴 **必须显式指定 `models=`**: 不指定(或 best_match)时 previous-runs 全为 null;
-    实测 `ecmwf_ifs025` 的 D1~D7 完整; 归档起点 ≈ 2024-07-01
+  · `models=` 不写也有值(2026-09-30 实测); 但**仍建议显式写** —— 不写时无法知道实际落到哪个模式。
+    各模式 lead 覆盖差异大: `ecmwf_ifs025`/`ncep_gfs_seamless` 为 D1~D7 完整, `icon_seamless` 到 D6,
+    `meteofrance_seamless` 只到 D3
+  · **归档起点 = 起报日约 2024-03-05**(原注释写"≈2024-07-01", 已更正): 2024-03-06 起才有值,
+    且 lead 逐日递增, 到 2024-03-13 才凑齐 D1~D7
   · `start_date/end_date` 与 `past_days/forecast_days` **不可混用**(混用 → HTTP 400)
   · 一次请求可取 14 个变量 × 180 天; 分块缓存(断点续传)
 
