@@ -62,42 +62,69 @@ META = {
 }
 
 # ---- 各区域计划：(区域, 站码, 起始年, 结束年) ----
+# 起始年给 1990 表示"该站全部可用历史"——只有 12 个月齐备的年份会被下载。
+# 中国/美国/欧洲优先排在前，配合 --max-files 可让定时任务按优先级慢慢下。
 PLAN = [
-    # 中国（重点，全部可用）
-    ("中国", "QIQ", 2023, 2025),
-    ("中国", "XIA", 2005, 2015),
+    # 中国（最高优先）
+    ("中国", "QIQ", 1990, 2025),
+    ("中国", "XIA", 1990, 2025),
     # 美国
-    ("美国", "BON", 2016, 2025),
-    ("美国", "BOS", 2016, 2025),
-    ("美国", "DRA", 2016, 2025),
-    ("美国", "FPE", 2016, 2022),
-    ("美国", "GCR", 2016, 2019),
-    ("美国", "SXF", 2016, 2018),
-    ("美国", "E13", 2016, 2018),
-    ("美国", "LRC", 2016, 2025),
-    ("美国", "BAR", 2016, 2022),
+    ("美国", "BON", 1990, 2025),
+    ("美国", "BOS", 1990, 2025),
+    ("美国", "DRA", 1990, 2025),
+    ("美国", "E13", 1990, 2025),
+    ("美国", "FPE", 1990, 2025),
+    ("美国", "GCR", 1990, 2025),
+    ("美国", "SXF", 1990, 2025),
+    ("美国", "LRC", 1990, 2025),
+    ("美国", "BAR", 1990, 2025),
     # 欧洲
-    ("欧洲", "CAB", 2016, 2025),
-    ("欧洲", "PAY", 2016, 2025),
-    ("欧洲", "SON", 2016, 2025),
-    ("欧洲", "CNR", 2010, 2025),
-    ("欧洲", "IZA", 2016, 2025),
-    ("欧洲", "PAL", 2016, 2025),
-    ("欧洲", "LIN", 2016, 2022),
-    ("欧洲", "TOR", 2016, 2020),
-    ("欧洲", "BUD", 2020, 2025),
-    ("欧洲", "INO", 2022, 2025),
-    ("欧洲", "LMP", 2024, 2025),
-    ("欧洲", "CAM", 2016, 2016),
-    # LER 2016 只有 86% 完整（少 7.4 万分钟），改用完整度更高的 2015
-    ("欧洲", "LER", 2015, 2015),
+    ("欧洲", "CNR", 1990, 2025),
+    ("欧洲", "IZA", 1990, 2025),
+    ("欧洲", "CAB", 1990, 2025),
+    ("欧洲", "PAY", 1990, 2025),
+    ("欧洲", "PAL", 1990, 2025),
+    ("欧洲", "SON", 1990, 2025),
+    ("欧洲", "LIN", 1990, 2025),
+    ("欧洲", "TOR", 1990, 2025),
+    ("欧洲", "LER", 1990, 2025),
+    ("欧洲", "CAM", 1990, 2025),
+    ("欧洲", "BUD", 1990, 2025),
+    ("欧洲", "INO", 1990, 2025),
+    ("欧洲", "LMP", 1990, 2025),
+    # 其他典型站（全球覆盖）
+    ("其他", "SYO", 1990, 2025),
+    ("其他", "SPO", 1990, 2025),
+    ("其他", "NYA", 1990, 2025),
+    ("其他", "TAT", 1990, 2025),
+    ("其他", "TAM", 1990, 2025),
+    ("其他", "DAA", 1990, 2025),
+    ("其他", "GIM", 1990, 2025),
+    ("其他", "BRB", 1990, 2025),
 ]
 
+# 已知完整度低、明确不再入库的站年（LER 2016 仅 86%，已用 2015 替代）
+EXCLUDE = {("LER", 2016)}
 
-def fetch(url: str) -> bytes:
-    req = urllib.request.Request(url, headers=UA)
-    with urllib.request.urlopen(req, timeout=180) as r:
-        return r.read()
+
+def fetch(url: str, retries: int = 4, timeout: int = 120) -> bytes:
+    """带退避重试的 GET。长跑（定时慢下）时网络抖动不应中断整轮。"""
+    import urllib.error
+    for attempt in range(retries):
+        try:
+            req = urllib.request.Request(url, headers=UA)
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return r.read()
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 500, 502, 503, 504) and attempt < retries - 1:
+                time.sleep(5 * (2 ** attempt))
+                continue
+            raise
+        except Exception:  # noqa: BLE001  (超时/连接重置等)
+            if attempt == retries - 1:
+                raise
+            time.sleep(5 * (attempt + 1))
+    raise RuntimeError("unreachable")
 
 
 def months_by_year(code: str) -> dict[int, dict[str, str]]:
@@ -169,6 +196,8 @@ def main() -> int:
     ap.add_argument("--reindex", action="store_true")
     ap.add_argument("--workers", type=int, default=3)
     ap.add_argument("--delay", type=float, default=0.4, help="每个请求后的休眠秒数（防限流）")
+    ap.add_argument("--max-files", type=int, default=0,
+                    help="单次运行最多下载的文件数（0=不限）；定时慢跑用，按 中国→美国→欧洲→其他 优先")
     args = ap.parse_args()
 
     if args.reindex:
@@ -181,8 +210,13 @@ def main() -> int:
     todo = []
     print("规划（只列 12 个月齐备的年份）：")
     for region, code, y0, y1 in plan:
-        have = months_by_year(code)
-        years = [y for y in range(y0, y1 + 1) if len(have.get(y, {})) == 12]
+        try:
+            have = months_by_year(code)
+        except Exception as e:  # noqa: BLE001  单站检索失败不拖垮整轮
+            print(f"  [{region}] {code:4s} 检索失败，跳过：{e!r}")
+            continue
+        years = [y for y in range(y0, y1 + 1)
+                 if len(have.get(y, {})) == 12 and (code, y) not in EXCLUDE]
         name, _ = META.get(code, ("?", "?"))
         if not years:
             print(f"  [{region}] {code:4s} {name:26s} {y0}-{y1}: 无完整年")
@@ -209,7 +243,15 @@ def main() -> int:
                 cached += 1
                 continue
             tasks.append((code, ym, months[ym], dst))
-    print(f"已缓存 {cached} 个；待下载 {len(tasks)} 个\n")
+    print(f"已缓存 {cached} 个；待下载 {len(tasks)} 个（本次上限 {args.max_files or '不限'}）")
+    if not tasks:
+        print("待下载为 0 —— 全部完成，本次不做任何事。")
+        reindex()
+        return 0
+    if args.max_files and len(tasks) > args.max_files:
+        tasks = tasks[:args.max_files]
+        print(f"本次只下前 {len(tasks)} 个（优先级：中国 → 美国 → 欧洲 → 其他）")
+    print()
 
     from concurrent.futures import ThreadPoolExecutor, as_completed
 
