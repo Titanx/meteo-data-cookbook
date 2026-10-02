@@ -24,7 +24,7 @@ ESIOS / REE 官方接口被域名级 WAF 封锁，已改用 ENTSO-E 替代口径
 | 面板拼装 | `references/build_spain_entsoe_panel.py` | — | 价格/发电/负荷三表对齐 |
 | 风电 SCADA（法国） | `references/download_engie_la_haute_borne.py` | — | ENGIE La Haute Borne，经 NREL/OpenOA 镜像（官网已下线） |
 | 风电 SCADA（英国） | `references/download_kelmarsh_zenodo.py` | — | Kelmarsh，Zenodo 记录 16807551，6×Senvion MM92，2016–2024 |
-| 风电数据体检 | `references/check_windfarm_integrity.py` | — | 按"每 10 分钟一个点"核对行数/时区/缺测 |
+| 风电数据体检 | `references/check_windfarm_integrity.py` | — | 按"每 10 分钟一点"核对行数/时区/缺测；`--scada` 逐年解剖并处理"累积快照堆叠" |
 | 凭证与连通自检 | `references/test_entsoe_api.py`、`references/test_esios_api.py` | — | 换 token / 换区域前先跑 |
 
 ## 使用
@@ -71,11 +71,13 @@ python skills/data-fetch-power/references/download_spain_entsoe.py
 - ESIOS 返回 403 → **立即停手换源**，不要反复重试或换 UA（属域名级封锁，不是请求头问题）
 - ENTSO-E 解析后量级明显偏小 → 按引用知识检查 `curveType` 压缩与合约类型混装
 - 电价出现重复时间戳 → 先确认时区口径（tz-naive vs tz-aware），再决定是否去重
-- 裸域 `zenodo.org` 解析到 `0.0.0.0`（0 字节/连不上）→ 不要在脚本里换 URL，改用进程内 `socket.getaddrinfo` 别名补丁把裸域指向 `www.zenodo.org` 的 IP（见 `download_kelmarsh_zenodo.py`）
-- Zenodo **多进程并发**下载会出现 0 字节 `.part`（被限流）→ 改成单进程串行 + 断点续传
-- Zenodo 大文件下到一半**连接挂死**（文件长时间不增长）→ 把 urlopen 读超时压到 45s，靠 `.part` 续传恢复；不要盲目加长超时
+- 裸域 `zenodo.org` 解析到 `0.0.0.0`（0 字节/连不上）→ 不要在脚本里换 URL，改用进程内 `socket.getaddrinfo` 别名补丁（见 `download_kelmarsh_zenodo.py`）
+- Zenodo 同站点**时快时慢**（0.1 vs 1 MB/s）→ 先怀疑**边缘 IP 池**：候选 IP 逐个测速再选最快的；坏 IP 会伪装成"站点被墙"
+- 并发下载卡住 → 先判断瓶颈在谁：拿同一台机器试 GitHub（实测 7.2 MB/s）即可区分"本机带宽"与"对端限速"。对端限速时用**分段并发**（默认 4 段；6 段会被打到 0 字节）
+- Zenodo 大文件下到一半**连接挂死或速率塌陷**（文件长时间不增长）→ 读超时压到 45s + 低速看门狗，靠 `.part` 续传恢复；不要盲目加长超时
 - ENGIE 门户打不开 → 属官网下线，直接换 NREL/OpenOA 的 `la_haute_borne.zip` 镜像，不要反复重试
-- 风电 SCADA 行数对不上（看上去缺 10%+）→ 先确认原生时间步长（10 分钟 ≠ 每行 1 分钟），别按 1440 行/天算
+- 风电 SCADA 行数对不上（看上去缺 10%+ 或里程 >100%）→ 先确认原生步长（10 分钟 ≠ 每分钟），再排查是否有**重复块**（时间戳回跳）
+- 同一个 SCADA CSV 的行数是理论值的几十倍 → 多半是"累积快照堆叠"，按时间戳回跳丢弃前块（见 `PIT-20261003-001`）
 
 > 引用知识（kb/）:
 > - `[PIT-20260723-001]` ERCOT 官网反爬虫屏蔽与中国 IP 不可访问陷阱
@@ -85,7 +87,8 @@ python skills/data-fetch-power/references/download_spain_entsoe.py
 > - `[RCP-20260723-001]` ERCOT 电力市场数据下载流程
 > - `[RCP-20260929-005]` 西班牙 ENTSO-E Transparency 数据链路（替代 ESIOS）
 > - `[RCP-20261002-001]` 风电场级开源数据集下载流程（La Haute Borne / Kelmarsh）
-> - `[PIT-20261002-001]` 裸域被 DNS 屏蔽 + 并发限流 + 链路挂死：Zenodo 批量下载的三重坑
+> - `[PIT-20261002-001]` 裸域被 DNS 屏蔽 + 边缘 IP 池 + 单连接限速 + 链路挂死：Zenodo 批量下载的五重坑
 > - `[PIT-20261002-002]` 注释行就是表头：Greenbyte 导出的 CSV 用 `# ` 开头做表头，且字段含逗号
 > - `[PIT-20261002-003]` 风电场 SCADA 的时间口径：10 分钟步长、本地时 vs UTC、首年不从 1 月 1 日起
+> - `[PIT-20261003-001]` 同一 CSV 里堆叠了 81 个"累积快照"：行数虚增 41 倍，完整度会被算成 4138%
 > - `[MTD-20260907-001]` 气象数据 API 凭证安全管理实践

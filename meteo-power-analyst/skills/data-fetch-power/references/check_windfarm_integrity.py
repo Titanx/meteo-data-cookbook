@@ -19,6 +19,7 @@ import sys
 import zipfile
 from collections import defaultdict
 from datetime import datetime
+from itertools import chain
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
@@ -89,7 +90,12 @@ def kelmarsh() -> None:
 
 
 def kelmarsh_scada() -> None:
-    """逐年解析 SCADA zip：行数 / 步长 / 首末时间 / 逐列非空率分布。"""
+    """逐年解析 SCADA zip：行数 / 首末时间 / 原生步长 / 逐列非空率分布。
+
+    性能：整个文件只用**一个** csv.reader 流式解析（逐行新建 reader 会慢一个量级）；
+    原生步长只取前两行之差，避免对每一行做 datetime 解析。
+    写盘中间结果到 _kelmarsh_scada.tsv，供生成 README 表格。
+    """
     D = KEL
     zips = sorted(f for f in os.listdir(D)
                   if f.startswith("Kelmarsh_SCADA_") and f.endswith(".zip"))
@@ -97,66 +103,90 @@ def kelmarsh_scada() -> None:
     if not zips:
         print("  （暂无完整年包，等待下载完成）")
         return
+    rows_out = []
     for z in zips:
+        year = z.split("_")[2]
         with zipfile.ZipFile(os.path.join(D, z)) as zf:
-            name = next(n for n in zf.namelist() if n.lower().endswith(".csv"))
+            csvs = [n for n in zf.namelist() if n.lower().endswith(".csv")]
+            # 2016–2022：一个年包 = 一个宽表 CSV；
+            # 2023–2024：一个年包 = 6 台机 × (Turbine_Data + Status)，取第 1 台的 Turbine_Data
+            name = next((n for n in csvs if "Turbine_Data" in n), csvs[0])
             with zf.open(name) as raw:
                 tw = io.TextIOWrapper(raw, encoding="utf-8", errors="replace")
-                header, n, first, last, prev = None, 0, None, None, None
-                steps: dict[int, int] = defaultdict(int)
-                nonnull = None
                 comments: list[str] = []
+                first_data = None
                 for line in tw:
-                    s = line.rstrip("\r\n")
-                    if not s:
+                    if line.startswith("#"):
+                        comments.append(line.rstrip("\r\n"))
                         continue
-                    # Greenbyte：开头是若干注释行，**表头本身也在注释块内**（最后一行），
-                    # 且注释行不保证都是 "# "（有的写成 "#," 的分组行）
-                    if s.startswith("#"):
-                        comments.append(s)
+                    first_data = line
+                    break
+                if first_data is None or not comments:
+                    print(f"  {z}: 结构异常（无注释/无数据），跳过")
+                    continue
+                reader = csv.reader(chain([first_data], tw))
+                row0 = next(reader)
+                # 注释块里挑"字段数与数据行相同"的**最后一行**当表头
+                best = comments[-1]
+                for c in reversed(comments):
+                    if len(next(csv.reader([c]))) == len(row0):
+                        best = c
+                        break
+                header = next(csv.reader([best]))
+                if header and header[0].startswith("#"):
+                    header[0] = header[0].lstrip("#").strip()
+                ncol = len(header)
+                nonnull = [0] * ncol
+                n = 0
+                first = last = prev = None
+                step = None
+                blocks = 1
+                # 2023/2024 的 Turbine_Data 是"累积快照堆叠"：文件里有多块，
+                # 每块都从 1 月 1 日起、长度递增。遇到时间戳回跳就**清零重来**，
+                # 这样最终统计的正好是最后（最完整）那一块。
+                for row in chain([row0], reader):
+                    if not row or not row[0]:
                         continue
-                    if header is None:
-                        row = next(csv.reader([s]))
-                        # 注释块里挑"字段数与数据行相同"的**最后一行**当表头
-                        best = comments[-1]
-                        for c in reversed(comments):
-                            if len(next(csv.reader([c]))) == len(row):
-                                best = c
-                                break
-                        header = next(csv.reader([best]))
-                        if header and header[0].startswith("#"):
-                            header[0] = header[0].lstrip("#").strip()
-                        nonnull = [0] * len(header)
-                    else:
-                        row = next(csv.reader([s]))
-                    n += 1
                     t = row[0]
+                    if prev is not None and t < prev:
+                        blocks += 1
+                        n = 0
+                        nonnull = [0] * ncol
+                        first = prev = None
+                        step = None
                     if first is None:
                         first = t
-                    for i, v in enumerate(row):
-                        if i == 0:            # 第 0 列是时间戳，不计入信号非空率
-                            continue
-                        if i < len(nonnull) and v not in ("", "NaN"):
+                    elif step is None:
+                        step = (datetime.fromisoformat(t.strip())
+                                - datetime.fromisoformat(first.strip())).total_seconds()
+                    for i in range(1, min(len(row), ncol)):
+                        v = row[i]
+                        if v and v != "NaN":
                             nonnull[i] += 1
-                    if prev is not None:
-                        d = (datetime.fromisoformat(t.strip())
-                             - datetime.fromisoformat(prev.strip())).total_seconds()
-                        steps[int(d)] += 1
-                    prev = t
                     last = t
-        ncol = len(header) if header else 0
-        sig = sum(1 for c in (nonnull or []) if ncol and c >= n * 0.999)
-        lo = sum(1 for c in (nonnull or []) if ncol and 0 < c < n * 0.1)
-        mid = sum(1 for c in (nonnull or []) if ncol and n * 0.1 <= c < n * 0.5)
-        hi = sum(1 for c in (nonnull or []) if ncol and n * 0.5 <= c < n * 0.999)
-        empty = sum(1 for c in (nonnull or []) if c == 0)
-        top = sorted(steps.items(), key=lambda kv: -kv[1])[:2]
-        print(f"\n  {z}")
-        print(f"    行数 {n:,}  列数 {ncol}（含时间戳列）")
-        print(f"    {first} → {last}")
-        print(f"    步长分布 {top}")
-        print(f"    列非空分布: 近乎无缺 {sig} / <10% {lo} / 10-50% {mid} "
-              f"/ 50-99.9% {hi} / 全空 {empty}")
+                    prev = t
+                    n += 1
+        sig = sum(1 for c in nonnull if c >= n * 0.999)
+        part = sum(1 for c in nonnull if 0 < c < n * 0.999)
+        empty = sum(1 for c in nonnull if c == 0)
+        span_days = (datetime.fromisoformat(last.strip())
+                     - datetime.fromisoformat(first.strip())).total_seconds() / 86400
+        exp = round(span_days * DAY) + 1          # 时间跨度内的理论行数（含首行）
+        pct = n / exp * 100
+        rows_out.append((year, n, ncol, int(step), sig, part, empty,
+                         first, last, round(pct, 2), blocks, len(csvs)))
+        print(f"  {year}: 行数 {n:,}  列数 {ncol}  步长 {int(step)}s  "
+              f"近乎无缺 {sig} / 部分缺 {part} / 全空 {empty}  "
+              f"（{first} → {last}，里程 {pct:.1f}%，块数 {blocks}，CSV {len(csvs)} 个）",
+              flush=True)
+
+    out = os.path.join(KEL, "kelmarsh_scada_体检.tsv")
+    with open(out, "w", encoding="utf-8") as f:
+        f.write("year\trows\tcols\tstep\tfull\tpart\tempty\tfirst\tlast\tpct\t"
+                "blocks\tcsvs\n")
+        for r in rows_out:
+            f.write("\t".join(str(x) for x in r) + "\n")
+    print(f"  （明细已写入 {out}）")
 
 
 def kelmarsh_static() -> None:
