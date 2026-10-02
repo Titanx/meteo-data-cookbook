@@ -20,7 +20,7 @@
 | 地表辐射实测（美国） | `references/surfrad_pipeline.py`、`references/surfrad_assessment.py` | 分钟级辐射，站点少 |
 | 地表辐射实测（全球基准） | `references/bsrn_pangaea_pipeline.py` | BSRN via PANGAEA，**匿名**；列结构逐站不同，按文件头解析 |
 | 地表辐射实测（典型站完整年，批量） | `references/download_bsrn_typical_years.py` | 16 个典型国家/地区各下 1 个完整年（12 月齐备且完整度最高），192 文件 / 0.67 GB，产出本地清单 |
-| 地表辐射实测（分区域全历史） | `references/download_bsrn_region_history.py` | 按区域下各站**全部可用完整年**（中国→美国→欧洲→其他优先）；已落 41 站 / 675 站年 / 8100 文件 / 23.4 GB；`--only` 选区域、`--max-files N` 单次配额可定时慢跑；**并发高会被 PANGAEA 限流（429），用 --workers 2** |
+| 地表辐射实测（分区域全历史） | `references/download_bsrn_region_history.py` | 按区域下各站**全部可用完整年**；已落 67 站 / 758 站年 / 9096 文件 / 26.4 GB（BSRN 注册表 82 站）；`--only` 选区域（中国/美国/欧洲/其他/亚太/北美/拉美/非洲中东/极地）、`--max-files N` 单次配额可定时慢跑；**并发高会被 PANGAEA 限流（429），用 --workers 2** |
 | 探空廓线 / 热力指数 | `references/download_sounding.py`、`references/download_sounding_parallel.py` | WSGI 口径；并行版用于批量 |
 | 完整性核验 | `references/check_data_integrity.py`、`references/check_asia_integrity.py`、`references/check_noaa_isd_frequency.py` | **每次取数后必跑** |
 | 实时性探活 | `references/check_meteostat_realtime.py`、`references/check_meteostat_realtime_americas.py`、`references/test_meteostat.py` | 判断站点是否有当期数据 |
@@ -87,7 +87,8 @@ python skills/data-fetch-ground/references/download_bsrn_region_history.py --max
 - BSRN 解析出一片 NaN → 先确认**该站本该有哪几列**（列结构逐站变，上行辐射未必有），再判缺测；**不要套 SURFRAD 的 `-9999.9` 判据**（BSRN 用空字段）
 - BSRN 某站某年"没有数据" → 先分**辐射类 LR（LR0100/0300）**与探空/臭氧 LR，矩阵打勾不等于有辐照
 - BSRN 批量下载被 **429 Too Many Requests** 打断 → PANGAEA 按请求速率限流；降到 `--workers 2 --delay 0.5`（脚本已内置 429 退避重试），已下文件会自动跳过、可续跑
-- BSRN **完整度算出来异常低**（如整站只有 60%~90%）→ 十有八九是**原生步长不是 1 分钟**（早期 SURFRAD 系 3 分钟、NYA 早期 5 分钟、FLO 部分年份 2 分钟）。先读文件第 1、2 行时间戳求差，再按 `当月天数 × (86400 ÷ 步长)` 算分母；按 1440 行/天算会把全历史 99.19% 错算成 89%
+- BSRN **完整度算出来异常低**（如整站只有 60%~90%）→ 十有八九是**原生步长不是 1 分钟**（早期 SURFRAD 系 3 分钟、NYA 早期 5 分钟、FLO 部分年份 2 分钟）。先读文件第 1、2 行时间戳求差，再按 `当月天数 × (86400 ÷ 步长)` 算分母；按 1440 行/天算会把全历史 99.13% 错算成 89%
+- BSRN 某站"没下到" → 先分清三种原因：**候选站**（从未建站，永远没有）、**当年不足 12 个月不构成完整年**（如 2026，不出现在列表里是正常的）、**该站辐照记录不在指定的年份区间内**（如收紧到 2015+ 就会漏掉 ALE/EUR/REG/SOV/SBO/ILO 等早已关闭的站）。要确认到底有没有数据，用 `+citation:"radiation"` 放宽年份搜一次
 - 按覆盖矩阵规划 BSRN 补站时 → 矩阵的"有数据"**含探空/臭氧等非辐射 LR**，"最后数据年"不等于辐照截止年（Barrow 矩阵显示 2022、辐照实止 2019）；且"矩阵有当年数据"不等于"能下到完整年"（2026 只到 9 月，不构成 12 月齐备）。规划前须用 `+citation:"radiation"` 逐站核实
 - BSRN **规划阶段**就整轮退出（WinError 10060 / 连接超时）→ 是检索接口无重试所致；现已内置 4 次退避重试并支持**单站失败跳过**，长跑不必人工干预
 - BSRN 定时慢跑"跑完还剩很多" → `--max-files N` 是单次配额而非总量；这是设计如此（慢慢下），多轮运行按 中国→美国→欧洲→其他 逐批补全
