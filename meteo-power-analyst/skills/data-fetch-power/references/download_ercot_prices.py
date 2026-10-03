@@ -65,8 +65,11 @@ from datetime import datetime
 from pathlib import Path
 
 # 自动加载 .env 文件 (API key 不入 git)
-_env_path = Path(__file__).resolve().parents[2] / ".env"
-if _env_path.exists():
+# 从脚本位置向上找最近的 .env —— 原写法 parents[2] 落在 skills/, 而 .env 在工作区根,
+# 导致自动加载恒为空操作 (见 kb/methods/MTD-20260907-001)
+_env_path = next((p / ".env" for p in Path(__file__).resolve().parents
+                  if (p / ".env").exists()), None)
+if _env_path is not None:
     for line in _env_path.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if line and not line.startswith("#") and "=" in line:

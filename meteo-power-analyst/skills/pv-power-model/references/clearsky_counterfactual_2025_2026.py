@@ -1,4 +1,4 @@
-"""ERCOT 光伏晴空反事实出力 (2025-01-01 ~ 2026-09-06, pvlib Solis 链路)
+"""ERCOT 光伏晴空反事实出力 (2025-01-01 ~ 2026-09-30, pvlib Solis 链路)
 
 用途: 统一缺口气径 —— 用与 PS-022(2022-07) 完全相同的物理链路, 为 2025/2026
       弹性标定提供"晴空可发"基准, 替代 P95 数据驱动包络(其在低太阳高度角虚高)。
@@ -28,9 +28,10 @@ def main():
     print(f"{len(plants)} 座电站, {plants['capacity_mw'].sum()/1000:.2f} GW, "
           f"{nt_h} 小时 ({nt_h/24:.0f} 天)")
 
-    # 5min 时间轴 (与温度同时段)
+    # 5min 时间轴 (与温度同时段); 末刻由 npz 的 times 推导, 不再硬编码日期
     t5 = pd.date_range("2025-01-01", periods=nt_h * 12, freq="5min", tz="UTC")
-    assert t5[-1] == pd.Timestamp("2026-09-06 23:55", tz="UTC"), t5[-1]
+    t_end = pd.Timestamp(str(z["times"][-1])).tz_localize("UTC") + pd.Timedelta(minutes=55)
+    assert t5[-1] == t_end, (t5[-1], t_end)
     frac = np.arange(len(t5)) * 5 / 60.0
 
     total = np.zeros(len(t5), dtype=np.float64)

@@ -30,7 +30,19 @@ warnings.simplefilter("ignore", IterationLimitWarning)
 
 D = r"c:\work\meteo\data\ercot"
 SF_CSV = os.path.join(D, "shortfall_physical_2025_2026.csv")
-RTM15 = os.path.join(D, "ercot_rtm_HB_HOUSTON_2025-01-01_2026-09-07.csv")
+
+
+def _series(pattern):
+    """按 glob 解析唯一的序列文件 (合并后每个 market+location 只有一个文件)。"""
+    import glob
+
+    hits = sorted(glob.glob(os.path.join(D, pattern)))
+    if len(hits) != 1:
+        raise FileNotFoundError(f"预期 1 个文件, 实得 {len(hits)}: {hits}")
+    return hits[0]
+
+
+RTM15 = _series("ercot_rtm_HB_HOUSTON_*.csv")
 OUT_CSV = os.path.join(D, "shortfall_duration_2025_2026.csv")
 
 F_BASE = "lnp ~ sf + wind + dem + C(hour) + C(month)"

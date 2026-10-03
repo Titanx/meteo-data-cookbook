@@ -13,7 +13,19 @@ D = r"c:\work\meteo\data"
 ELAS = os.path.join(D, "ercot", "price_elasticity_tail.csv")
 PN = {2025: os.path.join(D, "ercot", "ercot_hourly_panel_2025.csv"),
       2026: os.path.join(D, "ercot", "ercot_hourly_panel_2026.csv")}
-RTM = os.path.join(D, "ercot", "ercot_rtm_HB_HOUSTON_2025-01-01_2026-09-07.csv")
+
+
+def _series(pattern):
+    """按 glob 解析唯一的序列文件 (合并后每个 market+location 只有一个文件)。"""
+    import glob
+
+    hits = sorted(glob.glob(os.path.join(D, "ercot", pattern)))
+    if len(hits) != 1:
+        raise FileNotFoundError(f"预期 1 个文件, 实得 {len(hits)}: {hits}")
+    return hits[0]
+
+
+RTM = _series("ercot_rtm_HB_HOUSTON_*.csv")
 TAIL = os.path.join(D, "nsrdb", "pv_event_price_impact_tail_2022-07.csv")
 OUT_DIR = r"c:\work\meteo\output\price_tail_elasticity"
 OUT = os.path.join(OUT_DIR, "ercot_rtm_tail_elasticity.html")

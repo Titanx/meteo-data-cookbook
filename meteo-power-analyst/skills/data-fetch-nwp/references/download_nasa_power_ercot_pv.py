@@ -1,4 +1,4 @@
-"""ERCOT 光伏电站 NASA POWER 逐小时辐照/气温下载 (2025-01 ~ 2026-09)
+"""ERCOT 光伏电站 NASA POWER 逐小时辐照/气温下载 (2025-01 ~ 2026-09-30)
 目的: 为 ERCOT 光伏构造**全天候潜力** (all-sky potential), 以得到"潜力−实际"内生缺口,
       补齐可逆性检验矩阵中缺失的一格 (ERCOT 光伏 内生缺口)。
 源:   NASA POWER hourly point (辐照=CERES 卫星反演; 气象=MERRA-2/GEOS-IT 再分析;
@@ -22,7 +22,7 @@ OUT = os.path.join(D_NASA, "ercot_pv_plants.npz")
 H = {"User-Agent": "Mozilla/5.0"}
 NASA = "https://power.larc.nasa.gov/api/temporal/hourly/point"
 VARS = ["ALLSKY_SFC_SW_DWN", "ALLSKY_SFC_SW_DNI", "ALLSKY_SFC_SW_DIFF", "T2M"]
-START, END = "20250101", "20260906"
+START, END = "20250101", "20260930"
 
 
 def nasa_point(lat, lon, retries=4):

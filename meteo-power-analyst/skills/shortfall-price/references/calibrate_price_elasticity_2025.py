@@ -17,8 +17,20 @@ import numpy as np
 import pandas as pd
 
 D_ERCOT = r"c:\work\meteo\data\ercot"
-RTM = os.path.join(D_ERCOT, "ercot_rtm_HB_HOUSTON_2025-01-01_2026-09-07.csv")
-DAM = os.path.join(D_ERCOT, "ercot_dam_HB_HOUSTON_2025-01-01_2026-09-07.csv")
+
+
+def _series(pattern):
+    """按 glob 解析唯一的序列文件 (合并后每个 market+location 只有一个文件)。"""
+    import glob
+
+    hits = sorted(glob.glob(os.path.join(D_ERCOT, pattern)))
+    if len(hits) != 1:
+        raise FileNotFoundError(f"预期 1 个文件, 实得 {len(hits)}: {hits}")
+    return hits[0]
+
+
+RTM = _series("ercot_rtm_HB_HOUSTON_*.csv")
+DAM = _series("ercot_dam_HB_HOUSTON_*.csv")
 OUT_COEF = os.path.join(D_ERCOT, "price_elasticity_2025.csv")
 
 rtm_h, dam_h = None, None
@@ -40,12 +52,13 @@ def load_prices():
 
 
 def load_eia_year(year):
-    months = list(range(1, 13)) if year == 2025 else list(range(1, 9))
+    # 月份范围由磁盘上实际存在的月度文件决定。
+    # 旧实现把 2026 硬编码为 1–8 月, 新增月份会被静默漏读。
     fuels, demand = [], []
-    for m in months:
+    for m in range(1, 13):
         f = os.path.join(D_ERCOT, f"ercot_fuel_type_data_{year}-{m:02d}.csv")
         r = os.path.join(D_ERCOT, f"ercot_region_data_{year}-{m:02d}.csv")
-        if not os.path.exists(f):
+        if not os.path.exists(f) or not os.path.exists(r):
             continue
         fuels.append(pd.read_csv(f))
         rr = pd.read_csv(r)

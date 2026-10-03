@@ -78,6 +78,15 @@ python skills/data-fetch-power/references/download_spain_entsoe.py
 - ENGIE 门户打不开 → 属官网下线，直接换 NREL/OpenOA 的 `la_haute_borne.zip` 镜像，不要反复重试
 - 风电 SCADA 行数对不上（看上去缺 10%+ 或里程 >100%）→ 先确认原生步长（10 分钟 ≠ 每分钟），再排查是否有**重复块**（时间戳回跳）
 - 同一个 SCADA CSV 的行数是理论值的几十倍 → 多半是"累积快照堆叠"，按时间戳回跳丢弃前块（见 `PIT-20261003-001`）
+- ERCOT SPP 刷到"月末"却少了最后一天 → `--end` 是**左闭右开**，要覆盖某日全天得填**次日**；
+  下载后断言末条 `interval_start_utc = 期望末日 23:45`（见 `PIT-20261003-004`）
+- `--location-type wind`/`solar` 少了几个已知节点 → 过滤是按**名字子串**（WND/SLR），
+  名字不含关键词的节点（CAPRIDGE_ALL / AVIAT_ALL / WHMESA_U1 / FOARDCTY_ALL / LHORN_N_U1_2 / SAMSON_ALL）
+  要用 `--location-type recommended` 或 `--hubs <名>` 单独补
+- 目录里同一 `(market, location)` 出现多个带日期后缀的 chunk → 下游 glob 会**重复计数**；
+  刷新后必须按 `interval_start_utc` 合并成单文件全期序列（见 `RCP-20261003-002`）
+- 批量补多个结算点 → `get_dataset(..., filter_value=[...], filter_operator="in")`
+  （默认 `=` 配列表只会匹配到一个；实测 128 节点 × 2 窗口 = 8 次请求）
 
 > 引用知识（kb/）:
 > - `[PIT-20260723-001]` ERCOT 官网反爬虫屏蔽与中国 IP 不可访问陷阱
@@ -91,4 +100,6 @@ python skills/data-fetch-power/references/download_spain_entsoe.py
 > - `[PIT-20261002-002]` 注释行就是表头：Greenbyte 导出的 CSV 用 `# ` 开头做表头，且字段含逗号
 > - `[PIT-20261002-003]` 风电场 SCADA 的时间口径：10 分钟步长、本地时 vs UTC、首年不从 1 月 1 日起
 > - `[PIT-20261003-001]` 同一 CSV 里堆叠了 81 个"累积快照"：行数虚增 41 倍，完整度会被算成 4138%
+> - `[PIT-20261003-004]` ERCOT 增量下载的四个静默缺口：end 左闭右开 / 节点名过滤 / 重叠 chunk / 月份硬编码
+> - `[RCP-20261003-002]` ERCOT 月度增量刷新 SOP（市场侧刷到月末 → 合并去重 → 链条重算）
 > - `[MTD-20260907-001]` 气象数据 API 凭证安全管理实践

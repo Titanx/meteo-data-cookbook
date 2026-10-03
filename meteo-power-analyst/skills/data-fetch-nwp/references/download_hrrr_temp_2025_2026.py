@@ -1,8 +1,8 @@
-"""下载 HRRR 2m 气温 (Open-Meteo 历史预报 API, ERCOT 光伏电站 2025-01-01~2026-09-06)
+"""下载 HRRR 2m 气温 (Open-Meteo 历史预报 API, ERCOT 光伏电站 2025-01-01~2026-09-30)
 用途: 物理晴空反事实的温度输入, 与 PS-021/022 的 2022 口径完全一致
 API: historical-forecast-api.open-meteo.com, models=ncep_hrrr_conus, 匿名免key
      支持逗号分隔多坐标批量请求 (顺序与输入一致)
-输出: data/nsrdb/hrrr_t2m_2025_2026.npz (14736×N, °C) + 时间轴 + 站名
+输出: data/nsrdb/hrrr_t2m_2025_2026.npz (N×141, °C) + 时间轴 + 站名
 用法: python skills/data-fetch-nwp/references/download_hrrr_temp_2025_2026.py [year]
 """
 import sys
@@ -15,7 +15,7 @@ import requests
 API = "https://historical-forecast-api.open-meteo.com/v1/forecast"
 OUT_NPZ = r"c:\work\meteo\data\nsrdb\hrrr_t2m_2025_2026{sfx}.npz"
 PLANTS_TMPL = r"c:\work\meteo\data\nsrdb\ercot_solar_plants_pixels_{year}.csv"
-START, END = "2025-01-01", "2026-09-06"
+START, END = "2025-01-01", "2026-09-30"
 BATCH = 20
 
 

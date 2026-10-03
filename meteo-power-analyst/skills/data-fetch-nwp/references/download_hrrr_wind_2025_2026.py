@@ -1,7 +1,7 @@
-"""下载 HRRR 80m 风速 + 2m 气温 (Open-Meteo 历史预报 API, ERCOT 风电场 2025-01-01~2026-09-06)
+"""下载 HRRR 80m 风速 + 2m 气温 (Open-Meteo 历史预报 API, ERCOT 风电场 2025-01-01~2026-09-30)
 用途: 风功率物理链路的资源输入 (80m 为 ERCOT 风机典型轮毂高度)
 API: historical-forecast-api.open-meteo.com, models=ncep_hrrr_conus, 匿名免key
-输出: data/nsrdb/hrrr_wind80m_2025_2026.npz (14736×165, m/s) + t2m + time + names
+输出: data/nsrdb/hrrr_wind80m_2025_2026.npz (N×165, m/s) + t2m + time + names
 用法: python skills/data-fetch-nwp/references/download_hrrr_wind_2025_2026.py
 """
 import time
@@ -13,7 +13,7 @@ import requests
 API = "https://historical-forecast-api.open-meteo.com/v1/forecast"
 OUT = r"c:\work\meteo\data\nsrdb\hrrr_wind80m_2025_2026.npz"
 HUB = r"c:\work\meteo\data\gem\ercot_wind_plants_2025.csv"
-START, END = "2025-01-01", "2026-09-06"
+START, END = "2025-01-01", "2026-09-30"
 BATCH = 20
 KMH = 1 / 3.6
 

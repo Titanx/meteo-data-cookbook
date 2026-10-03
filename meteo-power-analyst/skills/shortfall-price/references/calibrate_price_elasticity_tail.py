@@ -26,7 +26,19 @@ from statsmodels.tools.sm_exceptions import IterationLimitWarning
 warnings.simplefilter("ignore", IterationLimitWarning)
 
 D = r"c:\work\meteo\data\ercot"
-RTM_PATH = os.path.join(D, "ercot_rtm_HB_HOUSTON_2025-01-01_2026-09-07.csv")
+
+
+def _series(pattern):
+    """按 glob 解析唯一的序列文件 (合并后每个 market+location 只有一个文件)。"""
+    import glob
+
+    hits = sorted(glob.glob(os.path.join(D, pattern)))
+    if len(hits) != 1:
+        raise FileNotFoundError(f"预期 1 个文件, 实得 {len(hits)}: {hits}")
+    return hits[0]
+
+
+RTM_PATH = _series("ercot_rtm_HB_HOUSTON_*.csv")
 OUT_CSV = os.path.join(D, "price_elasticity_tail.csv")
 QS = [0.50, 0.75, 0.90, 0.95, 0.99, 0.995]
 F_BASE = "lnp ~ sf + wind + dem + C(hour) + C(month)"
@@ -41,12 +53,13 @@ def rec(year, model, param, est, se, n):
 
 
 def load_eia_year(year):
-    months = list(range(1, 13)) if year == 2025 else list(range(1, 9))
+    # 月份范围由磁盘上实际存在的月度文件决定。
+    # 旧实现把 2026 硬编码为 1–8 月, 新增月份会被静默漏读。
     fuels, demand = [], []
-    for m in months:
+    for m in range(1, 13):
         f = os.path.join(D, f"ercot_fuel_type_data_{year}-{m:02d}.csv")
         r = os.path.join(D, f"ercot_region_data_{year}-{m:02d}.csv")
-        if not os.path.exists(f):
+        if not os.path.exists(f) or not os.path.exists(r):
             continue
         fuels.append(pd.read_csv(f))
         rr = pd.read_csv(r)
