@@ -25,7 +25,7 @@
 | 地表辐射实测（分区域全历史） | `references/download_bsrn_region_history.py` | 按区域下各站**全部可用完整年**；已落 67 站 / 758 站年 / 9096 文件 / 26.4 GB（BSRN 注册表 82 站）；`--only` 选区域（中国/美国/欧洲/其他/亚太/北美/拉美/非洲中东/极地）、`--max-files N` 单次配额可定时慢跑；**并发高会被 PANGAEA 限流（429），用 --workers 2** |
 | 探空廓线 / 热力指数 | `references/download_sounding.py`、`references/download_sounding_parallel.py` | WSGI 口径；并行版用于批量 |
 | 完整性核验 | `references/check_data_integrity.py`、`references/check_asia_integrity.py`、`references/check_noaa_isd_frequency.py` | **每次取数后必跑** |
-| **站点降水日界（报告时间）对齐检验** | `references/precip_window_verify.py` | GHCNd 上报日值 × GHCNh 小时重切窗口，扫描 ±12 h 反推每站日界；`--list PREFIX` 先找两边都有的候选站 |
+| **站点降水日界（报告时间）对齐检验** | `references/precip_window_verify.py` | GHCNd 上报日值 × GHCNh 小时重切窗口，扫描 ±12 h 反推每站日界；`--list PREFIX` 先找两边都有的候选站；输出**峰位平台区间**与分月诊断（平台内的月份会标 `?`） |
 | 实时性探活 | `references/check_meteostat_realtime.py`、`references/check_meteostat_realtime_americas.py`、`references/test_meteostat.py` | 判断站点是否有当期数据 |
 
 ## 使用
@@ -74,8 +74,9 @@ python skills/data-fetch-ground/references/precip_window_verify.py --station USW
 | bsrn/<站码>/<年>/<站码>_<YYYY-MM>.txt | BSRN 月度文件（分钟级，UTC；**列随站变**，按文件头解析） |
 | bsrn/bsrn_catalog.csv | BSRN 本地清单：站/年/月 → DOI、字节、行数、列数（可复现校验） |
 | sounding/*.csv | 探空廓线与热力指数（CAPE / DCAPE 等） |
-| station_precip/precip_window_verify.json | 逐站日界偏移 / PCC 落差 / 量级还原比（GHCN 检验结论） |
+| station_precip/precip_window_verify.json | 逐站日界偏移 / PCC 落差 / 量级还原比 / 峰位平台区间（GHCN 检验结论） |
 | station_precip/precip_window_curves.csv | 逐站逐偏移的完整相关曲线（长表） |
+| station_precip/precip_window_monthly.csv | 逐站逐月最优偏移与平台诊断（reliable 列为 0 表示该月峰位不可用） |
 | station_precip/_cache/ | GHCNd/GHCNh 下载缓存（复跑约 0.5 s/站） |
 
 ## 数据源与已知局限
@@ -108,7 +109,8 @@ python skills/data-fetch-ground/references/precip_window_verify.py --station USW
 - **GHCN 检验的"量级还原比"落在 0.01~0.05 或 >2** → 是 GHCNh 聚合口径错了（应先 floor 到小时、再按小时取 max、最后求和），**此时任何相关结论都不成立** → `[PIT-20261003-003]`
 - **PCC 曲线呈阶梯状、最优偏移顶到扫描边界** → 时间戳没对齐到小时（GHCNh 时间戳是 `:51`/`:02` 这类次小时时点）
 - **某站 GHCNh 有小时降水但 GHCNd 取不到日值（404）** → 两个数据集站点不等集，属正常；换站或改用途，别反复重试
-- **某站扫描出的最优偏移与"时区相反数"系统性不符** → 先查夏令时与行政区划异常；1 小时分辨率 + 全年聚合会糊掉 DST 的 1 小时季节差异，需**按月分别扫**
+- **某站扫描出的最优偏移与"时区相反数"系统性不符** → 先查行政区划与报告规范异常（**不要归因于夏令时**：实测不施行 DST 的凤凰城同样出现季节漂移）
+- **分月结果里出现互不一致的偏移** → 先看 `gap_to_2nd`：峰位在 1 小时步长下是**宽平台**，平台内 argmax 不是估计量。**日界只能报区间**（见 `[PIT-20261003-002]` 第 4 节），不要用分月 argmax 论证季节机制
 - **站点 vs 预报的日尺度相关普遍偏低但小时尺度正常** → 几乎一定是日界问题，先跑日界对齐检验 → `[PIT-20261003-002]`
 
 > 引用知识（kb/）:

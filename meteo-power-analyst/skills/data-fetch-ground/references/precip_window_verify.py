@@ -27,6 +27,14 @@
    本工具需要两者都有：GHCNh 提供小时降水、GHCNd 提供上报日值。
    实测东亚站点里同时满足的很少（扫 29 站仅零星可用），北美/欧洲覆盖最好。
 
+读结论时必须看的两件事
+----------------------
+1. **量级还原比**（`level_ratio`）：应 ≈1.0（实测 1.04~1.06）。偏到 0.0x 或 >2 说明聚合口径错了，
+   此时任何相关结论都不成立。
+2. **峰位平台宽度**（`plateau_range`）：PCC-偏移曲线在 1 小时步长下常常是**宽平台**，
+   与最优之差 ≤0.005 的偏移可能有 ±1~2 h。**平台内取 argmax 不是估计量**，
+   只能把日界报成一个区间；分月结论在低降水月（湿日少）尤其不可靠，脚本会打 `?` 标记。
+
 用法
 ----
     # 单站/多站：扫描日界偏移并给出错位代价
@@ -36,8 +44,9 @@
     python precip_window_verify.py --list KSM
 
 产物（默认写到仓库根 data/station_precip/，该目录已被 .gitignore 忽略）
-    precip_window_verify.json   逐站结论（最优偏移 / PCC 落差 / 年度量还原比）
+    precip_window_verify.json   逐站结论（最优偏移 / PCC 落差 / 年度量还原比 / 分月结论）
     precip_window_curves.csv    逐站逐偏移的完整曲线（长表）
+    precip_window_monthly.csv   逐站逐月的最优偏移（用于拆夏令时的 1 小时季节错配）
 
 数据源
     GHCNd 日值：https://www.ncei.noaa.gov/pub/data/ghcn/daily/by_station/<SID>.csv.gz
@@ -203,10 +212,13 @@ def verify_one(sid: str, year: int, half: int, cache: Path | None, min_days: int
     obs_total = sum(obs)
     wet_days = sum(1 for v in obs if v >= 0.1)
 
-    curves = []
-    for sh in range(-half, half + 1):
-        est = [window_sum(hourly, d, sh) for d in days]
-        curves.append({"shift": sh, "pcc": pearson(obs, est), "est_total": sum(est)})
+    # 先把每个偏移下的估计序列算一遍，后面整年相关与分月相关都复用它（避免重复计算）
+    est_by_shift = {sh: [window_sum(hourly, d, sh) for d in days]
+                    for sh in range(-half, half + 1)}
+
+    curves = [{"shift": sh, "pcc": pearson(obs, est_by_shift[sh]),
+               "est_total": sum(est_by_shift[sh])}
+              for sh in range(-half, half + 1)]
 
     valid = [c for c in curves if c["pcc"] == c["pcc"]]
     if not valid:
@@ -214,6 +226,36 @@ def verify_one(sid: str, year: int, half: int, cache: Path | None, min_days: int
         return None
     best = max(valid, key=lambda c: c["pcc"])
     at0 = next((c for c in valid if c["shift"] == 0), None)
+
+    # 峰位平台：与最优之差 <= 0.005 的偏移区间。
+    # 平台越宽，说明"最优偏移"的定位越不确定——1 小时步长下常见 ±1~2 h 的平台，
+    # 此时把 argmax 当成精确日界是过度解读。
+    plateau = sorted(c["shift"] for c in valid if best["pcc"] - c["pcc"] <= 0.005)
+
+    # 分月最优偏移：用来拆夏令时（DST）造成的 1 小时季节错配。
+    # 单月样本小，须设门槛：天数 >=20 且湿日 >=3，否则峰位不可信。
+    monthly = []
+    for m in range(1, 13):
+        idx = [i for i, d in enumerate(days) if d.month == m]
+        if len(idx) < 20:
+            continue
+        o = [obs[i] for i in idx]
+        wet = sum(1 for v in o if v >= 0.1)
+        if wet < 3:
+            continue
+        cand = [(sh, pearson(o, [est_by_shift[sh][i] for i in idx]))
+                for sh in range(-half, half + 1)]
+        cand = [c for c in cand if c[1] == c[1]]
+        if not cand:
+            continue
+        b = max(cand, key=lambda t: t[1])
+        # 峰宽诊断：最优与次优不同偏移的落差，太小说明该月区分不出来
+        gap = b[1] - max((c[1] for c in cand if c[0] != b[0]), default=float("nan"))
+        monthly.append({"month": m, "days": len(idx), "wet_days": wet,
+                        "best_shift": b[0], "pcc_best": round(b[1], 3),
+                        "gap_to_2nd": round(gap, 3) if gap == gap else None,
+                        # 平台诊断：与次优偏移落差 <0.005 说明该月峰位是任意的，不可用
+                        "reliable": bool(gap == gap and gap >= 0.005)})
 
     ratio = (best["est_total"] / obs_total) if obs_total > 0 else float("nan")
     return {
@@ -228,7 +270,9 @@ def verify_one(sid: str, year: int, half: int, cache: Path | None, min_days: int
         "delta_pcc": round(best["pcc"] - at0["pcc"], 3) if at0 else None,
         # 量级还原比：应接近 1.0；明显偏离说明 GHCNh 聚合口径需要复核
         "level_ratio": round(ratio, 3),
+        "plateau_range": [plateau[0], plateau[-1]] if plateau else None,
         "curve": {str(c["shift"]): round(c["pcc"], 3) for c in valid},
+        "monthly": monthly,
     }
 
 
@@ -288,9 +332,26 @@ def main() -> int:
         print(f"    日值 {r['days']} 天，湿日 {r['wet_days']}，年量 {r['obs_total_mm']:.0f} mm，"
               f"量级还原比 {r['level_ratio']:.2f}")
         print("    PCC 曲线: " + "  ".join(f"{k}:{v}" for k, v in r["curve"].items()))
-        print(f"    ▶ 最优日界偏移 {r['best_shift_h']:+d} h   PCC={r['pcc_best']:.3f}")
+        pr = r.get("plateau_range")
+        ptxt = f"   峰位平台 {pr[0]:+d}~{pr[1]:+d} h（ΔPCC≤0.005）" if pr else ""
+        print(f"    ▶ 最优日界偏移 {r['best_shift_h']:+d} h   PCC={r['pcc_best']:.3f}{ptxt}")
         if r["pcc_at_0h"] is not None:
             print(f"    ▶ 未对齐 0 h          PCC={r['pcc_at_0h']:.3f}   Δ={r['delta_pcc']:+.3f}")
+        if r["monthly"]:
+            print("    分月最优偏移: " + "  ".join(
+                f"{m['month']:02d}月:{m['best_shift']:+d}{'' if m['reliable'] else '?'}"
+                for m in r["monthly"]))
+            bad = [m["month"] for m in r["monthly"] if not m["reliable"]]
+            if bad:
+                print(f"    ⚠ {len(bad)}/{len(r['monthly'])} 个月峰位落在平台里（落差<0.005），"
+                      f"该月 argmax 无意义，已标 ?：{', '.join(f'{m}月' for m in bad)}")
+            win = sorted(m["best_shift"] for m in r["monthly"] if m["month"] in (12, 1, 2))
+            smr = sorted(m["best_shift"] for m in r["monthly"] if m["month"] in (6, 7, 8))
+            if win and smr:
+                w_mid = win[len(win) // 2]
+                s_mid = smr[len(smr) // 2]
+                print(f"    ▶ 冬(12/1/2) 中位 {w_mid:+d} h   夏(6/7/8) 中位 {s_mid:+d} h   "
+                      f"季节差 {s_mid - w_mid:+d} h")
 
     if results:
         print("\n" + "=" * 88)
@@ -312,8 +373,18 @@ def main() -> int:
             for r in results:
                 for sh, pcc in sorted(r["curve"].items(), key=lambda kv: int(kv[0])):
                     w.writerow([r["sid"], r["year"], sh, pcc])
+        with (out / "precip_window_monthly.csv").open("w", newline="", encoding="utf-8") as f:
+            w = csv.writer(f)
+            w.writerow(["sid", "year", "month", "days", "wet_days",
+                        "best_shift_h", "pcc_best", "gap_to_2nd", "reliable"])
+            for r in results:
+                for m in r["monthly"]:
+                    w.writerow([r["sid"], r["year"], m["month"], m["days"], m["wet_days"],
+                                m["best_shift"], m["pcc_best"], m["gap_to_2nd"],
+                                int(m["reliable"])])
         print(f"\n产物：{out / 'precip_window_verify.json'}")
         print(f"      {out / 'precip_window_curves.csv'}")
+        print(f"      {out / 'precip_window_monthly.csv'}")
     else:
         print("\n没有可出结论的站点。")
     return 0
