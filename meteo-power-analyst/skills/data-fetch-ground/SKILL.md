@@ -1,13 +1,15 @@
 # 数据获取 · 地面观测与探空
 
-**状态**: ✅ 可用 — Meteostat 区域机场站、SURFRAD 辐射、**BSRN 全球基准辐射（PANGAEA 匿名）**、怀俄明大学探空廓线均跑通并做过完整性核验。
+**状态**: ✅ 可用 — Meteostat 区域机场站、SURFRAD 辐射、**BSRN 全球基准辐射（PANGAEA 匿名）**、怀俄明大学探空廓线均跑通并做过完整性核验；**GHCN 站点降水（GHCNd 日值 × GHCNh 小时值）日界对齐检验**已跑通（3 站复原偏移精确命中时区）。
 
 **用途**: 拉取地面站小时观测、地表辐射实测与探空廓线（含热力指数），
-用于交叉验证卫星/再分析口径，以及雷暴与高影响天气的判据构建。
+用于交叉验证卫星/再分析口径，以及雷暴与高影响天气的判据构建；
+并提供**站点降水"日界（报告时间）"对齐检验**，用于把站点降水当"真值"核验预报之前先统一时间口径。
 
 **入口检查**:
-1. 先查 `data/` 下是否已有目标站点/年份的 csv（meteostat/、surfrad/、sounding/）
+1. 先查 `data/` 下是否已有目标站点/年份的 csv（meteostat/、surfrad/、sounding/、station_precip/）
 2. 无 → 先跑完整性核验脚本，确认既有数据的缺口模式，再决定补哪些年份
+3. 要用站点降水当"真值"→ **先跑日界对齐检验**，不要直接按日期比
 
 ## 选源
 
@@ -23,6 +25,7 @@
 | 地表辐射实测（分区域全历史） | `references/download_bsrn_region_history.py` | 按区域下各站**全部可用完整年**；已落 67 站 / 758 站年 / 9096 文件 / 26.4 GB（BSRN 注册表 82 站）；`--only` 选区域（中国/美国/欧洲/其他/亚太/北美/拉美/非洲中东/极地）、`--max-files N` 单次配额可定时慢跑；**并发高会被 PANGAEA 限流（429），用 --workers 2** |
 | 探空廓线 / 热力指数 | `references/download_sounding.py`、`references/download_sounding_parallel.py` | WSGI 口径；并行版用于批量 |
 | 完整性核验 | `references/check_data_integrity.py`、`references/check_asia_integrity.py`、`references/check_noaa_isd_frequency.py` | **每次取数后必跑** |
+| **站点降水日界（报告时间）对齐检验** | `references/precip_window_verify.py` | GHCNd 上报日值 × GHCNh 小时重切窗口，扫描 ±12 h 反推每站日界；`--list PREFIX` 先找两边都有的候选站 |
 | 实时性探活 | `references/check_meteostat_realtime.py`、`references/check_meteostat_realtime_americas.py`、`references/test_meteostat.py` | 判断站点是否有当期数据 |
 
 ## 使用
@@ -56,6 +59,10 @@ python skills/data-fetch-ground/references/download_bsrn_region_history.py --rei
 
 # 慢速分批（定时长跑用）：单次只下前 N 个未下文件，按 中国→美国→欧洲→其他 优先
 python skills/data-fetch-ground/references/download_bsrn_region_history.py --max-files 220 --workers 2 --delay 0.5
+
+# 站点降水日界对齐检验（GHCNd 日值 × GHCNh 小时值，全匿名）
+python skills/data-fetch-ground/references/precip_window_verify.py --list KSM
+python skills/data-fetch-ground/references/precip_window_verify.py --station USW00094728 USW00023183 --year 2024
 ```
 
 ## 产出
@@ -67,6 +74,9 @@ python skills/data-fetch-ground/references/download_bsrn_region_history.py --max
 | bsrn/<站码>/<年>/<站码>_<YYYY-MM>.txt | BSRN 月度文件（分钟级，UTC；**列随站变**，按文件头解析） |
 | bsrn/bsrn_catalog.csv | BSRN 本地清单：站/年/月 → DOI、字节、行数、列数（可复现校验） |
 | sounding/*.csv | 探空廓线与热力指数（CAPE / DCAPE 等） |
+| station_precip/precip_window_verify.json | 逐站日界偏移 / PCC 落差 / 量级还原比（GHCN 检验结论） |
+| station_precip/precip_window_curves.csv | 逐站逐偏移的完整相关曲线（长表） |
+| station_precip/_cache/ | GHCNd/GHCNh 下载缓存（复跑约 0.5 s/站） |
 
 ## 数据源与已知局限
 
@@ -77,6 +87,9 @@ python skills/data-fetch-ground/references/download_bsrn_region_history.py --max
 | BSRN | ✅ | PANGAEA **匿名可取**（仅 ftp 通道需账号）；**列结构逐站逐年代不同、缺测为空字段、无 QC 列**；时效 1–3 个月；覆盖矩阵"有数据"含探空/臭氧等非辐射 LR |
 | 怀俄明大学探空 | ✅ | 接口迁移过 + SSL 需处理；部分站点 WSGI 里没有 CAPE，需从 HTML 抽 |
 | USCRN | ✅ | 站点质量高但分布固定 |
+| **GHCNd（站点日值）** | ✅ 匿名 | 站点最多；**日值记的是"当地日历日"**，直接当 UTC 口径真值用会系统性惩罚相关（本项 ΔPCC 0.09~0.28）→ `[PIT-20261003-002]` |
+| **GHCNh（站点小时值）** | ✅ 匿名（AWS 公开桶 noaa-ghcnh-pds） | **不在 NCEI 的 data 路径下**；`precipitation` 是"自上次观测累积"（全加会虚高 ×2.45）、**时间戳非整点**、与 GHCNd **站点不等集** → `[PIT-20261003-003]` |
+| **GSOD（站点日值摘要）** | ✅ 匿名 | 单站文件名是 **11 位无连字符**站号（带连字符会 404） |
 
 ## 失败处理
 
@@ -92,6 +105,11 @@ python skills/data-fetch-ground/references/download_bsrn_region_history.py --max
 - 按覆盖矩阵规划 BSRN 补站时 → 矩阵的"有数据"**含探空/臭氧等非辐射 LR**，"最后数据年"不等于辐照截止年（Barrow 矩阵显示 2022、辐照实止 2019）；且"矩阵有当年数据"不等于"能下到完整年"（2026 只到 9 月，不构成 12 月齐备）。规划前须用 `+citation:"radiation"` 逐站核实
 - BSRN **规划阶段**就整轮退出（WinError 10060 / 连接超时）→ 是检索接口无重试所致；现已内置 4 次退避重试并支持**单站失败跳过**，长跑不必人工干预
 - BSRN 定时慢跑"跑完还剩很多" → `--max-files N` 是单次配额而非总量；这是设计如此（慢慢下），多轮运行按 中国→美国→欧洲→其他 逐批补全
+- **GHCN 检验的"量级还原比"落在 0.01~0.05 或 >2** → 是 GHCNh 聚合口径错了（应先 floor 到小时、再按小时取 max、最后求和），**此时任何相关结论都不成立** → `[PIT-20261003-003]`
+- **PCC 曲线呈阶梯状、最优偏移顶到扫描边界** → 时间戳没对齐到小时（GHCNh 时间戳是 `:51`/`:02` 这类次小时时点）
+- **某站 GHCNh 有小时降水但 GHCNd 取不到日值（404）** → 两个数据集站点不等集，属正常；换站或改用途，别反复重试
+- **某站扫描出的最优偏移与"时区相反数"系统性不符** → 先查夏令时与行政区划异常；1 小时分辨率 + 全年聚合会糊掉 DST 的 1 小时季节差异，需**按月分别扫**
+- **站点 vs 预报的日尺度相关普遍偏低但小时尺度正常** → 几乎一定是日界问题，先跑日界对齐检验 → `[PIT-20261003-002]`
 
 > 引用知识（kb/）:
 > - `[MTD-20260718-002]` Meteostat 地面观测数据使用指南
@@ -103,3 +121,6 @@ python skills/data-fetch-ground/references/download_bsrn_region_history.py --max
 > - `[RCP-20260720-002]` SURFRAD 地表辐射实测数据下载流程
 > - `[RCP-20260930-001]` BSRN 地表辐照基准实测数据取数流程（PANGAEA 匿名通道）
 > - `[RCP-20260811-001]` 探空廓线数据下载流程（怀俄明大学 WSGI）
+> - `[RCP-20261003-001]` 站点降水"日界（报告时间）"对齐检验流程
+> - `[PIT-20261003-002]` 站点日降水是"当地日"：与 UTC 口径直接比的代价（ΔPCC 0.09~0.28）
+> - `[PIT-20261003-003]` GHCNh 小时降水的三个口径坑（值语义 / 时间戳粒度 / 站点集合）
