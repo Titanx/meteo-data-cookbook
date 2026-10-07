@@ -24,7 +24,8 @@
 | 地表辐射实测（典型站完整年，批量） | `references/download_bsrn_typical_years.py` | 16 个典型国家/地区各下 1 个完整年（12 月齐备且完整度最高），192 文件 / 0.67 GB，产出本地清单 |
 | 地表辐射实测（分区域全历史） | `references/download_bsrn_region_history.py` | 按区域下各站**全部可用完整年**；已落 67 站 / 758 站年 / 9096 文件 / 26.4 GB（BSRN 注册表 82 站）；`--only` 选区域（中国/美国/欧洲/其他/亚太/北美/拉美/非洲中东/极地）、`--max-files N` 单次配额可定时慢跑；**并发高会被 PANGAEA 限流（429），用 --workers 2** |
 | 探空廓线 / 热力指数 | `references/download_sounding.py`、`references/download_sounding_parallel.py` | WSGI 口径；并行版用于批量 |
-| 完整性核验 | `references/check_data_integrity.py`、`references/check_asia_integrity.py`、`references/check_noaa_isd_frequency.py` | **每次取数后必跑** |
+| **强对流／灾害事件目录（美国）** | `references/download_storm_events.py` | NCEI Storm Events，**匿名全量**：details（明细）/ fatalities（伤亡）/ locations（逐点路径）三产品 × 77 年（1950–2026）= 231 文件 / ~355 MB；`--products`/`--years` 可切片 |
+| 完整性核验 | `references/check_data_integrity.py`、`references/check_asia_integrity.py`、`references/check_noaa_isd_frequency.py`、**`references/check_storm_events_integrity.py`** | **每次取数后必跑** |
 | **站点降水日界（报告时间）对齐检验** | `references/precip_window_verify.py` | GHCNd 上报日值 × GHCNh 小时重切窗口，扫描 ±12 h 反推每站日界；`--list PREFIX` 先找两边都有的候选站；输出**峰位平台区间**与分月诊断（平台内的月份会标 `?`） |
 | 实时性探活 | `references/check_meteostat_realtime.py`、`references/check_meteostat_realtime_americas.py`、`references/test_meteostat.py` | 判断站点是否有当期数据 |
 
@@ -63,6 +64,13 @@ python skills/data-fetch-ground/references/download_bsrn_region_history.py --max
 # 站点降水日界对齐检验（GHCNd 日值 × GHCNh 小时值，全匿名）
 python skills/data-fetch-ground/references/precip_window_verify.py --list KSM
 python skills/data-fetch-ground/references/precip_window_verify.py --station USW00094728 USW00023183 --year 2024
+
+# NCEI Storm Events 全量（1950-2026，3 产品，匿名；断点续传）
+python skills/data-fetch-ground/references/download_storm_events.py
+# 只下明细、或只下最近几年
+python skills/data-fetch-ground/references/download_storm_events.py --products details --years 2020 2021 2022 2023 2024 2025 2026
+# 取数后必跑核验（落盘/字节/解析/覆盖矩阵/当地时口径）
+python skills/data-fetch-ground/references/check_storm_events_integrity.py
 ```
 
 ## 产出
@@ -74,6 +82,8 @@ python skills/data-fetch-ground/references/precip_window_verify.py --station USW
 | bsrn/<站码>/<年>/<站码>_<YYYY-MM>.txt | BSRN 月度文件（分钟级，UTC；**列随站变**，按文件头解析） |
 | bsrn/bsrn_catalog.csv | BSRN 本地清单：站/年/月 → DOI、字节、行数、列数（可复现校验） |
 | sounding/*.csv | 探空廓线与热力指数（CAPE / DCAPE 等） |
+| storm_events/<product>/*.csv.gz | NCEI Storm Events 原始文件（details / fatalities / locations，1950–2026；**时间是当地时**） |
+| storm_events/storm_events_manifest.csv | 本地清单：产品/年/**快照日**/文件名/字节/状态（快照日用于追溯重发布版本） |
 | station_precip/precip_window_verify.json | 逐站日界偏移 / PCC 落差 / 量级还原比 / 峰位平台区间（GHCN 检验结论） |
 | station_precip/precip_window_curves.csv | 逐站逐偏移的完整相关曲线（长表） |
 | station_precip/precip_window_monthly.csv | 逐站逐月最优偏移与平台诊断（reliable 列为 0 表示该月峰位不可用） |
@@ -91,6 +101,7 @@ python skills/data-fetch-ground/references/precip_window_verify.py --station USW
 | **GHCNd（站点日值）** | ✅ 匿名 | 站点最多；**日值记的是"当地日历日"**，直接当 UTC 口径真值用会系统性惩罚相关（本项 ΔPCC 0.09~0.28）→ `[PIT-20261003-002]` |
 | **GHCNh（站点小时值）** | ✅ 匿名（AWS 公开桶 noaa-ghcnh-pds） | **不在 NCEI 的 data 路径下**；`precipitation` 是"自上次观测累积"（全加会虚高 ×2.45）、**时间戳非整点**、与 GHCNd **站点不等集** → `[PIT-20261003-003]` |
 | **GSOD（站点日值摘要）** | ✅ 匿名 | 单站文件名是 **11 位无连字符**站号（带连字符会 404） |
+| **NCEI Storm Events（美国强对流/灾害事件目录）** | ✅ 匿名全量 | 1950–2026 / 三产品 × 77 年 = 231 文件 / ~355 MB；**时间是当地时**（details 带 `CZ_TIMEZONE`，与 UTC 链路对齐需转换）；**文件名含快照日 `cYYYYMMDD`**，跨年快照不同、同年会重发布（清单已记）；**结构断点在 1996**（`locations` 实质自 1996 起、1950–1995 无；details 1995→1996 由 20,464 跳到 48,534 行，老记录无 EF 等级）；只覆盖美国（含属地） |
 
 ## 失败处理
 
@@ -109,6 +120,12 @@ python skills/data-fetch-ground/references/precip_window_verify.py --station USW
 - **GHCN 检验的"量级还原比"落在 0.01~0.05 或 >2** → 是 GHCNh 聚合口径错了（应先 floor 到小时、再按小时取 max、最后求和），**此时任何相关结论都不成立** → `[PIT-20261003-003]`
 - **PCC 曲线呈阶梯状、最优偏移顶到扫描边界** → 时间戳没对齐到小时（GHCNh 时间戳是 `:51`/`:02` 这类次小时时点）
 - **某站 GHCNh 有小时降水但 GHCNd 取不到日值（404）** → 两个数据集站点不等集，属正常；换站或改用途，别反复重试
+- **Storm Events 时间与电价/UTC 链路对不上** → 它是**本地标准时（LST，无夏令时）**：details 的 `CZ_TIMEZONE` 给出的是**标准时**偏移（德州恒为 `CST-6`，盛夏也不写 CDT），换算 **UTC = 本地时间 − offset**；按墙钟 `tz_localize('America/Chicago')` 会在夏季整体错 1 小时。逐行取 offset（远西德州有 `MST-7`）→ `[PIT-20261004-002]`（同类坑见 `[PIT-20261003-002]`）
+- **Storm Events 最新年份缺末尾几个月** → 是**约 2.5 个月的发布滞后**（NWS 事后录入），实测 2026 快照 `c20260918` 但事件止于 6 月；先打印 `BEGIN_YEARMONTH` 的 min/max 定可用交集，**不要用它做近实时预警** → `[PIT-20261004-002]`
+- **Storm Events 复跑后同一年数据"变了"** → 文件名快照日 `cYYYYMMDD` 变了（NCEI 逐年重发布）；以 manifest 记录的快照日为准，跨快照比较前先核对 → `[PIT-20261004-002]`
+- **Storm Events 老年份字段缺失/事件类型不同** → 1950–1995 与 1996+ 结构不同（`locations` 表 1950–1995 全空，`details` 行数 1995→1996 跳变），跨年统计需显式分段 → `[PIT-20261004-002]`
+- **Storm Events 想找龙卷路径** → `details` 只有起止点；逐点路径在 `locations` 产品
+- **Storm Events 计数对不上** → details 一行 = 一条**县级记录**，一个 `EPISODE_ID` 常跨多县；声明用记录数还是 episode 数
 - **某站扫描出的最优偏移与"时区相反数"系统性不符** → 先查行政区划与报告规范异常（**不要归因于夏令时**：实测不施行 DST 的凤凰城同样出现季节漂移）
 - **分月结果里出现互不一致的偏移** → 先看 `gap_to_2nd`：峰位在 1 小时步长下是**宽平台**，平台内 argmax 不是估计量。**日界只能报区间**（见 `[PIT-20261003-002]` 第 4 节），不要用分月 argmax 论证季节机制
 - **站点 vs 预报的日尺度相关普遍偏低但小时尺度正常** → 几乎一定是日界问题，先跑日界对齐检验 → `[PIT-20261003-002]`
@@ -126,3 +143,5 @@ python skills/data-fetch-ground/references/precip_window_verify.py --station USW
 > - `[RCP-20261003-001]` 站点降水"日界（报告时间）"对齐检验流程
 > - `[PIT-20261003-002]` 站点日降水是"当地日"：与 UTC 口径直接比的代价（ΔPCC 0.09~0.28）
 > - `[PIT-20261003-003]` GHCNh 小时降水的三个口径坑（值语义 / 时间戳粒度 / 站点集合）
+> - `[PIT-20261004-001]` 怀俄明 WSGI 探空：站号≠站名、接口限流挂死、12Z 覆盖偏斜
+> - `[PIT-20261004-002]` NCEI Storm Events：时间戳=LST（非墙钟）、1996 结构断点、~2.5 月发布滞后、逐年快照

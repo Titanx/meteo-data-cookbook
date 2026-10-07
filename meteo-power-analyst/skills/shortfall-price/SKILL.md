@@ -25,6 +25,8 @@
 | 风电侧 | `references/model_wind_power_shortfall.py` | 风功率物理链路（风光不对称） |
 | 机组级联动 | `references/gem_ercot_deep_dive.py`、`references/gem_ercot_lz_analysis.py`、`references/gem_storm_cross.py` | 把缺口落到具体机组与分区 |
 | 天气成因 | `references/thunderstorm_ercot_analysis.py`、`references/terrain_lightning_analysis.py` | 雷暴/地形与缺口事件的联动 |
+| 天气潜势（事前） | `references/dcape_price_analysis.py`、`references/make_dcape_charts_data.py` | 探空 DCAPE（下沉对流潜势）对傍晚电价的指示力（事前 12Z vs 同期 00Z） |
+| 已实现对流 × 电价 | `references/storm_events_price_analysis.py`、`references/make_se_charts_data.py` | NCEI Storm Events 强对流（龙卷/雷暴大风/冰雹/山洪）与 RTM 的日级/小时级关系，含滞后与分区检验 |
 
 ## 使用
 
@@ -77,3 +79,5 @@ python skills/shortfall-price/references/model_shortfall_duration_2025_2026.py
 > - `[RCP-20260911-002]` GEM 电站数据库下载与 ERCOT 电价联动分析流程
 > - `[PIT-20260724-002]` 雷暴检测在高风区绝对阈值失效
 > - `[RCP-20260909-001]` ASTER 地形与 GLM 闪电分布联动分析流程
+> - `[PIT-20261004-001]` 怀俄明 WSGI 探空：站号≠站名、接口限流挂死、12Z 覆盖偏斜
+> - `[PIT-20261004-002]` NCEI Storm Events：时间戳=LST（非墙钟）、1996 结构断点、~2.5 月发布滞后、逐年快照

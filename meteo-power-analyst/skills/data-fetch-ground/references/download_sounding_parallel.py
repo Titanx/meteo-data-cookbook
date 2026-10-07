@@ -32,12 +32,17 @@ SSL_CTX = ssl.create_default_context()
 SSL_CTX.check_hostname = False
 SSL_CTX.verify_mode = ssl.CERT_NONE
 
-socket.setdefaulttimeout(45)
+socket.setdefaulttimeout(25)
 
+# 站名/坐标经 Wyoming 返回数据核验 (2026-10-04, verify_sounding_stations.py):
+# 早期硬编码名有误 — 72251 实为 Corpus Christi (27.78,-97.51), 72340 实为 Little Rock (34.84,-92.26)
 STATIONS = {
-    "72249": {"name": "Fort Worth", "region": "texas", "country": "US", "lat": 32.83, "lon": -97.30},
-    "72251": {"name": "Dallas-FW", "region": "texas", "country": "US", "lat": 32.90, "lon": -97.04},
-    "72340": {"name": "Shreveport", "region": "texas", "country": "US", "lat": 32.45, "lon": -93.82},
+    "72249": {"name": "Fort Worth", "region": "ercot", "country": "US", "lat": 32.835, "lon": -97.297},
+    "72251": {"name": "Corpus Christi", "region": "ercot", "country": "US", "lat": 27.779, "lon": -97.505},
+    "72261": {"name": "Del Rio", "region": "ercot", "country": "US", "lat": 29.374, "lon": -100.918},
+    "72265": {"name": "Midland", "region": "ercot", "country": "US", "lat": 31.943, "lon": -102.190},
+    "72340": {"name": "Little Rock", "region": "ercot", "country": "US", "lat": 34.836, "lon": -92.260},
+    "72357": {"name": "Norman", "region": "ercot", "country": "US", "lat": 35.181, "lon": -97.438},
     "57494": {"name": "Wuhan", "region": "asia", "country": "CN", "lat": 30.62, "lon": 114.13},
     "58362": {"name": "Shanghai", "region": "asia", "country": "CN", "lat": 31.40, "lon": 121.46},
     "54857": {"name": "Qingdao", "region": "asia", "country": "CN", "lat": 36.07, "lon": 120.33},
@@ -48,7 +53,7 @@ STATIONS = {
 }
 
 REGION_FILTERS = {
-    "texas": ["72249", "72251", "72340"],
+    "ercot": ["72249", "72251", "72261", "72265", "72340", "72357"],
     "asia": ["57494", "58362", "54857", "57083", "58238", "47401", "47678"],
     "all": list(STATIONS.keys()),
 }
@@ -188,6 +193,7 @@ def fetch_sounding(station_id, dt_str, max_retries=2):
 
 def download_one(station_id, station_name, date_val, hour, output_dir):
     """下载并保存单个探空记录"""
+    time.sleep(0.3)  # 温和限速, 避免触发服务器节流挂起
     dt_str = f"{date_val.strftime('%Y-%m-%d')} {hour:02d}:00:00"
     fname = f"sounding_{station_id}_{date_val.strftime('%Y%m%d')}{hour:02d}Z.csv"
     fpath = output_dir / station_id / fname
@@ -249,7 +255,7 @@ def main():
     parser.add_argument("--start", default=None, help="起始日期")
     parser.add_argument("--end", default=None, help="截止日期")
     parser.add_argument("--days", type=int, default=30, help="下载最近N天")
-    parser.add_argument("--region", default="all", choices=["texas", "asia", "all"])
+    parser.add_argument("--region", default="all", choices=["ercot", "asia", "all"])
     parser.add_argument("--stations", nargs="+", default=None, help="指定站号")
     parser.add_argument("--hours", nargs="+", type=int, default=[0, 12])
     parser.add_argument("--workers", type=int, default=5, help="并行下载线程数")
