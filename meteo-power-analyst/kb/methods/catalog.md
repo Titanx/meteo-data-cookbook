@@ -11,3 +11,4 @@
 | [MTD-20260812-001](MTD-20260812-001.md) | 气象雷达数据匿名获取综合指南 | verified | active（原 GL-008） |
 | [MTD-20260907-001](MTD-20260907-001.md) | 气象数据 API 凭证安全管理实践 | verified | active（原 GL-009） |
 | [MTD-20260930-001](MTD-20260930-001.md) | 数据与知识库约定：命名、单位、目录、凭据、**结论取证（§7 否定性/边界性说法）** | verified | active（自旧 conventions 迁入；2026-09-30 补 §7） |
+| [MTD-20261015-001](MTD-20261015-001.md) | 机场 ASOS/METAR 观测获取：IEM ASOS 与 aviationweather 使用 | verified | active |

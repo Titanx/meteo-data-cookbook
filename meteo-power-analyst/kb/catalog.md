@@ -26,18 +26,18 @@
 - **变量链（本包主线）**: 气象 → 发电出力（光伏 / 风电）→ 净负荷与"缺口" → 电价（含负价与尖峰）
 - **工程域**: 取数 / 面板构建 / 数据体检 / 建模 / 概率校准 / 单文件报告
 
-## 统计（2026-10-04）
+## 统计（2026-10-16）
 
 | 分类 | 条目数 | 成熟度分布 |
 |------|--------|-----------|
-| methods (MTD) | 7 | draft 0 / verified 7 / proven 0 |
-| recipes (RCP) | 46 | draft 1 / verified 45 / proven 0 |
+| methods (MTD) | 8 | draft 0 / verified 8 / proven 0 |
+| recipes (RCP) | 47 | draft 1 / verified 46 / proven 0 |
 | decisions (DEC) | 3 | draft 0 / verified 3 / proven 0 |
-| pitfalls (PIT) | 29 | draft 0 / verified 29 / proven 0 |
+| pitfalls (PIT) | 30 | draft 0 / verified 30 / proven 0 |
 | experiments (EXP) | 0 | — |
 | examples | 3 | — |
 
-合计 85 条知识条目 + 3 个样例。其中 60 条由旧仓库知识库的 tech/ 子目录机械迁移而来（对照表见 [MIGRATION.md](MIGRATION.md)），25 条为迁移后新写：4 条流程（RCP-20260930-001 BSRN 基准实测取数，并推翻旧条目"PANGAEA 需注册"的结论；RCP-20261002-001 风电场级开源数据集下载 La Haute Borne / Kelmarsh；RCP-20261003-001 站点降水日界对齐检验；RCP-20261003-002 ERCOT 月度增量刷新 SOP）、3 条决策（DEC-20260930-001~003）、17 条坑（PIT-20260930-001 凭据硬编码与 raw 层外泄；PIT-20260930-002~004 NASA POWER 来源归因/换版/时间标准；PIT-20260930-005 S3 分页静默截断；PIT-20260930-006 静止卫星延迟与体积的多口径；PIT-20260930-007 聚合层的观测/预报混淆与列内单位切换；PIT-20261002-001~003 Zenodo 访问五坑 / Greenbyte CSV 表头与列数 / 风电 SCADA 时间口径；PIT-20261003-001 同一 CSV 堆叠多个累积快照；PIT-20261003-002 站点日降水是"当地日"与 UTC 口径错位；PIT-20261003-003 GHCNh 小时降水的三个口径坑；PIT-20261003-004 ERCOT 增量下载的四个静默缺口；PIT-20261003-005 EIA-930 储能列口径静默切换；PIT-20261004-001 怀俄明探空三坑；PIT-20261004-002 NCEI Storm Events 四坑）、1 条约定（MTD-20260930-001）。
+合计 88 条知识条目 + 3 个样例。其中 60 条由旧仓库知识库的 tech/ 子目录机械迁移而来（对照表见 [MIGRATION.md](MIGRATION.md)），28 条为迁移后新写：5 条流程（RCP-20260930-001 BSRN 基准实测取数，并推翻旧条目"PANGAEA 需注册"的结论；RCP-20261002-001 风电场级开源数据集下载 La Haute Borne / Kelmarsh；RCP-20261003-001 站点降水日界对齐检验；RCP-20261003-002 ERCOT 月度增量刷新 SOP；RCP-20261016-001 德州 ASOS 批量下载·IEM 通道）、3 条决策（DEC-20260930-001~003）、18 条坑（PIT-20260930-001 凭据硬编码与 raw 层外泄；PIT-20260930-002~004 NASA POWER 来源归因/换版/时间标准；PIT-20260930-005 S3 分页静默截断；PIT-20260930-006 静止卫星延迟与体积的多口径；PIT-20260930-007 聚合层的观测/预报混淆与列内单位切换；PIT-20261002-001~003 Zenodo 访问五坑 / Greenbyte CSV 表头与列数 / 风电 SCADA 时间口径；PIT-20261003-001 同一 CSV 堆叠多个累积快照；PIT-20261003-002 站点日降水是"当地日"与 UTC 口径错位；PIT-20261003-003 GHCNh 小时降水的三个口径坑；PIT-20261003-004 ERCOT 增量下载的四个静默缺口；PIT-20261003-005 EIA-930 储能列口径静默切换；PIT-20261004-001 怀俄明探空三坑；PIT-20261004-002 NCEI Storm Events 四坑；PIT-20261016-001 IEM ASOS 通道三坑）、1 条方法（MTD-20261015-001 ASOS/AWOS 观测获取通道）、1 条约定（MTD-20260930-001）。
 
 ## 分类入口
 
@@ -59,6 +59,7 @@
 | 数据源 | 相关条目 |
 |--------|---------|
 | Meteostat | [MTD-20260718-002](methods/MTD-20260718-002.md), [PIT-20260719-001](pitfalls/PIT-20260719-001.md) |
+| **IEM ASOS（机场逐时观测）** | **[RCP-20261016-001](recipes/RCP-20261016-001.md)**（德州 33 站批量下载；免费无 key，含 METAR 原文列）， **[PIT-20261016-001](pitfalls/PIT-20261016-001.md)**（missing=blank 废弃致 422 / 清单端点改版 / 无效站静默失败） |
 | Open-Meteo | [MTD-20260718-001](methods/MTD-20260718-001.md), [RCP-20260916-001](recipes/RCP-20260916-001.md), [RCP-20260927-005](recipes/RCP-20260927-005.md), **[RCP-20260929-012](recipes/RCP-20260929-012.md)**（`previous-runs` 历史预报·法国）, **[RCP-20260929-013](recipes/RCP-20260929-013.md)**（`previous-runs` 历史预报·西班牙 + D-1 预警）, **[PIT-20260929-003](pitfalls/PIT-20260929-003.md)**（逐 lead 同质性） |
 | NASA POWER | [MTD-20260720-001](methods/MTD-20260720-001.md), **[PIT-20260930-002](pitfalls/PIT-20260930-002.md)**（辐照来源被误归因）, **[PIT-20260930-003](pitfalls/PIT-20260930-003.md)**（同段换版）, **[PIT-20260930-004](pitfalls/PIT-20260930-004.md)**（默认 LST） |
 | USCRN | **[RCP-20260927-005](recipes/RCP-20260927-005.md)** |
