@@ -35,3 +35,4 @@
 | [PIT-20261004-002](PIT-20261004-002.md) | NCEI Storm Events：时间戳是本地标准时、1996 结构断点、~2.5 月发布滞后、逐年快照 | verified | active |
 | [PIT-20261016-001](PIT-20261016-001.md) | IEM ASOS 通道三坑：`missing=blank` 已废弃致 422、站清单端点改版返回 HTML、无效站静默失败 | verified | active |
 | [PIT-20261025-001](PIT-20261025-001.md) | IGRA v2.2 通道四坑：站清单在 pub/data/igra/（档案树内 404）、全周期目录是 data-por（access/data 不存在）、站清单行尾三列是 begin/end/nobs（取 f[-2:] 当起止年统计全错）、空格切列丢 PFLAG/ZFLAG/TFLAG 空白标志位（定宽列号解析是唯一正解） | verified | active |
+| [PIT-20261026-001](PIT-20261026-001.md) | Open-Meteo Archive / Zenodo 通道三坑：**风速默认 km/h**（"29 m/s"实为 29 km/h，不报错且量级"看着像"——唯一防线是 5–10 m/s 量级 sanity check）、**ERA5 pre-1979 段同化资料稀疏**（极值年落早期，P50/P90 主样本从 1979 起）、**Zenodo IncompleteRead 小文件也截断**（按 API size 校验字节数再落盘，重试可过） | verified | active |
