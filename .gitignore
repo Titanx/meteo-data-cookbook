@@ -11,6 +11,11 @@ analysis/
 # meteo-power-analyst/kb 与 raw/surveys，仅本地保留
 news/
 
+# 中国区格点/实测对比研究数据（可经 TPDC/IEM 重新下载，结论已沉淀进 kb 与 raw/surveys）
+cn_grid_7917/
+cn_station_obs_iem/
+cn_grid_vs_obs_summary.csv
+
 # Python
 __pycache__/
 *.py[cod]

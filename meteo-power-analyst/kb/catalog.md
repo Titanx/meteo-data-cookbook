@@ -31,7 +31,7 @@
 | 分类 | 条目数 | 成熟度分布 |
 |------|--------|-----------|
 | methods (MTD) | 8 | draft 0 / verified 8 / proven 0 |
-| recipes (RCP) | 49 | draft 1 / verified 48 / proven 0 |
+| recipes (RCP) | 50 | draft 1 / verified 49 / proven 0 |
 | decisions (DEC) | 3 | draft 0 / verified 3 / proven 0 |
 | pitfalls (PIT) | 32 | draft 0 / verified 32 / proven 0 |
 | experiments (EXP) | 0 | — |
