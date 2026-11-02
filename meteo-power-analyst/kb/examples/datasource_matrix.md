@@ -14,7 +14,7 @@
 | Open-Meteo Previous Runs | 同一预报的 D1~D7 归档 | REST JSON | 无 | **逐 lead 同质性有陷阱** → `[PIT-20260929-003]` |
 | Open-Meteo Seasonal | 45 天，多成员 | REST JSON | 无 | 季节尺度，不可当日尺度用 → `[RCP-20260916-001]` |
 | NASA POWER | 温度 / 辐照 / 风速，日或小时 | REST JSON / CSV | 无 | **辐照=CERES（SYN1deg/FLASHFlux）、气象=MERRA-2/GEOS-IT**；点位代表性有限；缺省 LST，须传 `time-standard=UTC` → `[MTD-20260720-001]` |
-| Meteostat | 地面站小时观测 | Python 包 / 批量 CSV | 无 | 区域批量下载有陷阱 → `[PIT-20260719-001]`、`[MTD-20260718-002]` |
+| Meteostat | 地面站小时观测（日/月也有） | Python 包 2.x（`daily()` 函数式）/ `data.meteostat.net/daily/{年}/{站}.csv.gz` | 无 | 域名迁到 data.meteostat.net（旧 bulk 停更）；**中国站日/小时 prcp 均 100% DWD MOSMIX 模式值，不可当雨量计观测**；美/澳日 prcp=ghcnd 观测、德=dwd_daily；日文件尾部 MOSMIX 填到今天+4~7 天；2.x 可 `providers=[GHCND]` 强制观测但滞后约 14 个月；区域批量下载陷阱 → `[MTD-20260718-002]`、`[PIT-20260719-001]`、`[PIT-20260930-007]` |
 | IEM ASOS（机场逐时观测） | 温度 / 露点 / 湿度 / 风 / 阵风 / 小时降水 + **METAR 原文列** | HTTP GET（asos.py，单站整段一次请求） | 无 | **单位全英制**须换算；`missing=blank` 已废弃（422）；站清单端点改版需硬编码；近实时另走 aviationweather → `[RCP-20261016-001]`、`[PIT-20261016-001]` |
 | SURFRAD | 地表辐照实测，分钟级 | HTTP 目录 | 无 | 只在美国境内（11 个站点目录），历史有限 → `[RCP-20260720-002]` |
 | SOLRAD | 地表辐照实测，分钟级 | HTTP 目录 | 无 | NOAA GML 另一条网络，只在美国（9 个站点目录），目录结构与 SURFRAD 相同 → `[RCP-20260720-002]` |
