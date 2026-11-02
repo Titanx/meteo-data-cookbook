@@ -68,6 +68,7 @@
 | Energy-Charts (Fraunhofer ISE) | 价格 / 发电构成，多国 | 公开 JSON | 无 | **免凭证首选**，可做 ENTSO-E 的校验口径 |
 | ESIOS / REE | 西班牙官方口径 | REST | token（有效也进不去） | **域名级 WAF 全面 403** → `[PIT-20260929-001]`，改用 ENTSO-E 替代 |
 | GEM 电站数据库 | 机组名录 / 位置 / 装机 | 公开 CSV | 无 | 月度版本，需按月份拼路径 → `[RCP-20260911-002]` |
+| **AEMO NEMWEB（澳洲 NEM）** | 场站级 UIGF 官方预测（ELAV）/ 5min 全场站 SCADA 实测 / 区域电价（RRP、TOTALDEMAND） | Apache autoindex HTTP 目录（MMS 格式，zip 套 zip） | **无（匿名免注册）** | 全球最易程序化获取的市场数据之一，中国直连可达；**MMS 字符串字段带双引号必须剥除**（否则 to_datetime 全 NaN 静默清空）；实测表名 `UNIT_SCADA`（非 DISPATCH_UNIT_SCADA）、时间字段 `SETTLEMENTDATE`；UIGF 只取 `SCADA_TYPE=ELAV` 才是对账基准 → `[RCP-20261102-001]` |
 
 ## 5. 合成与派生数据
 
