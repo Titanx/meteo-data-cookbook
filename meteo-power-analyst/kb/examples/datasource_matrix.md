@@ -40,6 +40,12 @@
 | IGLD（CMA 一体化陆面数据集） | 次小时站点观测 | data.cma.cn | **需注册** | 实测 API 连接超时，与 `[PIT-20260907-001]` 一致 |
 | **TPDC（青藏高原科学数据中心）** | 中国区均一化格点（HCD01 七要素 1961–2022 日尺度 0.1°；同组前代 RH/WS 1979–2017 月尺度 0.25°） | SPA JSON API + HTTPS/FTP | **无**（开放获取） | <1GB 文件走 HTTPS（batchDownloadByFileId）字节可精确校验；**>1GB 仅 FTP** 且端口 21 对代理/海外出口 SYN 静默丢弃（需大陆直连）；真实 API 路径是**双层 file 前缀** → `[RCP-20261030-001]` |
 
+## 1c. 海洋与沿海（offshore wind 备用）
+
+| 源 | 变量 | 获取方式 | 凭证 | 已知限制 |
+|----|------|----------|------|----------|
+| NOAA CORA（Coastal Ocean Reanalysis） | 沿岸逐时水位 + 波浪 bulk 参数（Hs/Tp/DIR），1979 起 | AWS NODD 匿名桶（NetCDF + zarr + intake 目录） | **无** | GEC 域（东/湾/加勒比）1979–2022 ~500m；**PAC 域（西海岸/夏威夷/东南阿拉斯加）1979–2025 ~200m，2026-10 首发**；**模式再分析非观测**，v0.9/v1.0/v1.1 全弃用（v1.0 有错误长期趋势），官方 Known Issues 自曝 PAC 16hr 振荡伪影与 2009/2019 偏差数十分米；引用必须锁 v1.1.1 → survey `raw/surveys/cora_noaa_coastal_reanalysis_survey.md` |
+
 ## 2. 卫星与遥感
 
 | 源 | 变量 | 获取方式 | 凭证 | 已知限制 |
