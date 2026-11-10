@@ -84,6 +84,7 @@
 | pvlib | 辐照 → 出力 | Python 包 | 无 | 需要装机侧假设（ILR/朝向），假设变了结论就变 |
 | **IGCC 全球气候指标** | 11 项 IPCC AR6 指标（GHG→强迫→温度→归因→碳预算→极端/海平面），1750–2025 年度 | CDS retrieve（需账号）/ **Zenodo 匿名**（doi:10.5281/zenodo.21494229，与 CDS 同版本） | 无（Zenodo 通道） | 年度全球聚合，**无风速/风资源项**——只进气候叙事层；**缺风速资源趋势用 Open-Meteo Archive 补** → `[RCP-20261026-001]` |
 | 站点代表点合成 | 省/区域级辐照代理 | 自建 | 无 | 覆盖率必须在报告里写明 → `[RCP-20260929-013]` |
+| **TGW/reV 美国风光发电剖面（GODEEEP）** | CONUS 1/8°（≈12km）逐时风（80/100/125m）+光伏容量因子；历史 1980–2022 + 未来情景至 2099 | Zenodo index record 10214348 → **~70 个 hasPart 子记录**（变量×情景×20 年，单个 zip 30GB 级）或 tgw-data.msdlive.org 门户（TGW 原始 WRF 气象同站） | 无（匿名） | **母 DOI 只有 README，数据全在子记录**；按需挑选勿全下（TB 级），免全量读取管线 `[RCP-20261110-001]`（前 4MB raw → 前缀切片 18–63 步）；rcp45/85hotter 是 TGW 热力学外推非 CMIP6 原生情景；license 字段缺失；reV 模型估计非实测发电；Nature Energy 范本论文 s41560-026-02109-3 → survey `raw/surveys/nature_energy_resource_adequacy_tgw_rev_survey.md` |
 
 ## 使用纪律
 
