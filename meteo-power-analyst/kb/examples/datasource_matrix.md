@@ -56,6 +56,8 @@
 | FY-4A LMI | 闪电 | NSMC | 需注册 / 受限 | 部分入口不可达 → `[PIT-20260907-001]`、`[RCP-20260907-003]` |
 | GPM IMERG | 降水 | NASA GES DISC | 需 Earthdata 登录 | 检索接口有坑 → `[RCP-20260907-001]` |
 | ASTER GDEM / WBD | 地形与水体 | NASA Earthdata | 需登录 | 分幅下载后需拼接 → `[RCP-20260907-004]` |
+| **OSTIA 海面温度/海冰（UKMO）** | L4 逐日 foundation SST + 海冰浓度 + error 场 | Copernicus Marine `copernicusmarine` 工具箱；PODAAC 镜像；NCEI THREDDS 匿名存档 | CMEMS 免费注册 / Earthdata / NCEI 匿名 | 0.05° 全球；**NRT(010_001) 只有滚动 2 年，1981 起长序列必须用 REP(010_011)**；2024-04 起 MOTU/OPeNDAP/FTP 全下线（旧 motu 教程全废）；analysis_error 2014-02 前高估；diurnal 版退役中；再分发需署名 → survey `raw/surveys/ostia_sst_sentinel_sar_wind_survey.md` |
+| **Sentinel-1 SAR 海面风（OWI）** | L2 OCN OWI：10m 风速风向，**1km** 网格 | CDSE（下载需免费注册+token）；ASF（Earthdata+EULA） | 浏览匿名 / 下载需注册 | σ0→CMOD7（VV 高风 ~25m/s 饱和→交叉极化 VH 可到 50m/s），风向取 ECMWF 非反演；精度 ~1.5–2 m/s；比散射计 25km 细一量级、近岸主场；旧文档站 404 已迁 SentiWiki；自反演工具 openwind/grdwindinversion/SNAP（sarwind 库已死）→ 同上 survey |
 
 ## 3. 雷达
 
