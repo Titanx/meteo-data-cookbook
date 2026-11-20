@@ -1,6 +1,6 @@
 # 数据源速查矩阵
 
-**最后同步**: 2026-10-03
+**最后同步**: 2026-11-19
 **用途**: 选源时先查本表；"已知限制"列里的坑在对应 PIT 条目里有排查信号与绕法。
 **口径提醒**: 本表只记"能不能拿、拿的时候会怎样"，不记具体数值结论。
 
@@ -59,6 +59,7 @@
 | **OSTIA 海面温度/海冰（UKMO）** | L4 逐日 foundation SST + 海冰浓度 + error 场 | Copernicus Marine `copernicusmarine` 工具箱；PODAAC 镜像；NCEI THREDDS 匿名存档 | CMEMS 免费注册 / Earthdata / NCEI 匿名 | 0.05° 全球；**NRT(010_001) 只有滚动 2 年，1981 起长序列必须用 REP(010_011)**；2024-04 起 MOTU/OPeNDAP/FTP 全下线（旧 motu 教程全废）；analysis_error 2014-02 前高估；diurnal 版退役中；再分发需署名 → survey `raw/surveys/ostia_sst_sentinel_sar_wind_survey.md` |
 | **Sentinel-1 SAR 海面风（OWI）** | L2 OCN OWI：10m 风速风向，**1km** 网格 | CDSE（下载需免费注册+token）；ASF（Earthdata+EULA） | 浏览匿名 / 下载需注册 | σ0→CMOD7（VV 高风 ~25m/s 饱和→交叉极化 VH 可到 50m/s），风向取 ECMWF 非反演；精度 ~1.5–2 m/s；比散射计 25km 细一量级、近岸主场；旧文档站 404 已迁 SentiWiki；自反演工具 openwind/grdwindinversion/SNAP（sarwind 库已死）→ 同上 survey |
 | **PARDIG + SatWeave（Google DeepMind，2026-11-13 开源）** | PARDIG：AI 降水估计 15min/0.1°（NRT 2016→ 输入 HRES+SatWeave 11 通道；LR 1999–2023 输入 ERA5+GridSat-B1+LEO 微波）；SatWeave：5 颗静止星 17 谱段统一拼接 0.1°（2016–2025 30min / 2026→ 逐时 ~1h 延迟） | arXiv 2611.13941（论文）；GCS 匿名公开桶 pardig_1 / satweave_1（Zarr v3）；GEE 静态档；官方 Colab 入门指南 | **无（实测匿名拉样成功）** | 训练目标仅 GPM CORRA 星载雷达（地面站零参与→评估独立）；CSI 全面胜 IMERG-Final/MSWEP/ERA5：36,678 站 89.9% 胜 IMERG-Final（0.36 vs 0.28），1mm/h 0.48 vs 0.38，**25mm/h 极端 0.12 vs 现役 <0.03**，热带 +52%（反超仅中纬度高山站）；"1999 至 2026 历史档"是 LR+NRT 两版拼接（输入分辨率不同，跨边界注意断点）；**developers.google.com 超时 → developers.google.cn 镜像 200**；桶根 zarr.json 404 需子目录前缀；SatWeave GEO 覆盖 ±60–65°、部分波段非全星座；**实测坑：obstore 本机必须 skip_signature=True（默认走 GCE metadata 取 token）+ timeout 放宽；chunk key c/0/0/0（zarr v3 default encoding）；bytes+zstd 有压缩 → 读子域也要整 chunk 下载（SatWeave 波段 26MB→16.8MB 仅 1.5x，PARDIG 降水 19.7x 秒级可拉）；国内直连单流 ~0.03MB/s → 8 连接并发分片提速 5–8x 后两帧验证 86s；列桶 maxResults=1000 截断须 pageToken 或 startOffset；物理自洽通过（640nm 白天反射率 1.65–79.35%、降水 0–37.8mm/h）→ survey `raw/surveys/deepmind_pardig_satweave_survey.md`** |
+| **Global Fire Atlas（独立火灾动态，Andela 2019 ESSD + 2026 扩展版）** | 1325 万场独立火灾事件（原版 2003–2016 口径，扩展版未单独披露场次；起火点/持续时间/面积/每日扩张/火线长度/蔓延速度方向）；500m 事件栅格 + 0.25° 月度聚合（10 变量 × 301 月：burned_area/fire_number/fire_size/fire_duration/fire_line/fire_speed/fire_direction(+alternative)/fire_spread/pixel_count） | 原版 2003–2016：ORNL DAAC（earthdata.nasa.gov 页面 200）；2026 扩展版 v20260408（2002–2026.2，MCD64A1 C6.1，2026-07-22 发布）：Zenodo records/17669692，7 个 zip 共 8GB，CC-BY-4.0 | **无（实测匿名 API+Range 流读成功）** | 两版不建议拼接成一套时间序列（C6→C6.1 + 土地覆盖输入更新）；**蔓延速度/方向未独立验证**（逐日扩张精度 < 多日平滑）；森林过火日期与 VIIRS 匹配差、边界总体低估；火季定义≠自然年（最新两个火季可能不完整）；小火灾/林下火漏检（500m MODIS 像元）；**Zenodo API 拒 python 默认 UA（403），需浏览器 UA + Accept 头**；zip32 包（<4GB）尾部 64KB 用普通 EOCD（PK\x05\x06）解析；Qdeg 包实测：Range 206 + CD 0.36MB 秒级出 3010 成员全清单，单成员 ~0.1MB 可直接 Range 抽单月单变量 → survey `raw/surveys/global_fire_atlas_survey.md`、管线复用 `[RCP-20261110-001]`；电力场景：与输电线/变电站叠加做历史火灾暴露分析，不可当实时火线 |
 
 ## 3. 雷达
 
@@ -76,7 +77,7 @@
 | ENTSO-E Transparency | 日前价 / 发电构成 / 负荷 | REST XML | 需 token | 报文两处隐藏结构 → `[PIT-20260929-002]`、`[RCP-20260929-005]` |
 | Energy-Charts (Fraunhofer ISE) | 价格 / 发电构成，多国 | 公开 JSON | 无 | **免凭证首选**，可做 ENTSO-E 的校验口径 |
 | ESIOS / REE | 西班牙官方口径 | REST | token（有效也进不去） | **域名级 WAF 全面 403** → `[PIT-20260929-001]`，改用 ENTSO-E 替代 |
-| GEM 电站数据库 | 机组名录 / 位置 / 装机 | 公开 CSV | 无 | 月度版本，需按月份拼路径 → `[RCP-20260911-002]` |
+| **GEM 电站数据库（Global Energy Monitor）** | 机组名录 / 坐标 / 装机 / 业主 / 状态 / 投产年（31 字段，182,668 条全类型；光伏 10.4 万 + 风电 3.5 万；中国 39,884 条） | **DigitalOcean CDN 直链**（匿名）：publicgemdata.nyc3.cdn.digitaloceanspaces.com/Current_maps/integrated-power/{YYYY-MM}-v2/integrated_map_{YYYY-MM}-v2.csv，gzip 传输 10.7MB→落盘 61.5MB，国内直连 **1.5s**（2026-11-19 复测） | 无 | 官网下载页要邮箱注册、**Google Sheets 通道 docs.google.com 国内直连超时（2026-11-19 实测）**，数据工程一律走 CDN 直链（发现方法：maps 仓库 config.js）→ `[RCP-20260911-002]`；月度版本节奏慢：2026-08-v2 至 11 月仍是最新（09/10/11 均 404，不能提前取）；capacity 单位注意 MW |
 | **AEMO NEMWEB（澳洲 NEM）** | 场站级 UIGF 官方预测（ELAV）/ 5min 全场站 SCADA 实测 / 区域电价（RRP、TOTALDEMAND） | Apache autoindex HTTP 目录（MMS 格式，zip 套 zip） | **无（匿名免注册）** | 全球最易程序化获取的市场数据之一，中国直连可达；**MMS 字符串字段带双引号必须剥除**（否则 to_datetime 全 NaN 静默清空）；实测表名 `UNIT_SCADA`（非 DISPATCH_UNIT_SCADA）、时间字段 `SETTLEMENTDATE`；UIGF 只取 `SCADA_TYPE=ELAV` 才是对账基准 → `[RCP-20261102-001]` |
 
 ## 5. 合成与派生数据
