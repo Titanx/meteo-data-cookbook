@@ -1,7 +1,7 @@
 # 数据获取 · 数值预报与再分析
 
 **状态**: ✅ 可用 — 脚本在原仓库端到端跑通（Open-Meteo archive / forecast / seasonal / previous-runs、NASA POWER）。
-本包 `data/` 与 `output/` 为空的生成目录，首跑需重新取数；脚本内路径已对齐到包根。
+本包 `data/` 与 `output/` 是不进版本库的生成目录；`data/` 下已有部分本地取数产物（如 `data/aemo_nem/`），NWP 数据按区域检查后再决定是否重取；脚本内路径已对齐到包根。
 
 **用途**: 拉取历史气象真值、短期数值预报（含 D1~D7 逐 lead 归档）与 45 天季节预报，落盘供出力建模与预警链路使用。
 
