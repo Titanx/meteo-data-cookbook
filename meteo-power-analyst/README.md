@@ -130,7 +130,7 @@ python kb/kb_lint.py
 | Energy-Charts (Fraunhofer ISE) | ✅ 免凭证，可做 ENTSO-E 校验口径 |
 | ESIOS / REE | ❌ 域名级 WAF 全面 403，已改用 ENTSO-E |
 | NSRDB / pvlib | ✅ 出力结论强依赖装机侧假设 |
-| 静止卫星（Himawari / GOES / GK2A / GLM） | ✅ 免凭证；FY-4 LMI 与 GPM IMERG 受入口限制 🟡 |
+| 静止卫星（Himawari / GOES / GLM） | ✅ 免凭证；GK2A 需 KMA key；FY-4 LMI 与 GPM IMERG 受入口限制 🟡 |
 | 雷达（NEXRAD / MRMS） | 🟡 可用性以逐次探活为准 |
 
 纪律：**宁可无数据，不可假数据**——受限或缺失的数据项在结论中显式标注"数据缺失"，不留空猜。

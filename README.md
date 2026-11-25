@@ -28,7 +28,7 @@ ERCOT 电价全是噪声。本仓库的做法是：
 3. **原始材料层**：`raw/` 是"土壤"——会话记录、研究流水、外部素材，只读、日常不读
 
 **分界线**：换个实现方式还成立的 → 知识层；跟着实现走的 → 能力层。
-渐进披露四层：`SKILL.md` 分诊树 → `skills/*/SKILL.md` → `kb/*/catalog.md` → 单条条目。
+渐进披露五层（见 `raw/FRAMEWORK.md` §3）：`SKILL.md` 分诊树 → `skills/*/SKILL.md` → `skills/*/references` 或 `kb/catalog.md` → `kb/*/catalog.md` → 单条条目。
 这样无论知识长到多少条，单次对话的上下文消耗始终可控。
 
 ## 分析链路与报告产物
@@ -73,6 +73,8 @@ NWP 短期预报（法国侧可预报但通道不增益）→ 以持续性为骨
 
 > 表中 `output/` 指仓库根目录下的生成目录（不进版本库）；报告为单文件 HTML，零外部依赖，可直接打开或分发。
 > 流程号 PS-0xx 是旧编号，与 kb 条目 ID 的对照见 `meteo-power-analyst/kb/MIGRATION.md`。
+> 另有五份较新报告未列入：`battery_elasticity_attribution`（储能归因）、`pv_node_shock`（节点级）、
+> `dcape_price`（探空 DCAPE）、`storm_events_price`（Storm Events）、`wind_shortfall_crossyear`（风电跨年）。
 
 ## 使用方法
 
