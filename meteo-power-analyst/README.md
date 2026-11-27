@@ -55,7 +55,7 @@ meteo-power-analyst/
 │   ├── negprice-chain/        负价概率与 D-1/D-3 预警
 │   ├── report-builder/        单文件 HTML 报告
 │   └── kb-capture/            知识沉淀与 lint
-└── kb/                     知识层（96 条）
+└── kb/                     知识层（97 条）
     ├── catalog.md              总目录（类型/领域/统计）
     ├── kb_lint.py              引用可达性 + 索引一致性检查（七项）
     ├── MIGRATION.md            旧 ID ↔ 新 ID 对照、成熟度冲突、路径改写记录
@@ -108,7 +108,7 @@ python kb/kb_lint.py
 **单一事实源是 [SKILL.md](SKILL.md) 的状态表**（含验证内容与升级/降级规则），此处不重复维护，避免两表漂移。
 概览：10 个 skill 中 7 个 ✅、3 个 🟡（卫星侧的凭证受限通道、雷达仅探活、知识沉淀流程无自动化）。
 
-知识层（截至 2026-11-10 的 `kb/catalog.md` 统计）：methods×8 / decisions×3 / pitfalls×32 / recipes×53 / experiments×0 / examples×3，其中 verified 95 条、draft 1 条。
+知识层（截至 2026-11-27 的 `kb/catalog.md` 统计）：methods×8 / decisions×3 / pitfalls×32 / recipes×54 / experiments×0 / examples×3，其中 verified 96 条、draft 1 条。
 代表性条目：
 
 - `DEC-20260930-001` 缺口口径取"物理晴空反事实"，不取"P95 数据驱动包络"

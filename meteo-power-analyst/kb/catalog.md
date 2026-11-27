@@ -31,13 +31,13 @@
 | 分类 | 条目数 | 成熟度分布 |
 |------|--------|-----------|
 | methods (MTD) | 8 | draft 0 / verified 8 / proven 0 |
-| recipes (RCP) | 53 | draft 1 / verified 52 / proven 0 |
+| recipes (RCP) | 54 | draft 1 / verified 53 / proven 0 |
 | decisions (DEC) | 3 | draft 0 / verified 3 / proven 0 |
 | pitfalls (PIT) | 32 | draft 0 / verified 32 / proven 0 |
 | experiments (EXP) | 0 | — |
 | examples | 3 | — |
 
-合计 96 条知识条目 + 3 个样例。其中 60 条由旧仓库知识库的 tech/ 子目录机械迁移而来（对照表见 [MIGRATION.md](MIGRATION.md)），36 条为迁移后新写：11 条流程（RCP-20260930-001 BSRN 基准实测取数，并推翻旧条目"PANGAEA 需注册"的结论；RCP-20261002-001 风电场级开源数据集下载 La Haute Borne / Kelmarsh；RCP-20261003-001 站点降水日界对齐检验；RCP-20261003-002 ERCOT 月度增量刷新 SOP；RCP-20261016-001 德州 ASOS 批量下载·IEM 通道；RCP-20261025-001 IGRA v2.2 全球探空档案下载解析·NCEI 通道；RCP-20261026-001 ERA5 长期风序列与 IGCC 气候指标双匿名通道；RCP-20261030-001 TPDC 青藏高原数据中心双通道下载；RCP-20261102-001 AEMO NEMWEB 澳洲市场下载与 MMS 对账管线；RCP-20261110-001 Zenodo 超大 zip 免全量下载读取管线·TGW/reV；RCP-20261114-001 DeepMind PARDIG/SatWeave 匿名拉取管线·GCS Zarr v3 并发分片）、3 条决策（DEC-20260930-001~003）、20 条坑（PIT-20260930-001 凭据硬编码与 raw 层外泄；PIT-20260930-002~004 NASA POWER 来源归因/换版/时间标准；PIT-20260930-005 S3 分页静默截断；PIT-20260930-006 静止卫星延迟与体积的多口径；PIT-20260930-007 聚合层的观测/预报混淆与列内单位切换；PIT-20261002-001~003 Zenodo 访问五坑 / Greenbyte CSV 表头与列数 / 风电 SCADA 时间口径；PIT-20261003-001 同一 CSV 堆叠多个累积快照；PIT-20261003-002 站点日降水是"当地日"与 UTC 口径错位；PIT-20261003-003 GHCNh 小时降水的三个口径坑；PIT-20261003-004 ERCOT 增量下载的四个静默缺口；PIT-20261003-005 EIA-930 储能列口径静默切换；PIT-20261004-001 怀俄明探空三坑；PIT-20261004-002 NCEI Storm Events 四坑；PIT-20261016-001 IEM ASOS 通道三坑；PIT-20261025-001 IGRA 通道四坑；PIT-20261026-001 Open-Meteo/Zenodo 单位量级·同质性·截断三坑）、1 条方法（MTD-20261015-001 ASOS/AWOS 观测获取通道）、1 条约定（MTD-20260930-001）。
+合计 97 条知识条目 + 3 个样例。其中 60 条由旧仓库知识库的 tech/ 子目录机械迁移而来（对照表见 [MIGRATION.md](MIGRATION.md)），37 条为迁移后新写：12 条流程（RCP-20260930-001 BSRN 基准实测取数，并推翻旧条目"PANGAEA 需注册"的结论；RCP-20261002-001 风电场级开源数据集下载 La Haute Borne / Kelmarsh；RCP-20261003-001 站点降水日界对齐检验；RCP-20261003-002 ERCOT 月度增量刷新 SOP；RCP-20261016-001 德州 ASOS 批量下载·IEM 通道；RCP-20261025-001 IGRA v2.2 全球探空档案下载解析·NCEI 通道；RCP-20261026-001 ERA5 长期风序列与 IGCC 气候指标双匿名通道；RCP-20261030-001 TPDC 青藏高原数据中心双通道下载；RCP-20261102-001 AEMO NEMWEB 澳洲市场下载与 MMS 对账管线；RCP-20261110-001 Zenodo 超大 zip 免全量下载读取管线·TGW/reV；RCP-20261114-001 DeepMind PARDIG/SatWeave 匿名拉取管线·GCS Zarr v3 并发分片；RCP-20261127-001 GonshoreWT2024 全球风机点位下载实检与 GEM 空间交叉核验）、3 条决策（DEC-20260930-001~003）、20 条坑（PIT-20260930-001 凭据硬编码与 raw 层外泄；PIT-20260930-002~004 NASA POWER 来源归因/换版/时间标准；PIT-20260930-005 S3 分页静默截断；PIT-20260930-006 静止卫星延迟与体积的多口径；PIT-20260930-007 聚合层的观测/预报混淆与列内单位切换；PIT-20261002-001~003 Zenodo 访问五坑 / Greenbyte CSV 表头与列数 / 风电 SCADA 时间口径；PIT-20261003-001 同一 CSV 堆叠多个累积快照；PIT-20261003-002 站点日降水是"当地日"与 UTC 口径错位；PIT-20261003-003 GHCNh 小时降水的三个口径坑；PIT-20261003-004 ERCOT 增量下载的四个静默缺口；PIT-20261003-005 EIA-930 储能列口径静默切换；PIT-20261004-001 怀俄明探空三坑；PIT-20261004-002 NCEI Storm Events 四坑；PIT-20261016-001 IEM ASOS 通道三坑；PIT-20261025-001 IGRA 通道四坑；PIT-20261026-001 Open-Meteo/Zenodo 单位量级·同质性·截断三坑）、1 条方法（MTD-20261015-001 ASOS/AWOS 观测获取通道）、1 条约定（MTD-20260930-001）。
 
 ## 分类入口
 
@@ -87,6 +87,7 @@
 | **GridStatus RTM** | **[RCP-20260927-006](recipes/RCP-20260927-006.md), [RCP-20260927-007](recipes/RCP-20260927-007.md)** |
 | ERCOT | [RCP-20260723-001](recipes/RCP-20260723-001.md), [PIT-20260723-001](pitfalls/PIT-20260723-001.md), [RCP-20260724-001](recipes/RCP-20260724-001.md), [RCP-20260911-002](recipes/RCP-20260911-002.md), [RCP-20260927-005](recipes/RCP-20260927-005.md), [RCP-20260927-006](recipes/RCP-20260927-006.md), [RCP-20260927-007](recipes/RCP-20260927-007.md), [RCP-20261003-002](recipes/RCP-20261003-002.md)（月度增量刷新 SOP）, [PIT-20261003-004](pitfalls/PIT-20261003-004.md)（增量下载四坑）, [PIT-20261003-005](pitfalls/PIT-20261003-005.md)（EIA-930 储能列口径切换） |
 | **GEM 电站数据库** | **[RCP-20260911-002](recipes/RCP-20260911-002.md), [RCP-20260927-007](recipes/RCP-20260927-007.md)** |
+| **GonshoreWT2024 全球陆上风机点位** | **[RCP-20261127-001](recipes/RCP-20261127-001.md)**（Zenodo 下载·字段实检·GEM 场站空间交叉核验：416,532 点仅坐标/Nation/landtype 三列无容量，ERCOT 165 场站 1 km 内 94.5% 但疑似共同上游非独立验证；2024 截面） |
 | **AEMO NEMWEB（澳洲 NEM）** | **[RCP-20261102-001](recipes/RCP-20261102-001.md)**（匿名免注册三层数据：UIGF 预测/SCADA 实测/区域电价；MMS 解析双引号坑、表名 UNIT_SCADA、ELAV 口径、负电价统计） |
 | **TGW/reV/GODEEEP（CONUS 风/光 CF 格点）** | **[RCP-20261110-001](recipes/RCP-20261110-001.md)**（免全量下载读取管线；8km 299×424 全域，1980–2099 历史+4 情景；reV 模型估计非实测；母记录只有 README、63 子记录各 29–34GB 单 zip） |
 | **PARDIG + SatWeave（DeepMind 降水/多光谱，GCS 匿名）** | **[RCP-20261114-001](recipes/RCP-20261114-001.md)**（Zarr v3 匿名拉取管线：startOffset 列桶 + obstore skip_signature + chunk key c/0/0/0 + 8 连接并发分片提速 5–8x；CSI 25mm/h 极端 0.12 vs 现役 <0.03） |

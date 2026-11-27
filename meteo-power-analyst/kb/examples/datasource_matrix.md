@@ -1,6 +1,6 @@
 # 数据源速查矩阵
 
-**最后同步**: 2026-11-19
+**最后同步**: 2026-11-27
 **用途**: 选源时先查本表；"已知限制"列里的坑在对应 PIT 条目里有排查信号与绕法。
 **口径提醒**: 本表只记"能不能拿、拿的时候会怎样"，不记具体数值结论。
 
@@ -78,6 +78,7 @@
 | Energy-Charts (Fraunhofer ISE) | 价格 / 发电构成，多国 | 公开 JSON | 无 | **免凭证首选**，可做 ENTSO-E 的校验口径 |
 | ESIOS / REE | 西班牙官方口径 | REST | token（有效也进不去） | **域名级 WAF 全面 403** → `[PIT-20260929-001]`，改用 ENTSO-E 替代 |
 | **GEM 电站数据库（Global Energy Monitor）** | 机组名录 / 坐标 / 装机 / 业主 / 状态 / 投产年（31 字段，182,668 条全类型；光伏 10.4 万 + 风电 3.5 万；中国 39,884 条） | **DigitalOcean CDN 直链**（匿名）：publicgemdata.nyc3.cdn.digitaloceanspaces.com/Current_maps/integrated-power/{YYYY-MM}-v2/integrated_map_{YYYY-MM}-v2.csv，gzip 传输 10.7MB→落盘 61.5MB，国内直连 **1.5s**（2026-11-19 复测） | 无 | 官网下载页要邮箱注册、**Google Sheets 通道 docs.google.com 国内直连超时（2026-11-19 实测）**，数据工程一律走 CDN 直链（发现方法：maps 仓库 config.js）→ `[RCP-20260911-002]`；月度版本节奏慢：2026-08-v2 至 11 月仍是最新（09/10/11 均 404，不能提前取）；capacity 单位注意 MW |
+| **GonshoreWT2024（全球陆上风机点位，ESSD 2026）** | 416,532 台风机坐标 + `Nation` + `landtype` 三列；**无容量/投运年/机型** | Zenodo doi:10.5281/zenodo.18984175（CC BY 4.0，v4，zip 11 MB 含 ResNet-18 权重与 GEE 代码） | 无 | **2024 截面**不能做逐年新增；下载必断流（API `/content` + `curl -C -` 续传）；2,106 组重复坐标（0.51%）须去重；PointZ 但 Z 全 0；论文 45%/42% 是 800 m buffer 面积口径，点计数是 41.4%/38.6%；与 GEM 疑似共同上游 OSM，空间一致率 ≠ 独立验证 → `[RCP-20261127-001]` |
 | **AEMO NEMWEB（澳洲 NEM）** | 场站级 UIGF 官方预测（ELAV）/ 5min 全场站 SCADA 实测 / 区域电价（RRP、TOTALDEMAND） | Apache autoindex HTTP 目录（MMS 格式，zip 套 zip） | **无（匿名免注册）** | 全球最易程序化获取的市场数据之一，中国直连可达；**MMS 字符串字段带双引号必须剥除**（否则 to_datetime 全 NaN 静默清空）；实测表名 `UNIT_SCADA`（非 DISPATCH_UNIT_SCADA）、时间字段 `SETTLEMENTDATE`；UIGF 只取 `SCADA_TYPE=ELAV` 才是对账基准 → `[RCP-20261102-001]` |
 
 ## 5. 合成与派生数据
